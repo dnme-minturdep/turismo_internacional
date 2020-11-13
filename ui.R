@@ -1,32 +1,70 @@
+### UI
 
-# Load the ggplot2 package which provides
-# the 'mpg' dataset.
-library(ggplot2)
-
-fluidPage(
-  titlePanel("TURISMO INTERNACIONAL"),
-  
-  # Create a new Row in the UI for selectInputs
-  fluidRow(
-    column(4,
-           selectInput("man",
-                       "Manufacturer:",
-                       c("All",
-                         unique(as.character(mpg$manufacturer))))
-    ),
-    column(4,
-           selectInput("trans",
-                       "Transmission:",
-                       c("All",
-                         unique(as.character(mpg$trans))))
-    ),
-    column(4,
-           selectInput("cyl",
-                       "Cylinders:",
-                       c("All",
-                         unique(as.character(mpg$cyl))))
-    )
-  ),
-  # Create a new row for the table.
-  DT::dataTableOutput("table")
-)
+navbarPage(title = div(  #### NavBar #####
+                         div(
+                           id = "img-id",
+                           img(src = "https://upload.wikimedia.org/wikipedia/commons/8/8e/Ministerio_de_Turismo_y_Deportes_arg.png",
+                              width = 100)
+                         )),
+           id="navbar",
+           position = "fixed-top",
+           collapsible = TRUE,
+           tabPanel("RECEPTIVO",
+                    div(class="outer",
+                        tags$head(
+                          # Include our custom CSS
+                          includeCSS("styles.css")
+                        )),
+                    br(),
+                    br(),
+                    h2(stringr::str_to_upper("Turismo Internacional - RECEPTIVO")),
+                    br(), 
+                    fluidPage(
+                      # Create a new Row in the UI for selectInputs
+                          fluidRow(
+                            column(4,
+                                   selectInput("year",
+                                               "Año:",
+                                               c("Todos",
+                                                 unique(as.character(data_receptivo$year))))
+                            ),
+                            column(4,
+                                   selectInput("pais",
+                                               "País:",
+                                               c("Todos",
+                                                 unique(as.character(data_receptivo$pais))))
+                            )
+                          ),
+                          # Create a new row for the table.
+                          DT::dataTableOutput("table_receptivo")
+                        )),
+           tabPanel("EMISIVO",
+                    div(class="outer",
+                        tags$head(
+                          # Include our custom CSS
+                          includeCSS("styles.css")
+                        )),
+                    br(),
+                    br(),
+                    h2(stringr::str_to_upper("Turismo Internacional - EMISIVO")),
+                    br(), 
+                    fluidPage(
+                      # Create a new Row in the UI for selectInputs
+                      fluidRow(
+                        column(4,
+                               selectInput("year",
+                                           "Año:",
+                                           c("Todos",
+                                             unique(as.character(data_emisivo$year))))
+                        ),
+                        column(4,
+                               selectInput("destino",
+                                           "Destino:",
+                                           c("Todos",
+                                             unique(as.character(data_emisivo$destino))))
+                        )
+                      ),
+                      # Create a new row for the table.
+                      DT::dataTableOutput("table_emisivo")
+                    ))
+           )

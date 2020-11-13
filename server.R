@@ -2,19 +2,34 @@
 
 function(input, output) {
   
-  # Filter data based on selections
-  output$table <- DT::renderDataTable(DT::datatable({
-    data <- data.table::fread("data/turistas_internacionales_con destino.csv") 
-  #  if (input$man != "All") {
-  #    data <- data[data$manufacturer == input$man,]
-  #  }
-  #  if (input$cyl != "All") {
-  #    data <- data[data$cyl == input$cyl,]
-  #  }
-  #  if (input$trans != "All") {
-  #    data <- data[data$trans == input$trans,]
-  #  }
-    data
+  # TABLA RECEPTIVO
+  output$table_receptivo <- DT::renderDataTable(DT::datatable({
+    
+    data_receptivo 
+    
+    if (input$year != "Todos") {
+      data_receptivo <- data_receptivo[data_receptivo$year == input$year,]
+    }
+    if (input$pais != "Todos") {
+      data_receptivo <- data_receptivo[data_receptivo$pais == input$pais,]
+       }
+    data_receptivo
   }))
+  
+  
+  # TABLA EMISIVO
+  output$table_emisivo <- DT::renderDataTable(DT::datatable({
+    
+    data_emisivo 
+    
+    if (input$year != "Todos") {
+      data_emisivo <- data_emisivo[data_emisivo$year == input$year,]
+    }
+    if (input$destino != "Todos") {
+      data_emisivo <- data_emisivo[data_emisivo$destino == input$destino,]
+    }
+    data_emisivo
+  }))
+  
   
 }
