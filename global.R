@@ -3,6 +3,14 @@ library(tidyverse) # Easily Install and Load the 'Tidyverse', CRAN v1.3.0
 library(glue) # Interpreted String Literals, CRAN v1.4.2
 library(lubridate) # Make Dealing with Dates a Little Easier, CRAN v1.7.9
 
+# CONFIGs Globales
+
+# language en DT::
+
+options(DT.options = list(language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')))
+
+
+# LEVANTO DATOS
 datos <- data.table::fread("data/turistas_internacionales_con destino.csv") %>% 
   as_tibble() 
 
@@ -11,7 +19,7 @@ data_receptivo <-  datos %>%
   filter(turismo_internac == "Receptivo") %>% 
   rename(year = 'año', 
          sentido = turismo_internac)  %>% 
-  group_by(year, pais, sentido) %>% 
+  group_by(year, pais) %>% 
   mutate(casos = str_replace_all(string = casos_ponderados, 
                                    pattern = ",", replacement = "." ), 
            casos = round(as.numeric(casos)))%>% 
@@ -22,11 +30,10 @@ data_emisivo <- datos %>%
   filter(turismo_internac == "Emisivo") %>% 
   rename(year = 'año', 
          sentido = turismo_internac)  %>% 
-  group_by(year, destino_agrup, sentido) %>% 
+  group_by(year, destino_agrup) %>% 
   mutate(casos = str_replace_all(string = casos_ponderados, 
                                  pattern = ",", replacement = "." ), 
          casos = round(as.numeric(casos)))%>% 
   summarise(n = sum(casos)) %>% 
-  rename(destino = destino_agrup) %>% 
-  print()
+  rename(destino = destino_agrup) 
 

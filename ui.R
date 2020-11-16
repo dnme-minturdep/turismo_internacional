@@ -3,9 +3,10 @@
 navbarPage(title = div(  #### NavBar #####
                          div(
                            id = "img-id",
-                           img(src = "https://upload.wikimedia.org/wikipedia/commons/8/8e/Ministerio_de_Turismo_y_Deportes_arg.png",
-                              width = 100)
+                           tags$a(img(src = "https://upload.wikimedia.org/wikipedia/commons/8/8e/Ministerio_de_Turismo_y_Deportes_arg.png",
+                              width = 100),href="https://www.yvera.tur.ar/estadistica/",target = '_blank'
                          )),
+           "TURISMO INTERNACIONAL", id = "title"),
            id="navbar",
            position = "fixed-top",
            collapsible = TRUE,
@@ -17,7 +18,7 @@ navbarPage(title = div(  #### NavBar #####
                         )),
                     br(),
                     br(),
-                    h2(stringr::str_to_upper("Turismo Internacional - RECEPTIVO")),
+                    h4(stringr::str_to_upper("Turismo Internacional - RECEPTIVO")),
                     br(), 
                     fluidPage(
                       # Create a new Row in the UI for selectInputs
@@ -46,7 +47,7 @@ navbarPage(title = div(  #### NavBar #####
                         )),
                     br(),
                     br(),
-                    h2(stringr::str_to_upper("Turismo Internacional - EMISIVO")),
+                    h4(stringr::str_to_upper("Turismo Internacional - EMISIVO")),
                     br(), 
                     fluidPage(
                       # Create a new Row in the UI for selectInputs

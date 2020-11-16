@@ -3,7 +3,10 @@
 function(input, output) {
   
   # TABLA RECEPTIVO
-  output$table_receptivo <- DT::renderDataTable(DT::datatable({
+  output$table_receptivo <- DT::renderDataTable(
+    
+  DT::datatable(    
+    {
     
     data_receptivo 
     
@@ -18,7 +21,10 @@ function(input, output) {
   
   
   # TABLA EMISIVO
-  output$table_emisivo <- DT::renderDataTable(DT::datatable({
+  output$table_emisivo <- DT::renderDataTable(
+    
+  DT::datatable(
+    {
     
     data_emisivo 
     
