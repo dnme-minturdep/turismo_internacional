@@ -30,6 +30,12 @@ navbarPage(title = div(  #### NavBar #####
                                                  unique(as.character(data_receptivo$year))))
                             ),
                             column(4,
+                                   selectInput("mes",
+                                               "Mes:",
+                                               c("Todos",
+                                                 unique(as.character(data_receptivo$mes))))
+                            ),
+                            column(4,
                                    selectInput("pais",
                                                "País:",
                                                c("Todos",
@@ -53,10 +59,17 @@ navbarPage(title = div(  #### NavBar #####
                       # Create a new Row in the UI for selectInputs
                       fluidRow(
                         column(4,
-                               selectInput("year",
+                               selectInput("year_e",
                                            "Año:",
                                            c("Todos",
                                              unique(as.character(data_emisivo$year))))
+                        ),
+                        column(4,
+                               selectInput("mes_e",
+                                           "Mes:",
+                                           c("Todos",
+                                             unique(as.character(data_emisivo$mes))))
+                               
                         ),
                         column(4,
                                selectInput("destino",
