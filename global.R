@@ -10,30 +10,31 @@ library(lubridate) # Make Dealing with Dates a Little Easier, CRAN v1.7.9
 options(DT.options = list(language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')))
 
 
-# LEVANTO DATOS
-datos <- data.table::fread("data/turistas_internacionales_con destino.csv") %>% 
-  as_tibble() 
+# LEVANTO DATOS (como Data table)
+datos <- data.table::fread("data/turistas_internacionales_con destino.csv")
 
-#### RECEPTIVO
+class(datos)
+
+#### RECEPTIVO (por mes)
 data_receptivo <-  datos %>% 
   filter(turismo_internac == "Receptivo") %>% 
   rename(year = 'año', 
          sentido = turismo_internac)  %>% 
-  group_by(year, pais) %>% 
+  group_by(year, mes, pais) %>% 
   mutate(casos = str_replace_all(string = casos_ponderados, 
                                    pattern = ",", replacement = "." ), 
            casos = round(as.numeric(casos)))%>% 
-  summarise(n = sum(casos)) 
+  summarise(turistas = sum(casos)) 
   
 #### EMISIVO
 data_emisivo <- datos %>% 
   filter(turismo_internac == "Emisivo") %>% 
   rename(year = 'año', 
          sentido = turismo_internac)  %>% 
-  group_by(year, destino_agrup) %>% 
+  group_by(year, mes, destino_agrup) %>% 
   mutate(casos = str_replace_all(string = casos_ponderados, 
                                  pattern = ",", replacement = "." ), 
          casos = round(as.numeric(casos)))%>% 
-  summarise(n = sum(casos)) %>% 
+  summarise(turistas = sum(casos)) %>% 
   rename(destino = destino_agrup) 
 

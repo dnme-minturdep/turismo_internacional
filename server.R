@@ -20,9 +20,12 @@ function(input, output) {
     if (input$year != "Todos") {
       data_receptivo <- data_receptivo[data_receptivo$year == input$year,]
     }
+    if (input$mes != "Todos") {
+        data_receptivo <- data_receptivo[data_receptivo$mes == input$mes,]
+    }  
     if (input$pais != "Todos") {
       data_receptivo <- data_receptivo[data_receptivo$pais == input$pais,]
-       }
+    }
     data_receptivo
   }))
   
@@ -35,8 +38,11 @@ function(input, output) {
     
     data_emisivo 
     
-    if (input$year != "Todos") {
-      data_emisivo <- data_emisivo[data_emisivo$year == input$year,]
+    if (input$year_e != "Todos") {
+      data_emisivo <- data_emisivo[data_emisivo$year == input$year_e,]
+    }
+    if (input$mes_e != "Todos") {
+        data_emisivo <- data_emisivo[data_emisivo$mes == input$mes_e,]
     }
     if (input$destino != "Todos") {
       data_emisivo <- data_emisivo[data_emisivo$destino == input$destino,]
