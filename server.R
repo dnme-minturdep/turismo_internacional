@@ -5,14 +5,7 @@ function(input, output) {
   # TABLA RECEPTIVO
   output$table_receptivo <- DT::renderDataTable(
     
-  DT::datatable(extensions = 'Buttons', options = list(
-    dom = 'Bfrtip',
-    buttons = 
-      list('copy', 'print', list(
-        extend = 'collection',
-        buttons = c('csv', 'excel', 'pdf'),
-        text = 'Download'
-      ))),    
+  DT::datatable(
     {
     
     data_receptivo 
