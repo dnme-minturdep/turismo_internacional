@@ -11,7 +11,7 @@ options(DT.options = list(language = list(url = '//cdn.datatables.net/plug-ins/1
 
 
 # LEVANTO DATOS (como Data table)
-datos <- data.table::fread("data/turistas_internacionales_con destino.csv")
+datos <- readRDS("data/turismo_internacional_pais.rds")
 
 class(datos)
 
