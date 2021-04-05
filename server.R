@@ -4,7 +4,8 @@ function(input, output) {
   
   # TABLA RECEPTIVO
   output$table_receptivo <- DT::renderDataTable(
-    
+
+      
   DT::datatable(extensions = 'Buttons', options = list(
     dom = 'Bfrtip',
     buttons = 
@@ -18,16 +19,42 @@ function(input, output) {
     data_receptivo 
     
     if (input$year != "Todos") {
-      data_receptivo <- data_receptivo[data_receptivo$year == input$year,]
+      data_receptivo <- data_receptivo[data_receptivo$year %in% input$year,]		
     }
     if (input$mes != "Todos") {
-        data_receptivo <- data_receptivo[data_receptivo$mes == input$mes,]
+       data_receptivo <- data_receptivo[data_receptivo$mes %in% input$mes,]	
+    }  
+    if (input$paso_publ != "Todos") {
+      data_receptivo <- data_receptivo[data_receptivo$paso_publ == input$paso_publ,]
+    }
+    if (input$via != "Todas") {
+        data_receptivo <- data_receptivo[data_receptivo$via == input$via,]
     }  
     if (input$pais != "Todos") {
-      data_receptivo <- data_receptivo[data_receptivo$pais == input$pais,]
+        data_receptivo <- data_receptivo[data_receptivo$pais == input$pais,]
     }
+    
+    if (input$paso_publ != "Todos") {
+        data_receptivo <- data_receptivo[data_receptivo$paso_publ == input$paso_publ,]
+    }
+    if (input$prov != "Todos") {
+        data_receptivo <- data_receptivo[data_receptivo$prov == input$prov,]
+    }
+    if (input$limita != "Todos") {
+        data_receptivo <- data_receptivo[data_receptivo$limita == input$limita,]
+    }
+    data_receptivo <- data_receptivo %>%
+        group_by_at(.vars = c(input$agrup)) %>%
+        summarise(sum(turistas))
+    
+    
+       
+    
     data_receptivo
   }))
+  
+ 
+  
   
   
   # TABLA EMISIVO
