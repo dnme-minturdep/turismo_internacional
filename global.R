@@ -24,7 +24,7 @@ data_receptivo <-  datos %>%
          sentido = turismo_internac)  %>% 
   mutate(casos = str_replace_all(string = casos_ponderados, 
                                  pattern = ",", replacement = "." ), 
-         casos = round(as.numeric(casos)))
+         casos = as.numeric(casos))
 
 data_receptivo <- data_receptivo %>%
   group_by(year, mes, via, pais, paso_publ, prov, limita) %>%
@@ -39,6 +39,9 @@ data_receptivo <- data_receptivo %>%
                      mes == 9 ,"Septiembre", mes == 10 ,"Octubre", mes == 11 ,"Noviembre",
                      mes == 12 ,"Diciembre"))
 
+Mes_ult <- data_receptivo[nrow(data_receptivo),2]
+
+
 #reordeno niveles
 
 data_receptivo$mes<- factor(data_receptivo$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",	"Mayo",	
@@ -52,11 +55,28 @@ data_emisivo <- datos %>%
   filter(turismo_internac == "Emisivo") %>% 
   rename(year = 'año', 
          sentido = turismo_internac)  %>% 
-  group_by(year, mes, destino_agrup) %>% 
   mutate(casos = str_replace_all(string = casos_ponderados, 
                                  pattern = ",", replacement = "." ), 
-          casos = round(as.numeric(casos)))%>% 
-  summarise(turistas = sum(casos)) %>% 
-  rename(destino = destino_agrup) 
+         casos = as.numeric(casos))
+
+data_emisivo <- data_emisivo %>%
+  group_by(year, mes, via, destino_agrup, paso_publ, prov, limita) %>%
+  summarise(turistas = sum(casos)) 
+
+
+#mes de numero a texto.
+
+data_emisivo <- data_emisivo %>%
+  mutate(mes = fcase(mes == 1 ,"Enero", mes == 2 ,"Febrero", mes == 3 ,"Marzo",mes == 4 ,"Abril",
+                     mes == 5 ,"Mayo", mes == 6 ,"Junio", mes == 7 ,"Julio", mes == 8 ,"Agosto",
+                     mes == 9 ,"Septiembre", mes == 10 ,"Octubre", mes == 11 ,"Noviembre",
+                     mes == 12 ,"Diciembre"))
+
+#reordeno niveles
+
+data_emisivo$mes<- factor(data_emisivo$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",	"Mayo",	
+                                                           "Junio",	"Julio",	"Agosto",	"Septiembre",	
+                                                           "Octubre",	"Noviembre",	"Diciembre"), 
+                            ordered = TRUE)	
 
 #runApp(display.mode = "showcase")

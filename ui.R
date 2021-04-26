@@ -18,7 +18,7 @@ navbarPage(title = div(  #### NavBar #####
                         )),
                     br(),
                     br(),
-                    h4(stringr::str_to_upper("Turismo Internacional - RECEPTIVO")),
+                    h4(stringr::str_to_upper(paste("Turismo Internacional - RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                     br(), 
                     fluidPage(
                       # Create a new Row in the UI for selectInputs
@@ -27,13 +27,13 @@ navbarPage(title = div(  #### NavBar #####
                                selectInput("year",
                                            "Año:",
                                            c("Todos",
-                                             unique(as.character(data_receptivo$year))),selected = "Todos", multiple =TRUE)
+                                             unique(as.character(data_receptivo$year))),selected = data_receptivo[nrow(data_receptivo),1], multiple =TRUE)
                         ),
                         column(1,
                                selectInput("mes",
                                            "Mes:",
                                            c("Todos",
-                                             unique(as.character(data_receptivo$mes))),selected = "Todos", multiple =TRUE)
+                                             unique(as.character(data_receptivo$mes))),selected = Mes_ult , multiple =TRUE)
                         ),
                         column(2,
                                selectInput("via",
@@ -46,31 +46,31 @@ navbarPage(title = div(  #### NavBar #####
                                selectInput("pais",
                                            "País de residencia:",
                                            c("Todos",
-                                             unique(as.character(data_receptivo$pais))))
+                                             sort(unique(as.character(data_receptivo$pais)))))
                         ),
                         column(2,
                                selectInput("paso_publ",
                                            "Paso:",
                                            c("Todos",
-                                             unique(as.character(data_receptivo$paso_publ))))
+                                             sort(unique(as.character(data_receptivo$paso_publ)))))
                         ),
                         column(2,
                                selectInput("prov",
                                            "Provincia del paso:",
                                            c("Todos",
-                                             unique(as.character(data_receptivo$prov))))
+                                             sort(unique(as.character(data_receptivo$prov)))))
                         ),
                         column(2,
                                selectInput("limita",
-                                           "Pasos limítrofes con:",
+                                           "País con el que limita",
                                            c("Todos",
-                                             unique(as.character(data_receptivo$limita))))
+                                             sort(unique(as.character(data_receptivo$limita)))))
                         ),
                       ),
                       
                       fluidRow(
                         column(4,
-                               selectInput("agrup", "Mostrar por:", choices = c('year', 'mes', 'via', 'pais', 'paso_publ', 'prov', 'limita'),
+                               selectInput("agrup", "Mostrar por:", choices = c( 'Año'= 'year', 'Mes' = 'mes', 'Vía' = 'via', 'País de residencia'= 'pais', 'Paso' = 'paso_publ', 'Provincia del paso' = 'prov', 'País con el que limita' = 'limita'),
                                            selected = "year", multiple = TRUE)
                         ),
                         
@@ -90,32 +90,66 @@ navbarPage(title = div(  #### NavBar #####
                         )),
                     br(),
                     br(),
-                    h4(stringr::str_to_upper("Turismo Internacional - EMISIVO")),
+                    h4(stringr::str_to_upper(paste("Turismo Internacional - EMISIVO- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
                     br(), 
                     fluidPage(
                       # Create a new Row in the UI for selectInputs
                       fluidRow(
-                        column(4,
+                        column(1,
                                selectInput("year_e",
                                            "Año:",
                                            c("Todos",
-                                             unique(as.character(data_emisivo$year))))
+                                             unique(as.character(data_emisivo$year))),selected = data_emisivo[nrow(data_emisivo),1], multiple =TRUE)
                         ),
-                        column(4,
+                        column(1,
                                selectInput("mes_e",
                                            "Mes:",
                                            c("Todos",
-                                             unique(as.character(data_emisivo$mes))))
-                               
+                                             unique(as.character(data_emisivo$mes))),selected = Mes_ult , multiple =TRUE)
                         ),
-                        column(4,
+                        column(2,
+                               selectInput("via_e",
+                                           "Vía:",
+                                           c("Todas",
+                                             unique(as.character(data_emisivo$via))))
+                        ),
+                        
+                        column(2,
                                selectInput("destino",
-                                           "Destino:",
+                                           "Destino principal:",
                                            c("Todos",
-                                             unique(as.character(data_emisivo$destino))))
-                        )
+                                             unique(as.character(data_emisivo$destino_agrup))))
+                        ),
+                        column(2,
+                               selectInput("paso_publ_e",
+                                           "Paso:",
+                                           c("Todos",
+                                             sort(unique(as.character(data_emisivo$paso_publ)))))
+                        ),
+                        column(2,
+                               selectInput("prov_e",
+                                           "Provincia del paso:",
+                                           c("Todos",
+                                             sort(unique(as.character(data_emisivo$prov)))))
+                        ),
+                        column(2,
+                               selectInput("limita_e",
+                                           "País con el que limita",
+                                           c("Todos",
+                                             sort(unique(as.character(data_emisivo$limita)))))
+                        ),
                       ),
+                      
+                      fluidRow(
+                        column(4,
+                               selectInput("agrup_e", "Mostrar por:", choices = c( 'Año'= 'year', 'Mes' = 'mes', 'Vía' = 'via', 'Destino principal'= 'destino_agrup', 'Paso' = 'paso_publ', 'Provincia del paso' = 'prov', 'País con el que limita' = 'limita'),
+                                           selected = "year", multiple = TRUE)
+                        ),
+                        
+                      ),
+                      
                       # Create a new row for the table.
                       DT::dataTableOutput("table_emisivo")
                     ))
 )
+

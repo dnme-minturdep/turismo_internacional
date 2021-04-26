@@ -45,10 +45,8 @@ function(input, output) {
     }
     data_receptivo <- data_receptivo %>%
         group_by_at(.vars = c(input$agrup)) %>%
-        summarise(sum(turistas))
+      summarise(round(sum(turistas))) 
     
-    
-       
     
     data_receptivo
   }))
@@ -65,15 +63,35 @@ function(input, output) {
     
     data_emisivo 
     
-    if (input$year_e != "Todos") {
-      data_emisivo <- data_emisivo[data_emisivo$year == input$year_e,]
-    }
-    if (input$mes_e != "Todos") {
-        data_emisivo <- data_emisivo[data_emisivo$mes == input$mes_e,]
-    }
-    if (input$destino != "Todos") {
-      data_emisivo <- data_emisivo[data_emisivo$destino == input$destino,]
-    }
+      if (input$year_e != "Todos") {
+        data_emisivo <- data_emisivo[data_emisivo$year %in% input$year_e,]		
+      }
+      if (input$mes_e != "Todos") {
+        data_emisivo <- data_emisivo[data_emisivo$mes %in% input$mes_e,]	
+      }  
+      if (input$paso_publ_e != "Todos") {
+        data_emisivo <- data_emisivo[data_emisivo$paso_publ == input$paso_publ_e,]
+      }
+      if (input$via_e != "Todas") {
+        data_emisivo <- data_emisivo[data_emisivo$via == input$via_e,]
+      }  
+      if (input$destino != "Todos") {
+        data_emisivo <- data_emisivo[data_emisivo$destino_agrup == input$destino,]
+      }
+      
+      if (input$paso_publ_e != "Todos") {
+        data_emisivo <- data_emisivo[data_emisivo$paso_publ == input$paso_publ_e,]
+      }
+      if (input$prov_e != "Todos") {
+        data_emisivo <- data_emisivo[data_emisivo$prov == input$prov_e,]
+      }
+      if (input$limita_e != "Todos") {
+        data_emisivo <- data_emisivo[data_emisivo$limita == input$limita_e,]
+      }
+      data_emisivo <- data_emisivo %>%
+        group_by_at(.vars = c(input$agrup_e)) %>%
+        summarise(round(sum(turistas))) 
+      
     data_emisivo
   }))
   
