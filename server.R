@@ -30,6 +30,9 @@ function(input, output) {
         if (input$via != "Todas") {
           data_receptivo <- data_receptivo[data_receptivo$via == input$via,]
         }  
+        if (input$pais_agrupado != "Todas") {
+          data_receptivo <- data_receptivo[data_receptivo$pais_agrupado == input$pais_agrupado,]
+        }
         if (input$pais != "Todos") {
           data_receptivo <- data_receptivo[data_receptivo$pais == input$pais,]
         }
@@ -52,6 +55,7 @@ function(input, output) {
         etiquetas <- gsub ("year", "Año", (colnames(data_receptivo)))
         etiquetas <- gsub ("mes", "Mes", etiquetas)
         etiquetas <- gsub ("via", "Vía", etiquetas)
+        etiquetas <- gsub ("pais_agrupado", "País de residencia (agrup.)", etiquetas)
         etiquetas <- gsub ("pais" , "País de residencia", etiquetas)
         etiquetas <- gsub ("paso_publ" , "Paso", etiquetas)
         etiquetas <- gsub ("prov", "Provincia del paso", etiquetas)

@@ -27,7 +27,7 @@ data_receptivo <-  datos %>%
          casos = as.numeric(casos))
 
 data_receptivo <- data_receptivo %>%
-  group_by(year, mes, via, pais, paso_publ, prov, limita) %>%
+  group_by(year, mes, via, pais_agrupado, pais, paso_publ, prov, limita) %>%
   summarise(turistas = sum(casos)) 
 
   

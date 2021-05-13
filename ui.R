@@ -35,20 +35,25 @@ navbarPage(title = div(  #### NavBar #####
                                            c("Todos",
                                              unique(as.character(data_receptivo$mes))),selected = Mes_ult , multiple =TRUE)
                         ),
-                        column(2,
+                        column(1,
                                selectInput("via",
                                            "Vía:",
                                            c("Todas",
                                              unique(as.character(data_receptivo$via))))
                         ),
-                        
+                        column(2,
+                               selectInput("pais_agrupado",
+                                           "País de residencia (agrup.):",
+                                           c("Todas",
+                                             unique(as.character(data_receptivo$pais_agrupado))))
+                        ),
                         column(2,
                                selectInput("pais",
                                            "País de residencia:",
                                            c("Todos",
                                              sort(unique(as.character(data_receptivo$pais)))))
                         ),
-                        column(2,
+                        column(1,
                                selectInput("paso_publ",
                                            "Paso:",
                                            c("Todos",
@@ -70,7 +75,7 @@ navbarPage(title = div(  #### NavBar #####
                       
                       fluidRow(
                         column(4,
-                               selectInput("agrup", "Mostrar por:", choices = c( 'Año'= 'year', 'Mes' = 'mes', 'Vía' = 'via', 'País de residencia'= 'pais', 'Paso' = 'paso_publ', 'Provincia del paso' = 'prov', 'País con el que limita' = 'limita'),
+                               selectInput("agrup", "Mostrar por:", choices = c( 'Año'= 'year', 'Mes' = 'mes', 'Vía' = 'via', 'País de residencia (agrup.)'= 'pais_agrupado', 'País de residencia'= 'pais', 'Paso' = 'paso_publ', 'Provincia del paso' = 'prov', 'País con el que limita' = 'limita'),
                                            selected = "year", multiple = TRUE)
                         ),
                         
