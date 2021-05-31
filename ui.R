@@ -35,41 +35,42 @@ navbarPage(title = div(  #### NavBar #####
                                            c("Todos",
                                              unique(as.character(data_receptivo$mes))),selected = Mes_ult , multiple =TRUE)
                         ),
-                        column(1,
-                               selectInput("via",
-                                           "Vía:",
-                                           c("Todas",
-                                             unique(as.character(data_receptivo$via))))
-                        ),
+                        
                         column(2,
                                selectInput("pais_agrupado",
                                            "País de residencia (agrup.):",
-                                           c("Todas",
-                                             unique(as.character(data_receptivo$pais_agrupado))))
+                                           c("Todos",
+                                             unique(data_receptivo$pais_agrupado)))
                         ),
                         column(2,
                                selectInput("pais",
                                            "País de residencia:",
-                                           c("Todos",
-                                             sort(unique(as.character(data_receptivo$pais)))))
+                                           choices = NULL)
+                               
                         ),
+                        
                         column(1,
-                               selectInput("paso_publ",
-                                           "Paso:",
+                               selectInput("via",
+                                           "Vía:",
                                            c("Todos",
-                                             sort(unique(as.character(data_receptivo$paso_publ)))))
+                                             unique(as.character(data_receptivo$via))))
                         ),
+                        
                         column(2,
                                selectInput("prov",
                                            "Provincia del paso:",
-                                           c("Todos",
-                                             sort(unique(as.character(data_receptivo$prov)))))
+                                           choices = NULL)
+                        ),
+                        column(1,
+                               selectInput("limita",
+                                           "Limítrofe con:",
+                                           choices = NULL)
                         ),
                         column(2,
-                               selectInput("limita",
-                                           "País con el que limita",
-                                           c("Todos",
-                                             sort(unique(as.character(data_receptivo$limita)))))
+                               selectInput("paso_publ",
+                                           "Paso:", 
+                                           choices = NULL)
+                               
                         ),
                       ),
                       
@@ -81,7 +82,7 @@ navbarPage(title = div(  #### NavBar #####
                         
                       ),
                       
-                        
+                      
                       
                       
                       # Create a new row for the table.
@@ -116,32 +117,32 @@ navbarPage(title = div(  #### NavBar #####
                                selectInput("via_e",
                                            "Vía:",
                                            c("Todas",
-                                             unique(as.character(data_emisivo$via))))
+                                             unique(data_emisivo$via)))
                         ),
                         
                         column(2,
                                selectInput("destino",
                                            "Destino principal:",
                                            c("Todos",
-                                             unique(as.character(data_emisivo$destino_agrup))))
+                                             unique(data_emisivo$destino_agrup)))
                         ),
                         column(2,
                                selectInput("paso_publ_e",
                                            "Paso:",
                                            c("Todos",
-                                             sort(unique(as.character(data_emisivo$paso_publ)))))
+                                             sort(unique(data_emisivo$paso_publ))))
                         ),
                         column(2,
                                selectInput("prov_e",
                                            "Provincia del paso:",
                                            c("Todos",
-                                             sort(unique(as.character(data_emisivo$prov)))))
+                                             sort(unique(data_emisivo$prov))))
                         ),
                         column(2,
                                selectInput("limita_e",
                                            "País con el que limita",
                                            c("Todos",
-                                             sort(unique(as.character(data_emisivo$limita)))))
+                                             sort(unique(data_emisivo$limita))))
                         ),
                       ),
                       
@@ -157,4 +158,3 @@ navbarPage(title = div(  #### NavBar #####
                       DT::dataTableOutput("table_emisivo")
                     ))
 )
-

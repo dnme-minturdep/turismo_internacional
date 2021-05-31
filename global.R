@@ -1,8 +1,11 @@
+#GLOBAL
+
 # Load packages #
 library(tidyverse) # Easily Install and Load the 'Tidyverse', CRAN v1.3.0
 library(glue) # Interpreted String Literals, CRAN v1.4.2
 library(lubridate) # Make Dealing with Dates a Little Easier, CRAN v1.7.9
 library(data.table)
+library(shiny)
 
 # CONFIGs Globales
 
@@ -14,69 +17,37 @@ options(DT.options = list(language = list(url = '//cdn.datatables.net/plug-ins/1
 # LEVANTO DATOS (como Data table)
 datos <- readRDS("data/turismo_internacional_pais.rds")
 
-#class(datos)
+#mes de numero a texto.
 
-#### RECEPTIVO (por mes)
+datos <- datos[, mes := .(fcase(mes == 1 ,"Enero", mes == 2 ,"Febrero", mes == 3 ,"Marzo",mes == 4 ,"Abril",						
+                                mes == 5 ,"Mayo", mes == 6 ,"Junio", mes == 7 ,"Julio", mes == 8 ,"Agosto",						
+                                mes == 9 ,"Septiembre", mes == 10 ,"Octubre", mes == 11 ,"Noviembre",						
+                                mes == 12 ,"Diciembre"))] 						
 
-data_receptivo <-  datos %>% 
-  filter(turismo_internac == "Receptivo") %>% 
-  rename(year = 'año', 
-         sentido = turismo_internac)  %>% 
+Mes_ult <- as.tibble(datos[nrow(datos),2])
+
+#reordeno niveles
+
+datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",	"Mayo",	
+                                         "Junio",	"Julio",	"Agosto",	"Septiembre",	
+                                         "Octubre",	"Noviembre",	"Diciembre"), 
+                   ordered = TRUE)	
+
+
+datos <- datos %>%
+  rename(year = 'año')  %>% 
   mutate(casos = str_replace_all(string = casos_ponderados, 
                                  pattern = ",", replacement = "." ), 
          casos = as.numeric(casos))
 
-data_receptivo <- data_receptivo %>%
-  group_by(year, mes, via, pais_agrupado, pais, paso_publ, prov, limita) %>%
-  summarise(turistas = sum(casos)) 
 
-  
-#mes de numero a texto.
+#### RECEPTIVO 
 
-data_receptivo <- data_receptivo %>%
-  mutate(mes = fcase(mes == 1 ,"Enero", mes == 2 ,"Febrero", mes == 3 ,"Marzo",mes == 4 ,"Abril",
-                     mes == 5 ,"Mayo", mes == 6 ,"Junio", mes == 7 ,"Julio", mes == 8 ,"Agosto",
-                     mes == 9 ,"Septiembre", mes == 10 ,"Octubre", mes == 11 ,"Noviembre",
-                     mes == 12 ,"Diciembre"))
-
-Mes_ult <- data_receptivo[nrow(data_receptivo),2]
-
-
-#reordeno niveles
-
-data_receptivo$mes<- factor(data_receptivo$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",	"Mayo",	
-                                                           "Junio",	"Julio",	"Agosto",	"Septiembre",	
-                                                           "Octubre",	"Noviembre",	"Diciembre"), 
-                            ordered = TRUE)	
+data_receptivo <-  datos[turismo_internac == "Receptivo", ] 
+data_receptivo <- data_receptivo[, .(turistas = sum(casos)), by = .(year, mes, via, pais_agrupado, pais, paso_publ, prov, limita)] 
 
 
 #### EMISIVO
-data_emisivo <- datos %>% 
-  filter(turismo_internac == "Emisivo") %>% 
-  rename(year = 'año', 
-         sentido = turismo_internac)  %>% 
-  mutate(casos = str_replace_all(string = casos_ponderados, 
-                                 pattern = ",", replacement = "." ), 
-         casos = as.numeric(casos))
 
-data_emisivo <- data_emisivo %>%
-  group_by(year, mes, via, destino_agrup, paso_publ, prov, limita) %>%
-  summarise(turistas = sum(casos)) 
-
-
-#mes de numero a texto.
-
-data_emisivo <- data_emisivo %>%
-  mutate(mes = fcase(mes == 1 ,"Enero", mes == 2 ,"Febrero", mes == 3 ,"Marzo",mes == 4 ,"Abril",
-                     mes == 5 ,"Mayo", mes == 6 ,"Junio", mes == 7 ,"Julio", mes == 8 ,"Agosto",
-                     mes == 9 ,"Septiembre", mes == 10 ,"Octubre", mes == 11 ,"Noviembre",
-                     mes == 12 ,"Diciembre"))
-
-#reordeno niveles
-
-data_emisivo$mes<- factor(data_emisivo$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",	"Mayo",	
-                                                           "Junio",	"Julio",	"Agosto",	"Septiembre",	
-                                                           "Octubre",	"Noviembre",	"Diciembre"), 
-                            ordered = TRUE)	
-
-#runApp(display.mode = "showcase")
+data_emisivo <-  datos[turismo_internac == "Emisivo", ] 
+data_emisivo <- data_emisivo[, .(turistas = sum(casos)), by = .(year, mes, via, destino_agrup, pais, paso_publ, prov, limita)] 
