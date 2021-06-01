@@ -99,33 +99,6 @@ button {
   color: black;
 }
 
-button.collapsed:after
-{
-  width:80px;
-  display: inline-block;
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  content: 'Expandir \f063';
-  transition: all linear 0.25s;
-}
-
-button:after
-{
-  width:80px;
-  display: inline-block;
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  content: 'Minimizar \f062';
-  transition: all linear 0.25s;
-}
 
 .btn:after {
 width:0px;

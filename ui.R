@@ -9,6 +9,7 @@ navbarPage(title = div(  #### NavBar #####
                          "TURISMO INTERNACIONAL", id = "title"),
            id="navbar",
            position = "fixed-top",
+           windowTitle = "Turismo Internacional - Argentina", 
            collapsible = TRUE,
            tabPanel("RECEPTIVO",
                     div(class="outer",
