@@ -122,14 +122,14 @@ function(input, output, session) {
   
   # TABLA RECEPTIVO
   
-  output$table_receptivo <- DT::renderDataTable(
+  output$table_receptivo <- DT::renderDT(server = FALSE,
     
     DT::datatable(extensions = 'Buttons', options = list(
-      dom = 'Bfrtip',
+      dom = 'frtipB',
       buttons = 
-        list('copy', 'print', list(
+        list('copy', list(
           extend = 'collection',
-          buttons = c('csv', 'excel', 'pdf'),
+          buttons = c('csv', 'excel'),
           text = 'Download'
         ))),    
       {
@@ -167,9 +167,16 @@ function(input, output, session) {
   
   
   # TABLA EMISIVO
-  output$table_emisivo <- DT::renderDataTable(
+  output$table_emisivo <- DT::renderDataTable(server = FALSE,
     
-    DT::datatable(
+    DT::datatable(extensions = 'Buttons', options = list(
+      dom = 'frtipB',
+      buttons = 
+        list('copy', list(
+          extend = 'collection',
+          buttons = c('csv', 'excel'),
+          text = 'Download'
+        ))),
       {
         
         data_emisivo 
