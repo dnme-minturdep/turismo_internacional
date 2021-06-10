@@ -34,7 +34,7 @@ navbarPage(title = div(  #### NavBar #####
                                selectInput("mes",
                                            "Mes:",
                                            c("Todos",
-                                             unique(as.character(data_receptivo$mes))),selected = Mes_ult , multiple =TRUE)
+                                             unique(as.character(data_receptivo$mes))), selected = "Todos" , multiple =TRUE)
                         ),
                         
                         column(2,
@@ -54,7 +54,7 @@ navbarPage(title = div(  #### NavBar #####
                                selectInput("via",
                                            "Vía:",
                                            c("Todos",
-                                             unique(as.character(data_receptivo$via))))
+                                             unique(data_receptivo$via)))
                         ),
                         
                         column(2,
@@ -77,8 +77,8 @@ navbarPage(title = div(  #### NavBar #####
                       
                       fluidRow(
                         column(4,
-                               selectInput("agrup", "Mostrar por:", choices = c( 'Año'= 'year', 'Mes' = 'mes', 'Vía' = 'via', 'País de residencia (agrup.)'= 'pais_agrupado', 'País de residencia'= 'pais', 'Paso' = 'paso_publ', 'Provincia del paso' = 'prov', 'País con el que limita' = 'limita'),
-                                           selected = "year", multiple = TRUE)
+                               selectInput("agrup", "Mostrar por:", choices = c( 'Mes' = 'mes', 'Vía' = 'via', 'País de residencia (agrup.)'= 'pais_agrupado', 'País de residencia'= 'pais', 'Paso' = 'paso_publ', 'Provincia del paso' = 'prov', 'País con el que limita' = 'limita'),
+                                           selected = "mes", multiple = TRUE)
                         ),
                         
                       ),
@@ -112,13 +112,7 @@ navbarPage(title = div(  #### NavBar #####
                                selectInput("mes_e",
                                            "Mes:",
                                            c("Todos",
-                                             unique(as.character(data_emisivo$mes))),selected = Mes_ult , multiple =TRUE)
-                        ),
-                        column(2,
-                               selectInput("via_e",
-                                           "Vía:",
-                                           c("Todas",
-                                             unique(data_emisivo$via)))
+                                             unique(as.character(data_emisivo$mes))),selected = "Todos" , multiple =TRUE)
                         ),
                         
                         column(2,
@@ -127,30 +121,38 @@ navbarPage(title = div(  #### NavBar #####
                                            c("Todos",
                                              unique(data_emisivo$destino_agrup)))
                         ),
+                        
                         column(2,
-                               selectInput("paso_publ_e",
-                                           "Paso:",
+                               selectInput("via_e",
+                                           "Vía:",
                                            c("Todos",
-                                             sort(unique(data_emisivo$paso_publ))))
+                                             unique(data_emisivo$via)))
                         ),
+                        
                         column(2,
                                selectInput("prov_e",
                                            "Provincia del paso:",
-                                           c("Todos",
-                                             sort(unique(data_emisivo$prov))))
+                                           choices = NULL)
+                        ),
+                        column(1,
+                               selectInput("limita_e",
+                                           "Limítrofe con:",
+                                           choices = NULL)
                         ),
                         column(2,
-                               selectInput("limita_e",
-                                           "País con el que limita",
-                                           c("Todos",
-                                             sort(unique(data_emisivo$limita))))
+                               selectInput("paso_publ_e",
+                                           "Paso:", 
+                                           choices = NULL)
+                               
                         ),
                       ),
                       
+                      
+                      
                       fluidRow(
                         column(4,
-                               selectInput("agrup_e", "Mostrar por:", choices = c( 'Año'= 'year', 'Mes' = 'mes', 'Vía' = 'via', 'Destino principal'= 'destino_agrup', 'Paso' = 'paso_publ', 'Provincia del paso' = 'prov', 'País con el que limita' = 'limita'),
-                                           selected = "year", multiple = TRUE)
+                               selectInput("agrup_e", "Mostrar por:", choices = c( 'Mes' = 'mes', 'Vía' = 'via', 'Destino principal'= 'destino_agrup', 'Paso' = 'paso_publ', 'Provincia del paso' = 'prov', 'País con el que limita' = 'limita'),
+                                           selected = "mes", multiple = TRUE)
                         ),
                         
                       ),

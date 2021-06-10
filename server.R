@@ -2,6 +2,8 @@
 
 function(input, output, session) {
   
+#### RECEPTIVO
+
   #  Reactivo de pais agrupado segun input 
   
   pais_ag <- reactive ({
@@ -144,8 +146,8 @@ function(input, output, session) {
         }
         
         tabla <- tabla %>%
-          group_by_at(.vars = c(input$agrup)) %>%
-          summarise (Turistas = round(sum(turistas))) 
+          group_by_at(.vars = c( "year", input$agrup)) %>%
+          summarise ("Turistas no residentes" = round(sum(turistas))) 
         
         #etiquetas receptivo según selección en ui.
         
@@ -162,7 +164,93 @@ function(input, output, session) {
       }, rownames= FALSE, colnames = etiquetas)
   )
   
+
   
+#### EMISIVO
+  
+ # Reactivo via_e segun input 
+  
+  via_e <- reactive ({
+    if (input$via_e == "Todos") {
+      via_e <- data_emisivo
+    } else {
+      via_e <- data_emisivo[data_emisivo$via == input$via_e,  ]
+    } 
+  }) 
+        
+  
+  # Actualizacion de choices de prov_e al cambiar input. 
+  
+  
+  observeEvent(via_e(), {
+    if (input$limita_e == "Todos" & input$via_e == "Todos") {
+      updateSelectInput(session, inputId = "prov_e", choices = c("Todos",
+                                                               unique(data_emisivo$prov))) 
+    } else {
+      updateSelectInput(session, inputId = "prov_e", choices = c("Todos",unique(via_e()$prov))) 
+    }
+  })
+  
+  
+  # Reactivo de prov_e segun input .
+  
+  prov_e <- reactive({
+    req(input$prov_e)
+    if (input$prov_e == "Todos") {
+      prov_e <- via_e()
+    } else {
+      prov_e <- via_e()[via_e()$prov == input$prov_e,  ]
+    }
+  })
+  
+  # Actualizacion de choices de limita_e al cambiar input. 
+  
+  observeEvent(prov_e(), {
+    if (input$via_e == "Todos" & input$prov_e == "Todos") {
+      updateSelectInput(session, inputId = "limita_e", choices = c("Todos",
+                                                                 unique(data_emisivo$limita))) 
+    } else {
+      updateSelectInput(session, inputId = "limita_e", choices = c("Todos",unique(prov_e()$limita))) 
+    }
+  })
+  
+  
+  # Reactivo de limita_e segun input.
+  
+  limita_e <- reactive({
+    req(input$limita_e)
+    if (input$limita_e == "Todos") {
+      limita_e <- prov_e()
+    } else {
+      limita_e <- prov_e()[prov_e()$limita == input$limita_e,  ]
+    }
+  })
+  
+  
+  # Actualizacion de choices de paso_e al cambiar input. 
+  
+  observeEvent(limita_e(), {
+    if (input$limita_e == "Todos" & input$via_e == "Todos" & input$prov_e == "Todos") {
+      updateSelectInput(session, inputId = "paso_publ_e", choices = c("Todos",
+                                                                    unique(data_emisivo$paso_publ))) 
+    } else {
+      updateSelectInput(session, inputId = "paso_publ_e", choices = c("Todos",unique(limita_e()$paso_publ))) 
+    }
+  })
+  
+  
+  # Reactivo de paso_e segun input.
+  
+  paso_e <- reactive({
+    req(input$paso_publ_e)
+    if (input$paso_publ_e == "Todos") {
+      paso_e <- limita_e()
+    } else {
+      paso_e <- limita_e()[limita_e()$paso_publ == input$paso_publ_e,  ]
+    }
+  })
+  
+    
   
   
   
@@ -178,39 +266,28 @@ function(input, output, session) {
           text = 'Download'
         ))),
       {
-        
-        data_emisivo 
-        
-        if (input$year_e != "Todos") {
-          data_emisivo <- data_emisivo[data_emisivo$year %in% input$year_e,]		
+        tabla_e <- paso_e()
+        req(input$year_e)
+        if (all(input$year_e != "Todos")) {
+          tabla_e <- tabla_e[tabla_e$year %in% input$year_e,]		
         }
-        if (input$mes_e != "Todos") {
-          data_emisivo <- data_emisivo[data_emisivo$mes %in% input$mes_e,]	
-        }  
-        
-        if (input$via_e != "Todas") {
-          data_emisivo <- data_emisivo[data_emisivo$via == input$via_e,]
-        }  
-        if (input$destino != "Todos") {
-          data_emisivo <- data_emisivo[data_emisivo$destino_agrup == input$destino,]
+        req(input$mes_e)
+        if (all(input$mes_e != "Todos")) {
+          tabla_e <- tabla_e[tabla_e$mes %in% input$mes_e,]		
+        }
+        req(input$destino)
+        if (all(input$destino != "Todos")) {
+          tabla_e <- tabla_e[tabla_e$destino == input$destino,]		
         }
         
-        if (input$paso_publ_e != "Todos") {
-          data_emisivo <- data_emisivo[data_emisivo$paso_publ == input$paso_publ_e,]
-        }
-        if (input$prov_e != "Todos") {
-          data_emisivo <- data_emisivo[data_emisivo$prov == input$prov_e,]
-        }
-        if (input$limita_e != "Todos") {
-          data_emisivo <- data_emisivo[data_emisivo$limita == input$limita_e,]
-        }
-        data_emisivo <- data_emisivo %>%
-          group_by_at(.vars = c(input$agrup_e)) %>%
-          summarise(Turistas = round(sum(turistas))) 
+        
+        tabla_e <- tabla_e %>%
+          group_by_at(.vars = c( "year", input$agrup_e)) %>%
+          summarise ("Turistas residentes" = round(sum(turistas))) 
         
         #etiquetas emisivo según selección en ui.
         
-        etiquetas_e <- gsub ("year", "Año", (colnames(data_emisivo)))
+        etiquetas_e <- gsub ("year", "Año", (colnames(tabla_e)))
         etiquetas_e <- gsub ("mes", "Mes", etiquetas_e)
         etiquetas_e <- gsub ("via", "Vía", etiquetas_e)
         etiquetas_e <- gsub ("destino_agrup" , "Destino principal", etiquetas_e)
@@ -218,10 +295,10 @@ function(input, output, session) {
         etiquetas_e <- gsub ("prov", "Provincia del paso", etiquetas_e)
         etiquetas_e <- gsub ("limita" ,"Limita con", etiquetas_e)
         
-        data_emisivo
+        tabla_e
       }, rownames= FALSE, colnames = etiquetas_e)
   )
-  
+    
   
 }
 
