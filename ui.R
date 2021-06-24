@@ -159,5 +159,51 @@ navbarPage(title = div(  #### NavBar #####
                       
                       # Create a new row for the table.
                       DT::dataTableOutput("table_emisivo")
-                    ))
+                    )),
+
+         tabPanel("METODOLOGÍA",
+         div(class="outer",
+             tags$head(
+               # Include our custom CSS
+               includeCSS("styles.css")
+             )),
+         br(),
+         h3 ("NOTAS TÉCNICAS"),
+         br(),
+         h4 ("   La estimación del turismo internacional (receptivo y emisivo) para el total del país surge de distintas fuentes 
+             de datos."), 
+         h4 ("   La fuente principal de información son los registros migratorios provistos por la Dirección Nacional de 
+             Migraciones (DNM), cuyo análisis permite distinguir los turistas de otros tipos de viajeros internacionales 
+             (excursionistas, tripulantes, etc.)."),
+         h4 ("   Para los Aeropuertos Internacionales de Ezeiza, Córdoba, Mendoza, Aeroparque Jorge Newbery y el Paso 
+            Internacional Cristo Redentor (Los Libertadores y Horcones), la fuente de información es la Encuesta de 
+            Turismo Internacional (ETI), realizada por el INDEC y el Ministerio de Turismo y Deportes. La misma tiene 
+            como objetivo caracterizar el flujo y medir el gasto de los visitantes no residentes durante su permanencia en 
+            Argentina (turismo receptivo) y de los visitantes residentes en Argentina durante su permanencia en el exterior 
+            (turismo emisivo)."), 
+        h4 ("   Para más detalles, ver el documento metodológico de la estimación del turismo Internacional de la Argentina:"),
+        h4 ("https://www.yvera.tur.ar/estadistica/documentos/descarga/5dc0460bcfa3e053142696.pdf"),
+        br(),
+        br(),
+        h3 ("DEFINICIONES Y CONCEPTOS"),
+        br(),
+        h4 (tags$ul(
+                    tags$p(" • Turismo internacional: Comprende el turismo receptivo y el turismo emisivo."),
+                    tags$p(" • Turismo receptivo: Refiere a los turistas no residentes en Argentina que han visitado el país."), 
+                    tags$p(" • Turismo emisivo: Refiere a los turistas residentes en Argentina que han viajado al exterior del país."),  
+                    tags$p(" • Turista: Un visitante se clasifica como turista si su viaje incluye una pernoctación."),  
+                    tags$p(" • Visitante: Es una persona que viaja a un destino principal distinto al de su entorno habitual, por una duración 
+                                inferior a un año, con cualquier finalidad principal que no sea ser empleado por una entidad residente en el país 
+                                o lugar visitado."),
+                    tags$p(" • Viaje: Refiere a todo desplazamiento de una persona a un lugar fuera de su entorno habitual, por cualquier 
+                    motivo y duración, desde el momento de su salida hasta su regreso."),
+                    tags$p(" • Entorno habitual: Se define como la zona geográfica (aunque no necesariamente contigua) en la que una 
+                    persona realiza sus actividades cotidianas habituales. Incluye el lugar de residencia habitual del hogar al que 
+                    pertenece, su lugar de trabajo o estudio, y cualquier otro lugar que visite con regularidad y frecuencia, aún 
+                    cuando dicho lugar esté lejos de su lugar de residencia habitual."),
+                    tags$p(" • País de residencia habitual: Es aquel en el cual una persona tiene su lugar de residencia habitual.")
+                    )),
+
+       )
+           
 )
