@@ -11,6 +11,9 @@ navbarPage(title = div(  #### NavBar #####
            position = "fixed-top",
            windowTitle = "Turismo Internacional - Argentina", 
            collapsible = TRUE,
+           tabPanel("GRÁFICO",
+                    plotOutput ("grafico_1")
+                    ),
            tabPanel("RECEPTIVO",
                     div(class="outer",
                         tags$head(

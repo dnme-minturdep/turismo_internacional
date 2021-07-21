@@ -1,7 +1,13 @@
 #SERVER
 
 function(input, output, session) {
+
+# GRAFICO
   
+output$grafico_1 <- renderPlot(grafico_1)
+                                         
+  
+    
 #### RECEPTIVO
 
   #  Reactivo de pais agrupado segun input 
