@@ -11,18 +11,12 @@ navbarPage(title = div(  #### NavBar #####
            position = "fixed-top",
            windowTitle = "Turismo Internacional - Argentina", 
            collapsible = TRUE,
-<<<<<<< HEAD
-           tabPanel("GRÁFICO",
-                    plotOutput ("grafico_1")
-                    ),
-=======
            tabPanel("SERIE HISTÓRICA",
                     br(),
                     plotlyOutput("fig1"),
                     br()
                     ),
                     br(),
->>>>>>> d2dee2062119137555729255221225151a0255fd
            tabPanel("RECEPTIVO",
                     div(class="outer",
                         tags$head(
