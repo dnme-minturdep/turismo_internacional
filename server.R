@@ -4,7 +4,11 @@ function(input, output, session) {
 
 # GRAFICO
   
+<<<<<<< HEAD
 output$grafico_1 <- renderPlot(grafico_1)
+=======
+output$fig1 <- renderPlotly(fig1)
+>>>>>>> d2dee2062119137555729255221225151a0255fd
                                          
   
     

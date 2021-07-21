@@ -82,14 +82,15 @@ transition-delay: 0;
     top: 10px;
   }
 
-/*Change title colors*/
-  #title {
-  color: #37BBED;
+
+
+.navbar-nav li a:hover, .navbar-nav > .active > a {
+color: white !important;
+background-color: #37BBED !important;
+
 }
 
-.navbar-default {
-  background-color: white !important;
-}
+
 
 /*Collapsible button*/
 button {

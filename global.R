@@ -6,6 +6,10 @@ library(glue) # Interpreted String Literals, CRAN v1.4.2
 library(lubridate) # Make Dealing with Dates a Little Easier, CRAN v1.7.9
 library(data.table)
 library(shiny)
+<<<<<<< HEAD
+=======
+library(plotly)
+>>>>>>> d2dee2062119137555729255221225151a0255fd
 #library(extrafont) # Tools for using fonts, CRAN v0.17 # Tools for using fonts, CRAN v0.17
 
 
@@ -128,4 +132,8 @@ grafico_1  <- ggplot(datos_grafico1, aes(period, (round(turistas)), colour = tur
        caption =  "Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes" )
 
 
+<<<<<<< HEAD
 
+=======
+fig1 <- ggplotly(grafico_1)
+>>>>>>> d2dee2062119137555729255221225151a0255fd
