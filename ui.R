@@ -11,9 +11,12 @@ navbarPage(title = div(  #### NavBar #####
            position = "fixed-top",
            windowTitle = "Turismo Internacional - Argentina", 
            collapsible = TRUE,
-           tabPanel("GRÁFICO",
-                    plotOutput ("grafico_1")
+           tabPanel("SERIE HISTÓRICA",
+                    br(),
+                    plotlyOutput("fig1"),
+                    br()
                     ),
+                    br(),
            tabPanel("RECEPTIVO",
                     div(class="outer",
                         tags$head(
@@ -22,7 +25,7 @@ navbarPage(title = div(  #### NavBar #####
                         )),
                     br(),
                     br(),
-                    h4(stringr::str_to_upper(paste("Turismo Internacional - RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
+                    h4(stringr::str_to_upper(paste("RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                     br(), 
                     fluidPage(
                       # Create a new Row in the UI for selectInputs
@@ -100,7 +103,7 @@ navbarPage(title = div(  #### NavBar #####
                         )),
                     br(),
                     br(),
-                    h4(stringr::str_to_upper(paste("Turismo Internacional - EMISIVO- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
+                    h4(stringr::str_to_upper(paste("EMISIVO- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
                     br(), 
                     fluidPage(
                       # Create a new Row in the UI for selectInputs
