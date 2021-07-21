@@ -7,6 +7,7 @@ library(lubridate) # Make Dealing with Dates a Little Easier, CRAN v1.7.9
 library(data.table)
 library(shiny)
 library(plotly)
+
 #library(extrafont) # Tools for using fonts, CRAN v0.17 # Tools for using fonts, CRAN v0.17
 
 
@@ -130,3 +131,4 @@ grafico_1  <- ggplot(datos_grafico1, aes(period, (round(turistas)), colour = tur
 
 
 fig1 <- ggplotly(grafico_1)
+

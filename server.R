@@ -4,7 +4,9 @@ function(input, output, session) {
 
 # GRAFICO
   
+
 output$fig1 <- renderPlotly(fig1)
+
                                          
   
     
