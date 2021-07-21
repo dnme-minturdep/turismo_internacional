@@ -4,7 +4,7 @@ function(input, output, session) {
 
 # GRAFICO
   
-output$grafico_1 <- renderPlot(grafico_1)
+output$fig1 <- renderPlotly(fig1)
                                          
   
     
