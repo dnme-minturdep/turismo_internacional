@@ -16,7 +16,6 @@ navbarPage(title = div(  #### NavBar #####
                     plotlyOutput("fig1"),
                     br()
                     ),
-                    br(),
            tabPanel("RECEPTIVO",
                     div(class="outer",
                         tags$head(
