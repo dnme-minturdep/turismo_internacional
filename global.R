@@ -7,7 +7,6 @@ library(lubridate) # Make Dealing with Dates a Little Easier, CRAN v1.7.9
 library(data.table)
 library(shiny)
 library(plotly)
-
 #library(extrafont) # Tools for using fonts, CRAN v0.17 # Tools for using fonts, CRAN v0.17
 
 
@@ -61,22 +60,18 @@ datos_grafico1 <- data.table(complete (data_graficos, expand(data_graficos, year
                                                               nesting(destino_agrup, pais_agrupado, turismo_internac)),
                                                        fill = list(turistas = 0)))
 
-#elimino meses posteriores que se completaron por nesting.
 
-datos_grafico1 <- datos_grafico1 %>% 
-  filter ((year < as.numeric(year_ult)) | (year == as.numeric(year_ult) & mes <= as.numeric(mes_ult_nro)))
-
-
-#data para graficar.
+#data para graficar. #elimino meses posteriores que se completaron por nesting.
 
 datos_grafico1 <- datos_grafico1 %>%
-  mutate (period = ymd(as.character(glue::glue("{year}/{mes}/01")))) %>% 
-  group_by(period, turismo_internac) %>%
-  summarize(turistas = sum(turistas))
-
-
-
-####################### DATOS PARA TABLA:
+  filter ((year < as.numeric(year_ult)) | (year == as.numeric(year_ult) & mes <= as.numeric(mes_ult_nro))) %>% 
+  mutate (periodo = ymd(as.character(glue::glue("{year}/{mes}/01")))) %>% 
+  group_by(periodo, turismo_internac) %>%
+  summarise(turistas = sum(turistas)) %>%
+  mutate (turistas= (round(turistas))) %>%
+  rename (turismo = turismo_internac)
+                                        
+######################## DATOS PARA TABLA:
 
   
 #mes de numero a texto.
@@ -108,13 +103,13 @@ data_emisivo <- data_emisivo[, .(turistas = sum(casos)), by = .(year, mes, via, 
 
 ####GRAFICO. (lo pongo al final porque toma dato de Mes_ult en texto de título)
 
-grafico_1  <- ggplot(datos_grafico1, aes(period, (round(turistas)), colour = turismo_internac))+   
+grafico_1  <- ggplot(datos_grafico1, aes(periodo, turistas, colour = turismo))+   
   geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) + 
   geom_line(size = 1.2 , alpha = 0.8) + 
   geom_point(size = 2.0, alpha = 0.8)+ 
   scale_color_manual(values = c(cols_arg2[1], cols_arg2[6])) + 
   scale_x_date(date_breaks = "1 months", date_labels = "%b%y", expand = c(0,10))+ #expande eje x para que no quede espacio antes y despues
-  scale_y_continuous(breaks = seq(min(round(datos_grafico1$turistas)), max(round(datos_grafico1$turistas)), by = 200000), 
+  scale_y_continuous(breaks = seq(min(datos_grafico1$turistas), max(datos_grafico1$turistas), by = 200000), 
                      labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
   theme_minimal()+
   theme(legend.position = "bottom", 
@@ -131,4 +126,3 @@ grafico_1  <- ggplot(datos_grafico1, aes(period, (round(turistas)), colour = tur
 
 
 fig1 <- ggplotly(grafico_1)
-
