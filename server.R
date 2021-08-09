@@ -29,7 +29,7 @@ output$fig1 <- renderPlotly(fig1)
       updateSelectInput(session, inputId = "pais", choices = c("Todos",
                                                                sort(unique(data_receptivo$pais))))
     } else {
-      updateSelectInput(session, inputId = "pais", choices = c("Todos", sort(unique(pais_ag()$pais)))) 
+      updateSelectInput(session, inputId = "pais", choices = c("Todos", (unique(pais_ag()$pais)))) 
     }
   })
   
@@ -64,9 +64,9 @@ output$fig1 <- renderPlotly(fig1)
   observeEvent(via(), {
     if (input$limita == "Todos" & input$via == "Todos") {
       updateSelectInput(session, inputId = "prov", choices = c("Todos",
-                                                               unique(data_receptivo$prov))) 
+                                                               sort(unique(data_receptivo$prov))))
     } else {
-      updateSelectInput(session, inputId = "prov", choices = c("Todos",unique(via()$prov))) 
+      updateSelectInput(session, inputId = "prov", choices = c("Todos",sort(unique(via()$prov)))) 
     }
   })
   
@@ -87,9 +87,9 @@ output$fig1 <- renderPlotly(fig1)
   observeEvent(prov(), {
     if (input$via == "Todos" & input$prov == "Todos") {
       updateSelectInput(session, inputId = "limita", choices = c("Todos",
-                                                                 unique(data_receptivo$limita))) 
+                                                                 sort(unique(data_receptivo$limita)))) 
     } else {
-      updateSelectInput(session, inputId = "limita", choices = c("Todos",unique(prov()$limita))) 
+      updateSelectInput(session, inputId = "limita", choices = c("Todos",sort(unique(prov()$limita))))
     }
   })
   
@@ -111,9 +111,9 @@ output$fig1 <- renderPlotly(fig1)
   observeEvent(limita(), {
     if (input$limita == "Todos" & input$via == "Todos" & input$prov == "Todos") {
       updateSelectInput(session, inputId = "paso_publ", choices = c("Todos",
-                                                                    unique(data_receptivo$paso_publ))) 
+                                                                    sort(unique(data_receptivo$paso_publ))))
     } else {
-      updateSelectInput(session, inputId = "paso_publ", choices = c("Todos",unique(limita()$paso_publ))) 
+      updateSelectInput(session, inputId = "paso_publ", choices = c("Todos",sort(unique(limita()$paso_publ))))
     }
   })
   
@@ -193,9 +193,9 @@ output$fig1 <- renderPlotly(fig1)
   observeEvent(via_e(), {
     if (input$limita_e == "Todos" & input$via_e == "Todos") {
       updateSelectInput(session, inputId = "prov_e", choices = c("Todos",
-                                                               unique(data_emisivo$prov))) 
+                                                                 sort(unique(data_emisivo$prov)))) 
     } else {
-      updateSelectInput(session, inputId = "prov_e", choices = c("Todos",unique(via_e()$prov))) 
+      updateSelectInput(session, inputId = "prov_e", choices = c("Todos", sort(unique(via_e()$prov)))) 
     }
   })
   
@@ -216,9 +216,9 @@ output$fig1 <- renderPlotly(fig1)
   observeEvent(prov_e(), {
     if (input$via_e == "Todos" & input$prov_e == "Todos") {
       updateSelectInput(session, inputId = "limita_e", choices = c("Todos",
-                                                                 unique(data_emisivo$limita))) 
+                                                                 sort(unique(data_emisivo$limita)))) 
     } else {
-      updateSelectInput(session, inputId = "limita_e", choices = c("Todos",unique(prov_e()$limita))) 
+      updateSelectInput(session, inputId = "limita_e", choices = c("Todos",sort(unique(prov_e()$limita)))) 
     }
   })
   
@@ -240,9 +240,9 @@ output$fig1 <- renderPlotly(fig1)
   observeEvent(limita_e(), {
     if (input$limita_e == "Todos" & input$via_e == "Todos" & input$prov_e == "Todos") {
       updateSelectInput(session, inputId = "paso_publ_e", choices = c("Todos",
-                                                                    unique(data_emisivo$paso_publ))) 
+                                                                    sort(unique(data_emisivo$paso_publ)))) 
     } else {
-      updateSelectInput(session, inputId = "paso_publ_e", choices = c("Todos",unique(limita_e()$paso_publ))) 
+      updateSelectInput(session, inputId = "paso_publ_e", choices = c("Todos", sort(unique(limita_e()$paso_publ)))) 
     }
   })
   
