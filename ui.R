@@ -46,7 +46,7 @@ navbarPage(title = div(  #### NavBar #####
                                selectInput("pais_agrupado",
                                            "País de residencia (agrup.):",
                                            c("Todos",
-                                             unique(data_receptivo$pais_agrupado)))
+                                             sort(unique(data_receptivo$pais_agrupado))))
                         ),
                         column(2,
                                selectInput("pais",
@@ -124,7 +124,7 @@ navbarPage(title = div(  #### NavBar #####
                                selectInput("destino",
                                            "Destino principal:",
                                            c("Todos",
-                                             unique(data_emisivo$destino_agrup)))
+                                             sort(unique(data_emisivo$destino_agrup))))
                         ),
                         
                         column(2,
