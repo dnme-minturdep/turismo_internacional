@@ -126,4 +126,4 @@ grafico_1  <- ggplot(datos_grafico1, aes(periodo, turistas, colour = turismo))+
 
 
 fig1 <- ggplotly(grafico_1) %>%
-  layout(legend = list(orientation = "h", x = 0.4, y = -0.5))
+  layout(legend = list(orientation = "h", x = 0.4, y = -0.6))
