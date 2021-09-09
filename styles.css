@@ -78,7 +78,7 @@ transition-delay: 0;
 /* Add an image to navbar */
   #img-id{
     position: fixed; 
-    right: 10px;
+    right: 50px;
     top: 10px;
   }
 
@@ -91,7 +91,7 @@ background-color: #37BBED !important;
 }
 
 
-
+/
 /*Collapsible button*/
 button {
   font-family: 'Encode Sans Normal', Helvetica;

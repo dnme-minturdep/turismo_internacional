@@ -21,7 +21,7 @@ options(DT.options = list(language = list(url = '//cdn.datatables.net/plug-ins/1
 datos <- readRDS("data/turismo_internacional_pais.rds")
 
 datos <- datos %>%
-  rename(year = 'año')  %>% 
+  rename(year = 'anio')  %>% 
   mutate(casos = str_replace_all(string = casos_ponderados, 
                                  pattern = ",", replacement = "." ), 
          casos = as.numeric(casos))
@@ -65,11 +65,12 @@ datos_grafico1 <- data.table(complete (data_graficos, expand(data_graficos, year
 
 datos_grafico1 <- datos_grafico1 %>%
   filter ((year < as.numeric(year_ult)) | (year == as.numeric(year_ult) & mes <= as.numeric(mes_ult_nro))) %>% 
-  mutate (periodo = ymd(as.character(glue::glue("{year}/{mes}/01")))) %>% 
+  mutate (periodo = dmy(as.character(glue::glue("01/{mes}/{year}"))))%>% 
   group_by(periodo, turismo_internac) %>%
   summarise(turistas = sum(turistas)) %>%
   mutate (turistas= (round(turistas))) %>%
   rename (turismo = turismo_internac)
+
                                         
 ######################## DATOS PARA TABLA:
 
@@ -124,6 +125,8 @@ grafico_1  <- ggplot(datos_grafico1, aes(periodo, turistas, colour = turismo))+
        color= "",
        caption =  "Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes" )
 
+grafico_1
+class(datos_grafico1$periodo)
 
 fig1 <- ggplotly(grafico_1) %>%
   layout(legend = list(orientation = "h", x = 0.4, y = -0.6))

@@ -3,7 +3,7 @@
 navbarPage(title = div(  #### NavBar #####
                          div(
                            id = "img-id",
-                           tags$a(img(src = "https://upload.wikimedia.org/wikipedia/commons/8/8e/Ministerio_de_Turismo_y_Deportes_arg.png",
+                           tags$a(img(src = "https://tableros.yvera.tur.ar/recursos/logo_mintur_color.png",
                                       width = 100),href="https://www.yvera.tur.ar/estadistica/",target = '_blank'
                            )),
                          "TURISMO INTERNACIONAL", id = "title"),
@@ -27,59 +27,61 @@ navbarPage(title = div(  #### NavBar #####
                     h4(stringr::str_to_upper(paste("RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                     br(), 
                     fluidPage(
-                      # Create a new Row in the UI for selectInputs
+                            h3("FILTROS"),
+                            h5("Los siguientes comandos permiten filtrar los datos"),
+                            # Create a new Row in the UI for selectInputs
                       fluidRow(
-                        column(1,
+                        column(3,
                                selectInput("year",
                                            "Año:",
                                            c("Todos",
                                              unique(as.character(data_receptivo$year))),selected = data_receptivo[nrow(data_receptivo),1], multiple =TRUE)
                         ),
-                        column(1,
+                        column(3,
                                selectInput("mes",
                                            "Mes:",
                                            c("Todos",
                                              unique(as.character(data_receptivo$mes))), selected = "Todos" , multiple =TRUE)
                         ),
                         
-                        column(2,
+                        column(3,
                                selectInput("pais_agrupado",
                                            "País de residencia (agrup.):",
                                            c("Todos",
                                              sort(unique(data_receptivo$pais_agrupado))))
                         ),
-                        column(2,
+                        column(3,
                                selectInput("pais",
                                            "País de residencia:",
                                            choices = NULL)
                                
-                        ),
-                        
-                        column(1,
+                        ),),
+                        fluidRow(
+                        column(3,
                                selectInput("via",
-                                           "Vía:",
+                                           "Medio de transporte:",
                                            c("Todos",
                                              unique(data_receptivo$via)))
                         ),
-                        
-                        column(2,
+                        column(3,
                                selectInput("prov",
                                            "Provincia del paso:",
                                            choices = NULL)
                         ),
-                        column(1,
+                        column(3,
                                selectInput("limita",
                                            "Limítrofe con:",
                                            choices = NULL)
                         ),
-                        column(2,
+                        column(3,
                                selectInput("paso_publ",
                                            "Paso:", 
                                            choices = NULL)
                                
                         ),
                       ),
-                      
+                      h3("VISUALIZACIÓN"),
+                      h5("Selecciona el nivel de apertura con que se visualizan los datos"),
                       fluidRow(
                         column(4,
                                selectInput("agrup", "Mostrar por:", choices = c( 'Mes' = 'mes', 'Vía' = 'via', 'País de residencia (agrup.)'= 'pais_agrupado', 'País de residencia'= 'pais', 'Paso' = 'paso_publ', 'Provincia del paso' = 'prov', 'País con el que limita' = 'limita'),
@@ -105,57 +107,58 @@ navbarPage(title = div(  #### NavBar #####
                     h4(stringr::str_to_upper(paste("EMISIVO- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
                     br(), 
                     fluidPage(
+                            h3("FILTROS"),
+                            h5("Los siguientes comandos permiten filtrar los datos"),
                       # Create a new Row in the UI for selectInputs
                       fluidRow(
-                        column(1,
+                        column(3,
                                selectInput("year_e",
                                            "Año:",
                                            c("Todos",
                                              unique(as.character(data_emisivo$year))),selected = data_emisivo[nrow(data_emisivo),1], multiple =TRUE)
                         ),
-                        column(1,
+                        column(3,
                                selectInput("mes_e",
                                            "Mes:",
                                            c("Todos",
                                              unique(as.character(data_emisivo$mes))),selected = "Todos" , multiple =TRUE)
                         ),
                         
-                        column(2,
+                        column(3,
                                selectInput("destino",
                                            "Destino principal:",
                                            c("Todos",
                                              sort(unique(data_emisivo$destino_agrup))))
                         ),
                         
-                        column(2,
+                        column(3,
                                selectInput("via_e",
-                                           "Vía:",
+                                           "Medio de transporte:",
                                            c("Todos",
                                              unique(data_emisivo$via)))
-                        ),
-                        
-                        column(2,
+                        ),),
+                        fluidRow(
+                        column(3,
                                selectInput("prov_e",
                                            "Provincia del paso:",
                                            choices = NULL)
                         ),
-                        column(1,
+                        column(3,
                                selectInput("limita_e",
                                            "Limítrofe con:",
                                            choices = NULL)
                         ),
-                        column(2,
+                        column(3,
                                selectInput("paso_publ_e",
                                            "Paso:", 
                                            choices = NULL)
                                
                         ),
                       ),
-                      
-                      
-                      
+                      h3("VISUALIZACIÓN"),
+                      h5("Selecciona el nivel de apertura con que se visualizan los datos"),
                       fluidRow(
-                        column(4,
+                              column(4,
                                selectInput("agrup_e", "Mostrar por:", choices = c( 'Mes' = 'mes', 'Vía' = 'via', 'Destino principal'= 'destino_agrup', 'Paso' = 'paso_publ', 'Provincia del paso' = 'prov', 'País con el que limita' = 'limita'),
                                            selected = "mes", multiple = TRUE)
                         ),
@@ -170,6 +173,7 @@ navbarPage(title = div(  #### NavBar #####
          br(),
          h3("NOTAS TÉCNICAS"),
          br(),
+         h4("   Todos los datos refieren a turistas, sin excursionistas."),
          h4("   La estimación del turismo internacional (receptivo y emisivo) para el total del país surge de distintas fuentes 
              de datos."), 
          h4("   La fuente principal de información son los registros migratorios provistos por la Dirección Nacional de 
@@ -181,7 +185,12 @@ navbarPage(title = div(  #### NavBar #####
             como objetivo caracterizar el flujo y medir el gasto de los visitantes no residentes durante su permanencia en 
             Argentina (turismo receptivo) y de los visitantes residentes en Argentina durante su permanencia en el exterior 
             (turismo emisivo)."), 
-        h4("   Para más detalles,", tags$a(href="https://www.yvera.tur.ar/estadistica/documentos/descarga/5dc0460bcfa3e053142696.pdf", "ver el documento metodológico "),"de la estimación del turismo Internacional de la Argentina:"),
+        h4("   Para más detalles,", tags$a(href="https://www.yvera.tur.ar/estadistica/documentos/descarga/5dc0460bcfa3e053142696.pdf", "ver el documento metodológico "),
+           "de la estimación del turismo internacional de la Argentina, los apartados correspondientes del",
+           tags$a(href="https://dnme-minturdep.github.io/DT3_registros_adminsitrativos/situaci%C3%B3n-nacional.html", "Documento Técnico N°1"),
+           "sobre utilización de los registros migratorios y del",
+           tags$a(href="https://dnme-minturdep.github.io/DT1_medicion_turismo/encuestas-nacionales.html#eti", "Documento Técnico N°3"),
+           "sobre la ETI."),
         br(),
         br(),
         h3 ("DEFINICIONES Y CONCEPTOS"),
