@@ -128,5 +128,5 @@ grafico_1  <- ggplot(datos_grafico1, aes(periodo, turistas, colour = turismo))+
 grafico_1
 class(datos_grafico1$periodo)
 
-fig1 <- ggplotly(grafico_1) %>%
+fig1 <- ggplotly(grafico_1)  %>% 
   layout(legend = list(orientation = "h", x = 0.4, y = -0.6))

@@ -134,14 +134,15 @@ output$fig1 <- renderPlotly(fig1)
   
   output$table_receptivo <- DT::renderDT(server = FALSE,
     
-    DT::datatable(extensions = 'Buttons', options = list(
-      dom = 'frtipB',
-      buttons = 
-        list('copy', list(
-          extend = 'collection',
-          buttons = c('csv', 'excel'),
-          text = 'Download'
-        ))),    
+                                         DT::datatable(extensions = 'Buttons',
+                                                       options = list(lengthMenu = c(10, 25, 50), pageLength = 10, 
+                                                                      dom = 'lfrtipB',
+                                                                      buttons = list('copy',
+                                                                                     list(
+                                                                                       extend = 'collection',
+                                                                                       buttons = c('csv', 'excel'),
+                                                                                       text = 'Download'
+                                                                                     ))),   
       {
         tabla <- paso()
         req(input$year)
@@ -265,14 +266,15 @@ output$fig1 <- renderPlotly(fig1)
   # TABLA EMISIVO
   output$table_emisivo <- DT::renderDataTable(server = FALSE,
     
-    DT::datatable(extensions = 'Buttons', options = list(
-      dom = 'frtipB',
-      buttons = 
-        list('copy', list(
-          extend = 'collection',
-          buttons = c('csv', 'excel'),
-          text = 'Download'
-        ))),
+    DT::datatable(extensions = 'Buttons', 
+                  options = list(lengthMenu = c(10, 25, 50), pageLength = 10, 
+                                    dom = 'lfrtipB',
+                                    buttons = list('copy',
+                                              list(
+                                              extend = 'collection',
+                                              buttons = c('csv', 'excel'),
+                                              text = 'Download'
+                                              ))),
       {
         tabla_e <- paso_e()
         req(input$year_e)

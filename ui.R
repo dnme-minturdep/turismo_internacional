@@ -22,10 +22,7 @@ navbarPage(title = div(  #### NavBar #####
                           # Include our custom CSS
                           includeCSS("styles.css")
                         )),
-                    br(),
-                    br(),
                     h4(stringr::str_to_upper(paste("RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
-                    br(), 
                     fluidPage(
                             h3("FILTROS"),
                             h5("Los siguientes comandos permiten filtrar los datos"),
@@ -102,10 +99,7 @@ navbarPage(title = div(  #### NavBar #####
                           # Include our custom CSS
                           includeCSS("styles.css")
                         )),
-                    br(),
-                    br(),
                     h4(stringr::str_to_upper(paste("EMISIVO- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
-                    br(), 
                     fluidPage(
                             h3("FILTROS"),
                             h5("Los siguientes comandos permiten filtrar los datos"),
