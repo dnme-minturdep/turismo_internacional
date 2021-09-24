@@ -18,7 +18,8 @@ options(DT.options = list(language = list(url = '//cdn.datatables.net/plug-ins/1
 
 
 # LEVANTO DATOS (como Data table)
-datos <- readRDS("data/turismo_internacional_pais.rds")
+datos <- readRDS("/srv/DataDNMYE/turismo_internacional/turismo_internacional_pais.rds")
+
 
 datos <- datos %>%
   rename(year = 'anio')  %>% 
@@ -104,12 +105,14 @@ data_emisivo <- data_emisivo[, .(turistas = sum(casos)), by = .(year, mes, via, 
 
 ####GRAFICO. (lo pongo al final porque toma dato de Mes_ult en texto de título)
 
-grafico_1  <- ggplot(datos_grafico1, aes(periodo, turistas, colour = turismo))+   
+grafico_1  <- ggplot(datos_grafico1, aes(periodo, turistas, colour = turismo, group =1, text = paste('Fecha:', format(periodo,"%b%y"),
+                                                                                                   '<br>Turistas:',format(turistas,big.mark="."), 
+                                                                                                   '<br>Turismo:',turismo)))+   
   geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) + 
   geom_line(size = 1.2 , alpha = 0.8) + 
   geom_point(size = 2.0, alpha = 0.8)+ 
   scale_color_manual(values = c(cols_arg2[1], cols_arg2[6])) + 
-  scale_x_date(date_breaks = "1 months", date_labels = "%b%y", expand = c(0,10))+ #expande eje x para que no quede espacio antes y despues
+  scale_x_date(date_breaks = "1 months", date_labels = "%b%y", expand = c(0,10))+ 
   scale_y_continuous(breaks = seq(min(datos_grafico1$turistas), max(datos_grafico1$turistas), by = 200000), 
                      labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
   theme_minimal()+
@@ -125,8 +128,5 @@ grafico_1  <- ggplot(datos_grafico1, aes(periodo, turistas, colour = turismo))+
        color= "",
        caption =  "Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes" )
 
-grafico_1
-class(datos_grafico1$periodo)
-
-fig1 <- ggplotly(grafico_1)  %>% 
+fig1 <- ggplotly(grafico_1, tooltip = "text")  %>% 
   layout(legend = list(orientation = "h", x = 0.4, y = -0.6))
