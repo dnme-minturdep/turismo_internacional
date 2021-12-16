@@ -57,16 +57,41 @@ output$fig1 <- renderPlotly(fig1)
   })
   
   
-  
-  # Actualizacion de choices de prov al cambiar input. 
+  # Actualizacion de choices de ruta al cambiar input. 
   
   
   observeEvent(via(), {
     if (input$limita == "Todos" & input$via == "Todos") {
+      updateSelectInput(session, inputId = "ruta", choices = c("Todos",
+                                                               sort(unique(data_receptivo$ruta_natural))))
+    } else {
+      updateSelectInput(session, inputId = "ruta", choices = c("Todos",sort(unique(via()$ruta_natural)))) 
+    }
+  })
+  
+  
+  # Reactivo de ruta segun input .
+  
+  ruta <- reactive({
+    req(input$ruta)
+    if (input$ruta == "Todos") {
+      ruta <- via()
+    } else {
+      ruta <- via()[via()$ruta == input$ruta,  ]
+    }
+  })
+  
+  
+  
+  # Actualizacion de choices de prov al cambiar input de ruta
+  
+  
+  observeEvent(ruta(), {
+    if (input$ruta == "Todos" & input$via == "Todos") {
       updateSelectInput(session, inputId = "prov", choices = c("Todos",
                                                                sort(unique(data_receptivo$prov))))
     } else {
-      updateSelectInput(session, inputId = "prov", choices = c("Todos",sort(unique(via()$prov)))) 
+      updateSelectInput(session, inputId = "prov", choices = c("Todos",sort(unique(ruta()$prov)))) 
     }
   })
   
@@ -76,16 +101,16 @@ output$fig1 <- renderPlotly(fig1)
   prov <- reactive({
     req(input$prov)
     if (input$prov == "Todos") {
-      prov <- via()
+      prov <- ruta()
     } else {
-      prov <- via()[via()$prov == input$prov,  ]
+      prov <- ruta()[ruta()$prov == input$prov,  ]
     }
   })
   
   # Actualizacion de choices de limita al cambiar input. 
   
   observeEvent(prov(), {
-    if (input$via == "Todos" & input$prov == "Todos") {
+    if (input$via == "Todos" & input$ruta == "Todos" & input$prov == "Todos") {
       updateSelectInput(session, inputId = "limita", choices = c("Todos",
                                                                  sort(unique(data_receptivo$limita)))) 
     } else {
@@ -109,7 +134,7 @@ output$fig1 <- renderPlotly(fig1)
   # Actualizacion de choices de paso al cambiar input. 
   
   observeEvent(limita(), {
-    if (input$limita == "Todos" & input$via == "Todos" & input$prov == "Todos") {
+    if (input$limita == "Todos" & input$via == "Todos" & input$ruta == "Todos" & input$prov == "Todos") {
       updateSelectInput(session, inputId = "paso_publ", choices = c("Todos",
                                                                     sort(unique(data_receptivo$paso_publ))))
     } else {
@@ -163,6 +188,7 @@ output$fig1 <- renderPlotly(fig1)
         etiquetas <- gsub ("year", "Año", (colnames(tabla)))
         etiquetas <- gsub ("mes", "Mes", etiquetas)
         etiquetas <- gsub ("via", "Vía", etiquetas)
+        etiquetas <- gsub ("ruta", "Ruta natural", etiquetas)
         etiquetas <- gsub ("pais_agrupado", "País de residencia (agrup.)", etiquetas)
         etiquetas <- gsub ("pais" , "País de residencia", etiquetas)
         etiquetas <- gsub ("paso_publ" , "Paso", etiquetas)

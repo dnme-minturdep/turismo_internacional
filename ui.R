@@ -24,6 +24,7 @@ navbarPage(title = div(  #### NavBar #####
                         )),
                     h4(stringr::str_to_upper(paste("RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                     fluidPage(
+                            h5("Los datos refieren a los turistas internacionales que salieron por cada paso, no a la totalidad de los que visitaron la provincia/ ruta natural"),
                             h3("FILTROS"),
                             h5("Los siguientes comandos permiten filtrar los datos"),
                             # Create a new Row in the UI for selectInputs
@@ -61,6 +62,12 @@ navbarPage(title = div(  #### NavBar #####
                                              unique(data_receptivo$via)))
                         ),
                         column(3,
+                               selectInput("ruta",
+                                           "Ruta natural:",
+                                           c("Todos",
+                                             unique(data_receptivo$ruta_natural)))
+                        ),
+                        column(3,
                                selectInput("prov",
                                            "Provincia del paso:",
                                            choices = NULL)
@@ -80,8 +87,16 @@ navbarPage(title = div(  #### NavBar #####
                       h3("VISUALIZACIÓN"),
                       h5("Selecciona el nivel de apertura con que se visualizan los datos"),
                       fluidRow(
-                        column(4,
-                               selectInput("agrup", "Mostrar por:", choices = c( 'Mes' = 'mes', 'Vía' = 'via', 'País de residencia (agrup.)'= 'pais_agrupado', 'País de residencia'= 'pais', 'Paso' = 'paso_publ', 'Provincia del paso' = 'prov', 'País con el que limita' = 'limita'),
+                        column(3,
+                               selectInput("agrup", "Mostrar por:", 
+                                           choices = c( 'Mes' = 'mes', 
+                                                        'Vía' = 'via', 
+                                                        'País de residencia (agrup.)'= 'pais_agrupado', 
+                                                        'País de residencia'= 'pais', 
+                                                        'Ruta natural' = 'ruta_natural',
+                                                        'Paso' = 'paso_publ',
+                                                        'Provincia del paso' = 'prov', 
+                                                        'País con el que limita' = 'limita'),
                                            selected = "mes", multiple = TRUE)
                         ),
                         
