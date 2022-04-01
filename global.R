@@ -4,6 +4,7 @@ library(lubridate)
 library(data.table)
 library(shiny)
 library(plotly)
+library(waiter)
 
 # language en DT::
 
@@ -143,3 +144,8 @@ grafico_1  <- ggplot(datos_grafico1, aes(periodo, turistas, colour = turismo, gr
 
 fig1 <- ggplotly(grafico_1, tooltip = "text")  %>% 
         layout(legend = list(orientation = "h", x = 0.4, y = -0.6))
+
+loading_screen <- tagList(
+  h3("Cargando...", style = "color:gray;"),
+  img(src = "https://tableros.yvera.tur.ar/recursos/logo_mintur_color.png", height = "200px")
+)

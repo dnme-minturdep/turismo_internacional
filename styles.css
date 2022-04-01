@@ -85,9 +85,22 @@ transition-delay: 0;
 
 
 .navbar-nav li a:hover, .navbar-nav > .active > a {
-color: white !important;
-background-color: #37BBED !important;
+  background-color: #C2C2C2;
+  color: black !important;
 
+}
+
+.navbar-nav li a {
+  color: white !important;
+}
+
+
+.navbar { 
+  background-color: #37BBED;
+}
+
+.navbar1 { 
+  color: white;
 }
 
 

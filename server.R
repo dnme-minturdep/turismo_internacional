@@ -3,7 +3,8 @@
 function(input, output, session) {
 
 # GRAFICO
-  
+  Sys.sleep(3)
+  waiter_hide()  
 
 output$fig1 <- renderPlotly(fig1)
 
