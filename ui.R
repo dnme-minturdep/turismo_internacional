@@ -225,6 +225,9 @@ navbarPage(title = div(  #### NavBar #####
                     tags$p(tags$b(" • País de residencia habitual"),": Es aquel en el cual una persona tiene su lugar de residencia habitual.")
                     )),
 
-       )
+       ), br(),
+       column(tags$footer(tags$a(img(src = "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+                                       width = 50),href="https://github.com/dnme-minturdep/")), 
+                width = 1, offset = 11)
            
 )
