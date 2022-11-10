@@ -120,7 +120,7 @@ cols_arg2 <- c("#EE3D8F", # "(rosa)"
 options(scipen = 999)
 
 grafico_1  <- ggplot(datos_grafico1, aes(periodo, turistas, colour = turismo, group =1, text = paste('Fecha:', format(periodo,"%b%y"),
-                                                                                                   '<br>Turistas:',format(turistas,big.mark="."), 
+                                                                                                   '<br>Viajes:',format(turistas,big.mark="."), 
                                                                                                    '<br>Turismo:',turismo)))+   
   geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) + 
   geom_line(size = 1.2 , alpha = 0.8) + 
