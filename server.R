@@ -1,18 +1,18 @@
 #SERVER
 
 function(input, output, session) {
-
-# GRAFICO
+  
+  # GRAFICO
   Sys.sleep(3)
   waiter_hide()  
-
-output$fig1 <- renderPlotly(fig1)
-
-                                         
   
-    
-#### RECEPTIVO
-
+  output$fig1 <- renderPlotly(fig1)
+  
+  
+  
+  
+  #### RECEPTIVO
+  
   #  Reactivo de pais agrupado segun input 
   
   pais_ag <- reactive ({
@@ -159,7 +159,7 @@ output$fig1 <- renderPlotly(fig1)
   # TABLA RECEPTIVO
   
   output$table_receptivo <- DT::renderDT(server = FALSE,
-    
+                                         
                                          DT::datatable(extensions = 'Buttons',
                                                        options = list(lengthMenu = c(10, 25, 50), pageLength = 10, 
                                                                       dom = 'lfrtipB',
@@ -169,42 +169,42 @@ output$fig1 <- renderPlotly(fig1)
                                                                                        buttons = c('csv', 'excel'),
                                                                                        text = 'Download'
                                                                                      ))),   
-      {
-        tabla <- paso()
-        req(input$year)
-        if (all(input$year != "Todos")) {
-          tabla <- tabla[tabla$year %in% input$year,]		
-        }
-        req(input$mes)
-        if (all(input$mes != "Todos")) {
-          tabla <- tabla[tabla$mes %in% input$mes,]		
-        }
-        
-        tabla <- tabla %>%
-          group_by_at(.vars = c( "year", input$agrup)) %>%
-          summarise ("Turistas no residentes" = round(sum(turistas))) 
-        
-        #etiquetas receptivo según selección en ui.
-        
-        etiquetas <- gsub ("year", "Año", (colnames(tabla)))
-        etiquetas <- gsub ("mes", "Mes", etiquetas)
-        etiquetas <- gsub ("via", "Vía", etiquetas)
-        etiquetas <- gsub ("ruta", "Ruta natural", etiquetas)
-        etiquetas <- gsub ("pais_agrupado", "País de residencia (agrup.)", etiquetas)
-        etiquetas <- gsub ("pais" , "País de residencia", etiquetas)
-        etiquetas <- gsub ("paso_publ" , "Paso", etiquetas)
-        etiquetas <- gsub ("prov", "Provincia del paso", etiquetas)
-        etiquetas <- gsub ("limita" ,"Limita con", etiquetas)
-        
-        tabla
-      }, rownames= FALSE, colnames = etiquetas)
+                                                       {
+                                                         tabla <- paso()
+                                                         req(input$year)
+                                                         if (all(input$year != "Todos")) {
+                                                           tabla <- tabla[tabla$year %in% input$year,]		
+                                                         }
+                                                         req(input$mes)
+                                                         if (all(input$mes != "Todos")) {
+                                                           tabla <- tabla[tabla$mes %in% input$mes,]		
+                                                         }
+                                                         
+                                                         tabla <- tabla %>%
+                                                           group_by_at(.vars = c( "year", input$agrup)) %>%
+                                                           summarise ("Viajes de Turistas" = round(sum(turistas))) 
+                                                         
+                                                         #etiquetas receptivo según selección en ui.
+                                                         
+                                                         etiquetas <- gsub ("year", "Año", (colnames(tabla)))
+                                                         etiquetas <- gsub ("mes", "Mes", etiquetas)
+                                                         etiquetas <- gsub ("via", "Vía", etiquetas)
+                                                         etiquetas <- gsub ("ruta_natural", "Ruta natural", etiquetas)
+                                                         etiquetas <- gsub ("pais_agrupado", "País de residencia (agrup.)", etiquetas)
+                                                         etiquetas <- gsub ("pais" , "País de residencia", etiquetas)
+                                                         etiquetas <- gsub ("paso_publ" , "Paso", etiquetas)
+                                                         etiquetas <- gsub ("prov", "Provincia del paso", etiquetas)
+                                                         etiquetas <- gsub ("limita" ,"Limita con", etiquetas)
+                                                         
+                                                         tabla
+                                                       }, rownames= FALSE, colnames = etiquetas)
   )
   
-
   
-#### EMISIVO
   
- # Reactivo via_e segun input 
+  #### EMISIVO
+  
+  # Reactivo via_e segun input 
   
   via_e <- reactive ({
     if (input$via_e == "Todos") {
@@ -213,7 +213,7 @@ output$fig1 <- renderPlotly(fig1)
       via_e <- data_emisivo[data_emisivo$via == input$via_e,  ]
     } 
   }) 
-        
+  
   
   # Actualizacion de choices de prov_e al cambiar input. 
   
@@ -244,7 +244,7 @@ output$fig1 <- renderPlotly(fig1)
   observeEvent(prov_e(), {
     if (input$via_e == "Todos" & input$prov_e == "Todos") {
       updateSelectInput(session, inputId = "limita_e", choices = c("Todos",
-                                                                 sort(unique(data_emisivo$limita)))) 
+                                                                   sort(unique(data_emisivo$limita)))) 
     } else {
       updateSelectInput(session, inputId = "limita_e", choices = c("Todos",sort(unique(prov_e()$limita)))) 
     }
@@ -268,7 +268,7 @@ output$fig1 <- renderPlotly(fig1)
   observeEvent(limita_e(), {
     if (input$limita_e == "Todos" & input$via_e == "Todos" & input$prov_e == "Todos") {
       updateSelectInput(session, inputId = "paso_publ_e", choices = c("Todos",
-                                                                    sort(unique(data_emisivo$paso_publ)))) 
+                                                                      sort(unique(data_emisivo$paso_publ)))) 
     } else {
       updateSelectInput(session, inputId = "paso_publ_e", choices = c("Todos", sort(unique(limita_e()$paso_publ)))) 
     }
@@ -286,56 +286,56 @@ output$fig1 <- renderPlotly(fig1)
     }
   })
   
-    
+  
   
   
   
   # TABLA EMISIVO
   output$table_emisivo <- DT::renderDataTable(server = FALSE,
-    
-    DT::datatable(extensions = 'Buttons', 
-                  options = list(lengthMenu = c(10, 25, 50), pageLength = 10, 
-                                    dom = 'lfrtipB',
-                                    buttons = list('copy',
-                                              list(
-                                              extend = 'collection',
-                                              buttons = c('csv', 'excel'),
-                                              text = 'Download'
-                                              ))),
-      {
-        tabla_e <- paso_e()
-        req(input$year_e)
-        if (all(input$year_e != "Todos")) {
-          tabla_e <- tabla_e[tabla_e$year %in% input$year_e,]		
-        }
-        req(input$mes_e)
-        if (all(input$mes_e != "Todos")) {
-          tabla_e <- tabla_e[tabla_e$mes %in% input$mes_e,]		
-        }
-        req(input$destino)
-        if (all(input$destino != "Todos")) {
-          tabla_e <- tabla_e[tabla_e$destino == input$destino,]		
-        }
-        
-        
-        tabla_e <- tabla_e %>%
-          group_by_at(.vars = c( "year", input$agrup_e)) %>%
-          summarise ("Turistas residentes" = round(sum(turistas))) 
-        
-        #etiquetas emisivo según selección en ui.
-        
-        etiquetas_e <- gsub ("year", "Año", (colnames(tabla_e)))
-        etiquetas_e <- gsub ("mes", "Mes", etiquetas_e)
-        etiquetas_e <- gsub ("via", "Vía", etiquetas_e)
-        etiquetas_e <- gsub ("destino_agrup" , "Destino principal", etiquetas_e)
-        etiquetas_e <- gsub ("paso_publ" , "Paso", etiquetas_e)
-        etiquetas_e <- gsub ("prov", "Provincia del paso", etiquetas_e)
-        etiquetas_e <- gsub ("limita" ,"Limita con", etiquetas_e)
-        
-        tabla_e
-      }, rownames= FALSE, colnames = etiquetas_e)
+                                              
+                                              DT::datatable(extensions = 'Buttons', 
+                                                            options = list(lengthMenu = c(10, 25, 50), pageLength = 10, 
+                                                                           dom = 'lfrtipB',
+                                                                           buttons = list('copy',
+                                                                                          list(
+                                                                                            extend = 'collection',
+                                                                                            buttons = c('csv', 'excel'),
+                                                                                            text = 'Download'
+                                                                                          ))),
+                                                            {
+                                                              tabla_e <- paso_e()
+                                                              req(input$year_e)
+                                                              if (all(input$year_e != "Todos")) {
+                                                                tabla_e <- tabla_e[tabla_e$year %in% input$year_e,]		
+                                                              }
+                                                              req(input$mes_e)
+                                                              if (all(input$mes_e != "Todos")) {
+                                                                tabla_e <- tabla_e[tabla_e$mes %in% input$mes_e,]		
+                                                              }
+                                                              req(input$destino)
+                                                              if (all(input$destino != "Todos")) {
+                                                                tabla_e <- tabla_e[tabla_e$destino == input$destino,]		
+                                                              }
+                                                              
+                                                              
+                                                              tabla_e <- tabla_e %>%
+                                                                group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                                summarise ("Viajes de turistas" = round(sum(turistas))) 
+                                                              
+                                                              #etiquetas emisivo según selección en ui.
+                                                              
+                                                              etiquetas_e <- gsub ("year", "Año", (colnames(tabla_e)))
+                                                              etiquetas_e <- gsub ("mes", "Mes", etiquetas_e)
+                                                              etiquetas_e <- gsub ("via", "Vía", etiquetas_e)
+                                                              etiquetas_e <- gsub ("destino_agrup" , "Destino principal", etiquetas_e)
+                                                              etiquetas_e <- gsub ("paso_publ" , "Paso", etiquetas_e)
+                                                              etiquetas_e <- gsub ("prov", "Provincia del paso", etiquetas_e)
+                                                              etiquetas_e <- gsub ("limita" ,"Limita con", etiquetas_e)
+                                                              
+                                                              tabla_e
+                                                            }, rownames= FALSE, colnames = etiquetas_e)
   )
-    
+  
   
 }
 
