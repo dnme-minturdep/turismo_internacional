@@ -5,6 +5,7 @@ library(data.table)
 library(shiny)
 library(plotly)
 library(waiter)
+library(shinycssloaders)
 
 # language en DT::
 

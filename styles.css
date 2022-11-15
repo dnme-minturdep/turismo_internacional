@@ -1,16 +1,3 @@
-input[type="number"] {
-  max-width: 80%;
-}
-
-div.outer {
-  position: fixed;
-  top: 41px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  padding: 0;
-}
 
 /* Customize fonts */
   label { 
@@ -70,10 +57,6 @@ transition-delay: 0;
   font-size: 12px;
 }
 
-/* If not using map tiles, show a white background */
-  .leaflet-container {
-    background-color: white !important;
-  }
 
 /* Add an image to navbar */
   #img-id{
@@ -97,6 +80,7 @@ transition-delay: 0;
 
 .navbar { 
   background-color: #37BBED;
+  padding-left: 15px;
 }
 
 .navbar1 { 
@@ -104,9 +88,8 @@ transition-delay: 0;
 }
 
 
-/
 /*Collapsible button*/
-button {
+.action-button {
   font-family: 'Encode Sans Normal', Helvetica;
   right: -20px;
   background-color: white;  
@@ -114,23 +97,46 @@ button {
 }
 
 
-.btn:after {
-width:0px;
-content: '';
+.footer {
+  font-family: 'Encode Sans Normal', Helvetica;
+  font-size: 1.5rem;
+  font-style: italic;
+  color: white;
+  background-color: #37BBED;
+  height: auto;
+  padding: 20px;
 }
 
-.handsontable th {
-  background-color: white;
-  color: #37BBED;
+#footer-text {
+  font-family: 'Encode Sans Normal', Helvetica;
+  color: white;
+  font-style: normal;
 }
 
-.ht_master tr td {
-  background-color: #F00;
-}
-.ht_master tr > td:nth-of-type(even) {
-  background-color: #f00;
+.fa-github {
+  color: white;
 }
 
-.ht_master tr > td:nth-child(3) {
-  background-color: #f00;
+.fa-robot {
+  color: white;
 }
+
+.col-md-1 {
+    text-align: center;
+    font-size: 1.3rem;
+}
+
+.container-fluid {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+#container-info {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.row {
+  margin-right: 0;
+  margin-left: 0;
+} 
