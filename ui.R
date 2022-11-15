@@ -6,26 +6,28 @@ navbarPage(title = div(  #### NavBar #####
                                  tags$a(img(src = "https://tableros.yvera.tur.ar/recursos/logo_sinta.png",
                                             width = 150),href="https://www.yvera.tur.ar/sinta/",target = '_blank'
                                  )),
-                         "TURISMO INTERNACIONAL", id = "title", class = "navbar1"),
+                         icon("globe"),"TURISMO INTERNACIONAL", id = "title", class = "navbar1"),
            id="navbar",
            position = "fixed-top",
            windowTitle = "Turismo Internacional - Argentina", 
            collapsible = TRUE,
+           header = includeCSS("styles.css"),
+           
            tabPanel("SERIE HISTÓRICA",
                     
+                    div(id= "container-info",
                     useWaiter(),
                     waiter_show_on_load(html = loading_screen, color = "white"),
                     
-                    br(),
+                    br(), br(), br(),
                     plotlyOutput("fig1"),
-                    br()
+                    br(), br(), br())
            ),
+           
            tabPanel("RECEPTIVO",
-                    div(class="outer",
-                        tags$head(
-                                # Include our custom CSS
-                                includeCSS("styles.css")
-                        )),
+                    
+                    div(id="container-info",
+                    br(),
                     h4(stringr::str_to_upper(paste("RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                     fluidPage(
                             h5("Los datos refieren a los viajes de turistas no residentes según el paso de salida del país y no a los realizados a cada provincia/ruta natural"),
@@ -113,18 +115,20 @@ navbarPage(title = div(  #### NavBar #####
                             
                             
                             # Create a new row for the table.
-                            DT::dataTableOutput("table_receptivo")
-                    )),
+                            DT::dataTableOutput("table_receptivo") %>% 
+                              withSpinner(), br()
+                    ))),
+                    
            tabPanel("EMISIVO",
-                    div(class="outer",
-                        tags$head(
-                                # Include our custom CSS
-                                includeCSS("styles.css")
-                        )),
+                    
+                    div(id="container-info",
+                        
+                    br(),
                     h4(stringr::str_to_upper(paste("EMISIVO- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
                     fluidPage(
                             h3("FILTROS"),
                             h5("Los siguientes comandos permiten filtrar los datos"),
+                            
                             # Create a new Row in the UI for selectInputs
                             fluidRow(
                                     column(3,
@@ -184,10 +188,13 @@ navbarPage(title = div(  #### NavBar #####
                             
                             
                             # Create a new row for the table.
-                            DT::dataTableOutput("table_emisivo")
-                    )),
+                            DT::dataTableOutput("table_emisivo") %>% 
+                              withSpinner(), br()
+                    ))),
            
            tabPanel("METODOLOGÍA",
+                    
+                    div(id = "container-info",
                     br(),
                     h3("NOTAS TÉCNICAS"),
                     br(),
@@ -234,12 +241,11 @@ en el país de referencia, como parte de un viaje turístico receptor."),
 del país de referencia, como parte de un viaje turístico emisor."),  
                                tags$p(tags$b(" • Turismo internacional"),": Comprende el turismo receptivo y el turismo emisivo."),
                                tags$p(tags$b(" • País de residencia habitual"),": Es aquel en el cual una persona tiene su lugar de residencia habitual.")
-                    )),
-                    
-           ), br(),
-           column(tags$footer(tags$a(img(src = "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-                                         width = 50),href="https://github.com/dnme-minturdep/")), 
-                  width = 1, offset = 11)
+                    )), br()
+                    )
+           ),
+           
+           footer = includeHTML("/srv/shiny-server/recursos/shiny_footer.html")
            
 )
            
