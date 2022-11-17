@@ -118,7 +118,79 @@ navbarPage(title = div(  #### NavBar #####
                             DT::dataTableOutput("table_receptivo") %>% 
                               withSpinner(), br()
                     ))),
+           tabPanel("PERFIL RECEPTIVO",
                     
+                    div(id="container-info",
+                        br(),
+                        h4(stringr::str_to_upper(paste("PERFIL RECEPTIVO. Ezeiza y Aeroparque- Datos desde 2019 hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
+                        fluidPage(
+                          h3("FILTROS"),
+                          h5("Los siguientes comandos permiten filtrar los datos"),
+                          fluidRow(
+                            column(3,
+                                   selectInput("anio",
+                                               "Año:",
+                                               c("Todos",
+                                                 unique(as.character(localidad$anio))),selected = localidad[nrow(localidad),1], multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("mes",
+                                               "Mes:",
+                                               c("Todos",
+                                                 unique(as.character(localidad$mes))), selected = "Todos" , multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("provincia",
+                                               "Provincia visitada:",
+                                               c("Todos",
+                                                 sort(unique(as.character(localidad$provincia)))), selected = "Todos" , multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("pais_origen",
+                                               "País de residencia:",
+                                               c("Todos",
+                                                 sort(unique(as.character(localidad$pais_origen)))), selected = "Todos" , multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("alojamiento",
+                                               "Tipo de alojamiento principal en el país:",
+                                               c("Todos",
+                                                 sort(unique(as.character(localidad$alojamiento)))), selected = "Todos" , multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("motivo_viaje",
+                                               "Motivo de viaje:",
+                                               c("Todos",
+                                                 unique(as.character(localidad$motivo_viaje))), selected = "Todos" , multiple =TRUE)
+                            )
+                          ),
+                          h3("VISUALIZACIÓN"),
+                          h5("Selecciona el nivel de apertura con que se visualizan los datos"),
+                          fluidRow(
+                            column(3,
+                                   selectInput("agrup", "Mostrar por:", 
+                                               choices = c( 'Mes' = 'mes', 
+                                                            'Provincia visitada' = 'provincia', 
+                                                            'Ciudad visitada' = 'ciudad',
+                                                            'Pais de residencia' = 'pais_origen', 
+                                                            'Tipo de alojamiento principal en el país' = 'alojamiento', 
+                                                            'Motivo de viaje' = 'motivo_viaje'),
+                                               selected = "mes", multiple = TRUE)
+                            )),
+                          
+                          h3("PERFIL DE TURISTAS NO RESIDENTES. EZEIZA-AEROPARQUE"),
+                          
+                          # Create a new row for the table.
+                          DT::dataTableOutput("tabla_eti"),
+                          h6("*Se consideran visitas a las localidades con al menos un pernocte, excepto en los casos de cruceros, donde puede no haber pernocte en la localidad."),
+                          h6("*La suma de visitas a localidades de una provincia es mayor al total provincial, por los casos que visitan más de una localidad en la provincia."),
+                          h6("*La suma de noches en localidades de una provincia es igual a las noches del total provincial."),
+                          h6("*El gasto está calculado como el gasto promedio diario en el país por la cantidad de noches.")
+                          
+                        )
+                        )
+                    ),
+           
            tabPanel("EMISIVO",
                     
                     div(id="container-info",

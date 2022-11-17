@@ -2,7 +2,7 @@
 
 function(input, output, session) {
   
-  # GRAFICO
+  # GRAFICO ####
   Sys.sleep(3)
   waiter_hide()  
   
@@ -11,7 +11,7 @@ function(input, output, session) {
   
   
   
-  #### RECEPTIVO
+  # RECEPTIVO ####
   
   #  Reactivo de pais agrupado segun input 
   
@@ -202,7 +202,7 @@ function(input, output, session) {
   
   
   
-  #### EMISIVO
+  # EMISIVO ####
   
   # Reactivo via_e segun input 
   
@@ -334,6 +334,73 @@ function(input, output, session) {
                                                               
                                                               tabla_e
                                                             }, rownames= FALSE, colnames = etiquetas_e)
+  )
+  
+# ETI ####  
+
+  output$tabla_eti<- DT::renderDT(server = FALSE,
+                                  
+                                  DT::datatable(extensions = 'Buttons',
+                                                options = list(lengthMenu = c(10, 25, 50), pageLength = 10, 
+                                                               dom = 'lfrtipB',
+                                                               buttons = list('copy',
+                                                                              list(
+                                                                                extend = 'collection',
+                                                                                buttons = c('csv', 'excel'),
+                                                                                text = 'Download'
+                                                                              ))),   
+                                                {
+                                                  tabla <- localidad
+                                                  req(input$anio)
+                                                  if (all(input$anio != "Todos")) {
+                                                    tabla <- tabla[tabla$anio %in% input$anio,]		
+                                                  }
+                                                  req(input$mes)
+                                                  if (all(input$mes != "Todos")) {
+                                                    tabla <- tabla[tabla$mes %in% input$mes,]		
+                                                  }
+                                                  req(input$provincia)
+                                                  if (all(input$provincia != "Todos")) {
+                                                    tabla <- tabla[tabla$provincia %in% input$provincia,]		
+                                                  }
+                                                  req(input$motivo_viaje)
+                                                  if (all(input$motivo_viaje != "Todos")) {
+                                                    tabla <- tabla[tabla$motivo_viaje %in% input$motivo_viaje,]		
+                                                  }
+                                                  req(input$alojamiento)
+                                                  if (all(input$alojamiento != "Todos")) {
+                                                    tabla <- tabla[tabla$alojamiento %in% input$alojamiento,]		
+                                                  }
+                                                  req(input$pais_origen)
+                                                  if (all(input$pais_origen != "Todos")) {
+                                                    tabla <- tabla[tabla$pais_origen %in% input$pais_origen,]		
+                                                  }
+                                                  tabla <- tabla %>%
+                                                    group_by_at(.vars = c( "anio", "id", input$agrup)) %>%
+                                                    summarise (turistas = first(wpf),
+                                                               casos =  first(p18_1), 
+                                                               noches = sum(noches * wpf),
+                                                               gasto = sum(gasto * wpf),                                                                      ) %>%
+                                                    group_by_at(.vars = c( "anio", input$agrup)) %>%
+                                                    summarise (Turistas = sum(turistas),
+                                                               Noches = sum(noches),
+                                                               Gasto = round(sum(gasto),1),
+                                                               Casos_Muestrales = sum(casos))
+                                                  
+                                                  #etiquetas receptivo según selección en ui.
+                                                  
+                                                  etiquetas <- gsub ("anio", "Año", (colnames(tabla)))
+                                                  etiquetas <- gsub ("mes", "Mes", etiquetas)
+                                                  etiquetas <- gsub ("provincia", "Provincia visitada", etiquetas)
+                                                  etiquetas <- gsub ("ciudad", "Ciudad visitada", etiquetas)
+                                                  etiquetas <- gsub ("provincia", "Provincia visitada", etiquetas)
+                                                  etiquetas <- gsub ("pais_origen", "País de residencia", etiquetas)
+                                                  etiquetas <- gsub ("alojamiento", "Tipo alojamiento principal en el país", etiquetas)
+                                                  etiquetas <- gsub ("motivo_viaje", "Motivo de viaje", etiquetas)
+                                                  etiquetas <- gsub ("Casos_Muestrales", "Casos Muestrales", etiquetas)
+                                                  
+                                                  tabla
+                                                }, rownames= FALSE, colnames = etiquetas)
   )
   
   
