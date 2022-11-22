@@ -376,12 +376,12 @@ function(input, output, session) {
                                                     tabla <- tabla[tabla$pais_origen %in% input$pais_origen,]		
                                                   }
                                                   tabla <- tabla %>%
-                                                    group_by_at(.vars = c( "anio", "id", input$agrup)) %>%
+                                                    group_by_at(.vars = c( "anio", "id", input$agrup_p)) %>%
                                                     summarise (turistas = first(wpf),
                                                                casos =  first(p18_1), 
                                                                noches = sum(noches * wpf),
                                                                gasto = sum(gasto * wpf),                                                                      ) %>%
-                                                    group_by_at(.vars = c( "anio", input$agrup)) %>%
+                                                    group_by_at(.vars = c( "anio", input$agrup_p)) %>%
                                                     summarise (Turistas = sum(turistas),
                                                                Noches = sum(noches),
                                                                Gasto = round(sum(gasto),1),

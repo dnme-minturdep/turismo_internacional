@@ -122,7 +122,7 @@ navbarPage(title = div(  #### NavBar #####
                     
                     div(id="container-info",
                         br(),
-                        h4(stringr::str_to_upper(paste("PERFIL RECEPTIVO. Ezeiza y Aeroparque- Datos desde 2019 hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
+                        h4(stringr::str_to_upper(paste("PERFIL RECEPTIVO. Encuesta de Turismo Internacional. Ezeiza y Aeroparque- Datos desde 2019 hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                         fluidPage(
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos"),
@@ -168,7 +168,7 @@ navbarPage(title = div(  #### NavBar #####
                           h5("Selecciona el nivel de apertura con que se visualizan los datos"),
                           fluidRow(
                             column(3,
-                                   selectInput("agrup", "Mostrar por:", 
+                                   selectInput("agrup_p", "Mostrar por:", 
                                                choices = c( 'Mes' = 'mes', 
                                                             'Provincia visitada' = 'provincia', 
                                                             'Ciudad visitada' = 'ciudad',
@@ -178,7 +178,7 @@ navbarPage(title = div(  #### NavBar #####
                                                selected = "mes", multiple = TRUE)
                             )),
                           
-                          h3("PERFIL DE TURISTAS NO RESIDENTES. EZEIZA-AEROPARQUE"),
+                          h3("PERFIL DE TURISTAS NO RESIDENTES. EZEIZA-AEROPARQUE (ETI)"),
                           
                           # Create a new row for the table.
                           DT::dataTableOutput("tabla_eti"),

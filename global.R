@@ -177,7 +177,7 @@ eti_tur <- readRDS("/srv/DataDNMYE/eti/bases/eti_nr_2014_2022.rds") %>%
 #creo variables para pivotear. Selecciono solo pasos Eze y Aerop.
 
 eti_tur <- eti_tur %>% 	
-  filter (p3_3 == 2022 | p3_3 == 2019) %>% #filtro 2019 porque sino tengo problema en cruceros y 2022 porque es lo que publicamos 
+  filter (p3_3 >=2019) %>% #filtro 2019 porque sino tengo problema en cruceros y 2022 porque es lo que publicamos 
   filter (p5 <=3) %>%  # filtro  EyA
   mutate (cod_ciudad1 = paste (p21_1_1a, p21_1_1b, p21_1_2a, sep = "_"), #CONCaT DE CaTEGORÍa pROVINCIa/paÍS, CÓDIGO pROV								
           cod_ciudad2 = paste (p21_2_1a, p21_2_1b, p21_2_2a, sep = "_"),									
