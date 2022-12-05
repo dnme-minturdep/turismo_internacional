@@ -195,6 +195,9 @@ function(input, output, session) {
                                                          etiquetas <- gsub ("paso_publ" , "Paso", etiquetas)
                                                          etiquetas <- gsub ("prov", "Provincia del paso", etiquetas)
                                                          etiquetas <- gsub ("limita" ,"Limita con", etiquetas)
+                                                         etiquetas <- gsub ("sexo", "Género", etiquetas)
+                                                         etiquetas <- gsub ("grupoetario", "Tramos de edad", etiquetas)
+                                                         
                                                          
                                                          tabla
                                                        }, rownames= FALSE, colnames = etiquetas)

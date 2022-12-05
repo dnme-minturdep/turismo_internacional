@@ -20,8 +20,17 @@ datos <- datos %>%
   rename(year = 'anio')  %>% 
   mutate(casos = str_replace_all(string = casos_ponderados, 
                                  pattern = ",", replacement = "." ), 
+         sexo = str_replace_all(string = sexo, 
+                                 pattern = "SD", replacement = "Sin dato" ), 
+         sexo = str_replace_all(string = sexo, 
+                                pattern = "X", replacement = "X(identidad no binaria)" ), 
          casos = as.numeric(casos),
-         paso_publ = str_replace_all(paso_publ, "Aero ", "Aeropuerto ")
+         paso_publ = str_replace_all(paso_publ, "Aero ", "Aeropuerto "), 
+         grupoetario = case_when(grupoetario == "Menores de 18 años" ~ "Entre 0 y 18 años",
+                                 grupoetario == "60 años y más" ~ "Más de 59 años",
+                                 grupoetario == "SD" ~ "Sin dato", 
+                                 TRUE ~ grupoetario)
+         
          )
 
 # matcheo ruta natual
@@ -98,7 +107,8 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
   data_receptivo <-  datos[turismo_internac == "Receptivo", ] 
   data_receptivo <- data_receptivo[, .(turistas = sum(casos)), 
                                    by = .(year, mes, via, pais_agrupado, pais, 
-                                          paso_publ, prov, limita, ruta_natural)] 
+                                          paso_publ, prov, limita, ruta_natural, 
+                                          sexo, grupoetario)] 
   
   
   #### EMISIVO
@@ -106,7 +116,8 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
   data_emisivo <-  datos[turismo_internac == "Emisivo", ] 
   data_emisivo <- data_emisivo[, .(turistas = sum(casos)), 
                                by = .(year, mes, via, destino_agrup, pais, 
-                                      paso_publ, prov, limita)] 
+                                      paso_publ, prov, limita,
+                                      sexo, grupoetario)] 
 
 
 # GRAFICO. (lo pongo al final porque toma dato de Mes_ult en texto)
