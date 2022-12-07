@@ -171,6 +171,9 @@ function(input, output, session) {
                                                                                      ))),   
                                                        {
                                                          tabla <- paso()
+                                                         req(input$tipo_visitante)
+                                                           tabla <- tabla[tabla$tipo_visitante %in% input$tipo_visitante,]		
+                                                         
                                                          req(input$year)
                                                          if (all(input$year != "Todos")) {
                                                            tabla <- tabla[tabla$year %in% input$year,]		
@@ -182,7 +185,7 @@ function(input, output, session) {
                                                          
                                                          tabla <- tabla %>%
                                                            group_by_at(.vars = c( "year", input$agrup)) %>%
-                                                           summarise ("Viajes de Turistas" = round(sum(turistas))) 
+                                                           summarise ("Viajes de visitantes" = round(sum(turistas))) 
                                                          
                                                          #etiquetas receptivo según selección en ui.
                                                          
@@ -197,8 +200,8 @@ function(input, output, session) {
                                                          etiquetas <- gsub ("limita" ,"Limita con", etiquetas)
                                                          etiquetas <- gsub ("sexo", "Género", etiquetas)
                                                          etiquetas <- gsub ("grupoetario", "Tramos de edad", etiquetas)
-                                                         
-                                                         
+                                                         etiquetas <- gsub ("tipo_visitante" ,"Tipo de visitante", etiquetas)
+  
                                                          tabla
                                                        }, rownames= FALSE, colnames = etiquetas)
   )
@@ -307,6 +310,9 @@ function(input, output, session) {
                                                                                           ))),
                                                             {
                                                               tabla_e <- paso_e()
+                                                              req(input$tipo_visitante_e)
+                                                              tabla_e <- tabla_e[tabla_e$tipo_visitante %in% input$tipo_visitante_e,]		
+                                                              
                                                               req(input$year_e)
                                                               if (all(input$year_e != "Todos")) {
                                                                 tabla_e <- tabla_e[tabla_e$year %in% input$year_e,]		
@@ -323,7 +329,7 @@ function(input, output, session) {
                                                               
                                                               tabla_e <- tabla_e %>%
                                                                 group_by_at(.vars = c( "year", input$agrup_e)) %>%
-                                                                summarise ("Viajes de turistas" = round(sum(turistas))) 
+                                                                summarise ("Viajes de visitantes" = round(sum(turistas))) 
                                                               
                                                               #etiquetas emisivo según selección en ui.
                                                               
@@ -334,6 +340,7 @@ function(input, output, session) {
                                                               etiquetas_e <- gsub ("paso_publ" , "Paso", etiquetas_e)
                                                               etiquetas_e <- gsub ("prov", "Provincia del paso", etiquetas_e)
                                                               etiquetas_e <- gsub ("limita" ,"Limita con", etiquetas_e)
+                                                              etiquetas_e <- gsub ("tipo_visitante" ,"Tipo de visitante", etiquetas_e)
                                                               
                                                               tabla_e
                                                             }, rownames= FALSE, colnames = etiquetas_e)

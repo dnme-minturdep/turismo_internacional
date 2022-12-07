@@ -30,24 +30,38 @@ navbarPage(title = div(  #### NavBar #####
                         br(),
                         h4(stringr::str_to_upper(paste("RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                         fluidPage(
-                          h5("Los datos refieren a los viajes de turistas no residentes según el paso de salida del país y no a los realizados a cada provincia/ruta natural"),
+                          h5("Los datos refieren a los viajes de visitantes no residentes según el paso de salida del país y no a los realizados a cada provincia/ruta natural"),
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos"),
                           # Create a new Row in the UI for selectInputs
                           fluidRow(
                             column(3,
+                                   checkboxGroupInput("tipo_visitante",
+                                                      label = "Tipo de visitante:",
+                                                      choices = c("Turistas", 
+                                                                  "Excursionistas"),
+                                                      selected = "Turistas")
+                                   ),
+                            column(3,
                                    selectInput("year",
                                                "Año:",
                                                c("Todos",
                                                  unique(as.character(data_receptivo$year))),selected = data_receptivo[nrow(data_receptivo),1], multiple =TRUE)
-                            ),
+                                  ),
                             column(3,
                                    selectInput("mes",
                                                "Mes:",
                                                c("Todos",
                                                  unique(as.character(data_receptivo$mes))), selected = "Todos" , multiple =TRUE)
                             ),
-                            
+                            column(3,
+                                   selectInput("via",
+                                               "Medio de transporte:",
+                                               c("Todos",
+                                                 unique(data_receptivo$via)))
+                                   )
+                            ),
+                          fluidRow(
                             column(3,
                                    selectInput("pais_agrupado",
                                                "País de residencia (agrup.):",
@@ -58,21 +72,13 @@ navbarPage(title = div(  #### NavBar #####
                                    selectInput("pais",
                                                "País de residencia:",
                                                choices = NULL)
-                                   
-                            ),),
-                          fluidRow(
-                            column(3,
-                                   selectInput("via",
-                                               "Medio de transporte:",
-                                               c("Todos",
-                                                 unique(data_receptivo$via)))
-                            ),
+                                   ),
                             column(3,
                                    selectInput("ruta",
                                                "Ruta natural:",
                                                c("Todos",
                                                  unique(data_receptivo$ruta_natural)))
-                            ),
+                                   ),
                             column(3,
                                    selectInput("prov",
                                                "Provincia del paso:",
@@ -87,8 +93,7 @@ navbarPage(title = div(  #### NavBar #####
                                    selectInput("paso_publ",
                                                "Paso:", 
                                                choices = NULL)
-                                   
-                            ),
+                                   ),
                           ),
                           h3("VISUALIZACIÓN"),
                           h5("Selecciona el nivel de apertura con que se visualizan los datos"),
@@ -97,6 +102,7 @@ navbarPage(title = div(  #### NavBar #####
                                    selectInput("agrup", "Mostrar por:", 
                                                choices = c( 'Mes' = 'mes', 
                                                             'Vía' = 'via', 
+                                                            'Tipo de visitante' = 'tipo_visitante', 
                                                             'País de residencia (agrup.)'= 'pais_agrupado', 
                                                             'País de residencia'= 'pais', 
                                                             'Ruta natural' = 'ruta_natural',
@@ -110,7 +116,7 @@ navbarPage(title = div(  #### NavBar #####
                             
                             
                           ),
-                          h3("VIAJES DE TURISTAS NO RESIDENTES"),
+                          h3("VIAJES DE VISITANTES NO RESIDENTES"),
                           
                           
                           
@@ -206,6 +212,13 @@ navbarPage(title = div(  #### NavBar #####
                           # Create a new Row in the UI for selectInputs
                           fluidRow(
                             column(3,
+                                   checkboxGroupInput("tipo_visitante_e",
+                                                      label = "Tipo de visitante:",
+                                                      choices = c("Turistas", 
+                                                                  "Excursionistas"),
+                                                      selected = "Turistas")
+                            ),
+                            column(3,
                                    selectInput("year_e",
                                                "Año:",
                                                c("Todos",
@@ -217,14 +230,6 @@ navbarPage(title = div(  #### NavBar #####
                                                c("Todos",
                                                  unique(as.character(data_emisivo$mes))),selected = "Todos" , multiple =TRUE)
                             ),
-                            
-                            column(3,
-                                   selectInput("destino",
-                                               "Destino principal:",
-                                               c("Todos",
-                                                 sort(unique(data_emisivo$destino_agrup))))
-                            ),
-                            
                             column(3,
                                    selectInput("via_e",
                                                "Medio de transporte:",
@@ -232,6 +237,12 @@ navbarPage(title = div(  #### NavBar #####
                                                  unique(data_emisivo$via)))
                             ),),
                           fluidRow(
+                            column(3,
+                                   selectInput("destino",
+                                               "Destino principal:",
+                                               c("Todos",
+                                                 sort(unique(data_emisivo$destino_agrup))))
+                            ),
                             column(3,
                                    selectInput("prov_e",
                                                "Provincia del paso:",
@@ -255,6 +266,7 @@ navbarPage(title = div(  #### NavBar #####
                             column(4,
                                    selectInput("agrup_e", "Mostrar por:", choices = c( 'Mes' = 'mes', 
                                                                                        'Vía' = 'via', 
+                                                                                       'Tipo de visitante' = 'tipo_visitante', 
                                                                                        'Destino principal'= 'destino_agrup', 
                                                                                        'Paso' = 'paso_publ', 
                                                                                        'Provincia del paso' = 'prov', 
@@ -265,7 +277,7 @@ navbarPage(title = div(  #### NavBar #####
                             ),
                             
                           ),
-                          h3("VIAJES DE TURISTAS RESIDENTES"),
+                          h3("VIAJES DE VISITANTES RESIDENTES"),
                           
                           
                           # Create a new row for the table.
@@ -279,8 +291,8 @@ navbarPage(title = div(  #### NavBar #####
                         br(),
                         h3("NOTAS TÉCNICAS"),
                         br(),
-                        h4("   Todos los datos refieren a viajes de turistas, sin excursionistas."),
-                        h4("   Los datos por género y edad solo están disponibles desde noviembre de 2017."),
+                        h4("   Los datos de excursionistas residentes por destino están disponibles desde agosto de 2021."),
+                        h4("   Los datos por género y edad están disponibles desde noviembre de 2017."),
                         h4("   La estimación del turismo internacional (receptivo y emisivo) para el total del país surge de distintas fuentes 
              de datos."), 
                         h4("   La fuente principal de información son los registros migratorios provistos por la Dirección Nacional de 
