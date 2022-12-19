@@ -335,6 +335,7 @@ function(input, output, session) {
                                                               
                                                               etiquetas_e <- gsub ("year", "Año", (colnames(tabla_e)))
                                                               etiquetas_e <- gsub ("mes", "Mes", etiquetas_e)
+                                                              etiquetas_e <- gsub ("trim", "Trimestre", etiquetas_e)
                                                               etiquetas_e <- gsub ("via", "Vía", etiquetas_e)
                                                               etiquetas_e <- gsub ("destino_agrup" , "Destino principal", etiquetas_e)
                                                               etiquetas_e <- gsub ("paso_publ" , "Paso", etiquetas_e)
@@ -401,6 +402,7 @@ function(input, output, session) {
                                                   
                                                   etiquetas <- gsub ("anio", "Año", (colnames(tabla)))
                                                   etiquetas <- gsub ("mes", "Mes", etiquetas)
+                                                  etiquetas <- gsub ("trim", "Trimestre", etiquetas)
                                                   etiquetas <- gsub ("provincia", "Provincia visitada", etiquetas)
                                                   etiquetas <- gsub ("ciudad", "Ciudad visitada", etiquetas)
                                                   etiquetas <- gsub ("provincia", "Provincia visitada", etiquetas)

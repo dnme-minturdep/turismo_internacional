@@ -92,7 +92,8 @@ navbarPage(title = div(  #### NavBar #####
                             column(3,
                                    selectInput("paso_publ",
                                                "Paso:", 
-                                               choices = NULL)
+                                               choices = NULL
+                                               )
                                    ),
                           ),
                           h3("VISUALIZACIÓN"),
@@ -101,6 +102,7 @@ navbarPage(title = div(  #### NavBar #####
                             column(3,
                                    selectInput("agrup", "Mostrar por:", 
                                                choices = c( 'Mes' = 'mes', 
+                                                            'Trimestre' = 'trim',
                                                             'Vía' = 'via', 
                                                             'Tipo de visitante' = 'tipo_visitante', 
                                                             'País de residencia (agrup.)'= 'pais_agrupado', 
@@ -256,7 +258,9 @@ navbarPage(title = div(  #### NavBar #####
                             column(3,
                                    selectInput("paso_publ_e",
                                                "Paso:", 
+                                               #multiple =TRUE,
                                                choices = NULL)
+                                               
                                    
                             ),
                           ),
@@ -265,6 +269,7 @@ navbarPage(title = div(  #### NavBar #####
                           fluidRow(
                             column(4,
                                    selectInput("agrup_e", "Mostrar por:", choices = c( 'Mes' = 'mes', 
+                                                                                       'Trimestre' = 'trim',
                                                                                        'Vía' = 'via', 
                                                                                        'Tipo de visitante' = 'tipo_visitante', 
                                                                                        'Destino principal'= 'destino_agrup', 

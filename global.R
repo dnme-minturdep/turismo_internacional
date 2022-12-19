@@ -106,7 +106,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
   
   data_receptivo <-  datos[turismo_internac == "Receptivo", ] 
   data_receptivo <- data_receptivo[, .(turistas = sum(casos)), 
-                                   by = .(year, mes, tipo_visitante, via,
+                                   by = .(year, trim, mes, tipo_visitante, via,
                                           pais_agrupado, pais, 
                                           paso_publ, prov, limita, ruta_natural, 
                                           sexo, grupoetario)] 
@@ -116,7 +116,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
   
   data_emisivo <-  datos[turismo_internac == "Emisivo", ] 
   data_emisivo <- data_emisivo[, .(turistas = sum(casos)), 
-                               by = .(year, mes,  tipo_visitante, via, 
+                               by = .(year, trim, mes,  tipo_visitante, via, 
                                       destino_agrup, pais, 
                                       paso_publ, prov, limita,
                                       sexo, grupoetario)] 
