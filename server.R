@@ -161,7 +161,7 @@ function(input, output, session) {
   output$table_receptivo <- DT::renderDT(server = FALSE,
                                          
                                          DT::datatable(extensions = 'Buttons',
-                                                       options = list(lengthMenu = c(10, 25, 50), pageLength = 10, 
+                                                       options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
                                                                       dom = 'lfrtipB',
                                                                       buttons = list('copy',
                                                                                      list(
@@ -300,7 +300,7 @@ function(input, output, session) {
   output$table_emisivo <- DT::renderDataTable(server = FALSE,
                                               
                                               DT::datatable(extensions = 'Buttons', 
-                                                            options = list(lengthMenu = c(10, 25, 50), pageLength = 10, 
+                                                            options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
                                                                            dom = 'lfrtipB',
                                                                            buttons = list('copy',
                                                                                           list(
@@ -352,7 +352,7 @@ function(input, output, session) {
   output$tabla_eti<- DT::renderDT(server = FALSE,
                                   
                                   DT::datatable(extensions = 'Buttons',
-                                                options = list(lengthMenu = c(10, 25, 50), pageLength = 10, 
+                                                options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
                                                                dom = 'lfrtipB',
                                                                buttons = list('copy',
                                                                               list(
@@ -415,6 +415,53 @@ function(input, output, session) {
                                                 }, rownames= FALSE, colnames = etiquetas)
   )
   
+# GRAFICO. 
+  
+datos_grafico1_sel <- eventReactive(input$pais_agrup_graf,{
+    req(input$pais_agrup_graf)
+  if (input$pais_agrup_graf == "Todos") {
+   datos_grafico1_sel <- data_graficos %>% 
+     group_by(periodo, turismo) %>%
+     summarise(turistas = round(sum(turistas))) 
+   } else {
+     datos_grafico1_sel <- data_graficos %>% 
+     filter(pais_agrupado == input$pais_agrup_graf |
+            destino_agrup == input$pais_agrup_graf) %>% 
+     group_by(periodo, turismo, pais_agrupado, destino_agrup) %>% 
+       summarise(turistas = round(sum(turistas)))
+     }
+})
+  
+output$grafico_serie <- renderPlotly({ 
+  grafico_1  <- ggplot(datos_grafico1_sel(), aes(periodo, turistas, colour = turismo, group =1, text = paste('Fecha:', format(periodo,"%b%y"),
+                                                                                                       '<br>Viajes:',format(turistas,big.mark=".",
+                                                                                                                            decimal.mark = ","), 
+                                                                                                       '<br>Turismo:',turismo)))+   
+    geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) + 
+    geom_line(size = 1.2 , alpha = 0.8) + 
+    geom_point(size = 2.0, alpha = 0.8)+ 
+    scale_color_manual(values = c(cols_arg2[1], cols_arg2[6])) + 
+    scale_x_date(date_breaks = "1 months", date_labels = "%b%y", expand = c(0,10))+ 
+    scale_y_continuous(#breaks = seq(min(datos_grafico1_sel()$turistas), max(datos_grafico1_sel()$turistas), by = 200000),
+                       n.breaks = 8,
+                       labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
+    theme_minimal()+
+    theme(legend.position = "bottom", 
+          axis.text.x =element_text (size =12, angle=90),
+          axis.text.y = element_text(size = 12),
+          legend.text = element_text (size =12),
+          plot.caption =  element_text (size =12, hjust = 0.0)) +
+    labs(title = "EVOLUCIÓN MENSUAL DE LOS VIAJES DE TURISTAS INTERNACIONALES",
+         subtitle = glue ("Emisivo y receptivo \n Enero 2016-{Mes_ult}-{year_ult}"),
+         y = "", 
+         x = "", 
+         color= "",
+         caption =  "Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes,
+         en base a información de la Dirección Nacional de Migraciones y la Encuesta de Turismo Internacional." )
+  
+   ggplotly(grafico_1, tooltip = "text")  %>% 
+    layout(legend = list(orientation = "h", x = 0.4, y = -0.6))
+ })
   
 }
 
