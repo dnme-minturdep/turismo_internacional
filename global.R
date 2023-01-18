@@ -7,7 +7,8 @@ library(plotly)
 library(waiter)
 library(shinycssloaders)
 library (readxl)									
-
+library(herramientas)
+library(comunicacion)
 
 # language en DT::
 
@@ -59,16 +60,15 @@ ruta <- ruta %>%
 
 datos <- left_join(datos,ruta) 
 
-##DATA PARA GRAFICO 1
+#datos para graficos####
 
-#data por pais_agrupado y destino
+#data para serie, por pais_agrupado y destino
 
 data_graficos <- datos [tipo_visitante == "Turistas", .(turistas = sum(casos)), 
                       by = .(year, mes, pais_agrupado, destino_agrup, 
                                turismo_internac)] 
 
 #completo meses faltantes.
-
 
 data_graficos <- data.table(complete (data_graficos, 
                                       expand(data_graficos, year, mes, 
@@ -85,22 +85,87 @@ year_ult <- as_tibble(datos[nrow(datos),1])
 data_graficos <- data_graficos %>%
   filter ((year < as.numeric(year_ult)) | (year == as.numeric(year_ult) 
                                            & mes <= as.numeric(mes_ult_nro))) %>% 
-  mutate (periodo = dmy(as.character(glue::glue("01/{mes}/{year}"))))%>% 
+  mutate (periodo = dmy(as.character(glue("01/{mes}/{year}"))))%>% 
   rename (turismo = turismo_internac)
 
+# acumulado por destino:
 
-# GRAFICOS RESUMEN
-#
-##dato mensual 
-#
-#dato_mensual <- datos %>% 
-#  filter (year == as.numeric(year_ult))
-#
-## %>% 
-  
+data_grafico_ac_pais <- data_graficos %>%
+  filter (year == as.numeric(year_ult)) %>% 
+  mutate(pais_destino = case_when(turismo == "Receptivo" ~ pais_agrupado,
+                                  turismo == "Emisivo" ~ destino_agrup)) %>% 
+  group_by(turismo,pais_destino) %>% 
+  summarise(turistas = round(sum(turistas))) %>% 
+  ungroup() 
+
+ggplot(data_grafico_ac_via, aes(x= via, y= turistas, fill = turismo))
+
+graf_pais_ti <- ggplot(data_grafico_ac_pais, aes(x= pais_destino, y= turistas, fill = turismo)) +   
+  geom_col(position = "dodge")+
+  #coord_flip()+
+  geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
+             position = position_dodge(width = 1),
+             vjust = -0.25,
+  )+
+  scale_fill_dnmye() +
+  scale_y_continuous(#breaks = seq(min(datos_grafico1_sel()$turistas), max(datos_grafico1_sel()$turistas), by = 200000),
+    #n.breaks = 8,
+    labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
+  #scale_x_discrete(limits = data_grafico_ac_pais$pais_destino[order(data_grafico_ac_pais$pais_destino)] )+
+  theme_minimal()+
+  theme(legend.position = "bottom", 
+        axis.text.x =element_text (size =11,),
+        axis.text.y = element_text(size = 11),
+        legend.text = element_text (size =11)) +
+  labs(title = "Viajes de turistas según país de residencia/destino",
+       subtitle = glue("Total país. Acumulado a {Mes_ult} {year_ult}."),
+       y = "", 
+       x = "", 
+       fill = "")
 
 
-                                        
+# acumulado por via. 
+
+data_grafico_ac_via <- datos %>%
+  filter (year == as.numeric(year_ult), tipo_visitante == "Turistas") %>% 
+  rename(turismo = turismo_internac) %>% 
+  group_by(turismo, via) %>% 
+  summarise(turistas = round(sum(casos_ponderados))) %>% 
+  ungroup() 
+
+data_grafico_ac_total <- data_grafico_ac_via %>%
+  group_by(turismo) %>% 
+  summarise(turistas = round(sum(turistas))) %>% 
+  ungroup() %>% 
+  mutate(via = "Total")
+
+#agrego total a via. 
+data_grafico_ac_via <- bind_rows(data_grafico_ac_via, data_grafico_ac_total)
+
+graf_via_ti <- ggplot(data_grafico_ac_via, aes(x= via, y= turistas, fill = turismo)) +   
+  geom_col(position = "dodge") +
+  geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
+             position = position_dodge(width = 1),
+             vjust = -0.25,
+             )+
+  scale_fill_dnmye() +
+  scale_y_continuous(#breaks = seq(min(datos_grafico1_sel()$turistas), max(datos_grafico1_sel()$turistas), by = 200000),
+    #n.breaks = 8,
+    labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
+  theme_minimal()+
+  theme(axis.text.x =element_text (size =11),
+        axis.text.y = element_text(size = 11),
+        legend.position = "" )+
+  labs(title = "Viajes de turistas según medio de transporte",
+       subtitle = glue("Total país. Acumulado a {Mes_ult} {year_ult}."),
+       y = "", 
+       x = "", 
+       fill = "",
+       color = "",
+       caption =  "Fuente: Dirección Nacional de Mercados y Estadstica, Ministerio de Turismo y Deportes")
+
+
+
 ## DATOS PARA TABLA:
 
 #mes de numero a texto.

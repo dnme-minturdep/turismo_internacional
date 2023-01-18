@@ -415,7 +415,7 @@ function(input, output, session) {
                                                 }, rownames= FALSE, colnames = etiquetas)
   )
   
-# GRAFICO. 
+# GRAFICOS. 
   
 datos_grafico1_sel <- eventReactive(input$pais_agrup_graf,{
     req(input$pais_agrup_graf)
@@ -451,7 +451,7 @@ output$grafico_serie <- renderPlotly({
           axis.text.y = element_text(size = 12),
           legend.text = element_text (size =12),
           plot.caption =  element_text (size =12, hjust = 0.0)) +
-    labs(title = "EVOLUCIÓN MENSUAL DE LOS VIAJES DE TURISTAS INTERNACIONALES",
+    labs(title = "Evolución mensual de los viajes de turistas internacionales.",
          subtitle = glue ("Emisivo y receptivo \n Enero 2016-{Mes_ult}-{year_ult}"),
          y = "", 
          x = "", 
@@ -462,6 +462,10 @@ output$grafico_serie <- renderPlotly({
    ggplotly(grafico_1, tooltip = "text")  %>% 
     layout(legend = list(orientation = "h", x = 0.4, y = -0.6))
  })
+
+output$graf_pais_ti <- renderPlot(graf_pais_ti)
+output$graf_via_ti <- renderPlot(graf_via_ti)
+
   
 }
 

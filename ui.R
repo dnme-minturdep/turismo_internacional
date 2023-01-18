@@ -20,7 +20,7 @@ navbarPage(title = div(  #### NavBar #####
                         useWaiter(),
                         waiter_show_on_load(html = loading_screen, color = "white"),
                         h4(tags$p("El tablero de TURISMO INTERNACIONAL presenta las estimaciones de turismo receptivo y emisivo,
-                        permitiendo cuantificar y caracterizar a los viajes de visitantes internacionales (turistas y excursionistas).
+                        permitiendo cuantificar y caracterizar a los viajes de los visitantes internacionales (turistas y excursionistas).
                         En la pestaña ", tags$b("RECEPTIVO"), "puede encontrar información sobre los viajes de turistas no residentes y en la 
                         solapa", tags$b("EMISIVO"), "sobre los viajes de residentes. Para profundizar en la caracterización de los
                         turistas receptivos puede hacerlo en la pestaña", tags$b("PERFIL RECEPTIVO."), "Para más información del tablero 
@@ -37,7 +37,14 @@ navbarPage(title = div(  #### NavBar #####
                         br(), br(), br(),
                         
                         plotlyOutput("grafico_serie"),
-                        br(), br(), br(),
+                        helpText("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes.",  
+                                 style = "text-align: left;"),
+                        br(),
+                        fluidRow(
+                          column(7, plotOutput("graf_pais_ti", height = 500)),
+                          column(5, plotOutput('graf_via_ti', height = 500)),
+                          ),
+                        br(), 
                         h4("   Aquí puede acceder al último ", tags$a(href="https://tableros.yvera.tur.ar/internacional.html", "reporte "),
                            "e ", tags$a(href="https://www.yvera.tur.ar/sinta/informe/info/turismo-internacional", "informe mensual.")),
            )),
@@ -150,13 +157,16 @@ navbarPage(title = div(  #### NavBar #####
                           
                           # Create a new row for the table.
                           DT::dataTableOutput("table_receptivo") %>% 
-                            withSpinner(), br()
+                            withSpinner(), br(),
+                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes."),
+                          
                         ))),
+           #PERFIL RECEPTIVO ####
            tabPanel("PERFIL RECEPTIVO",
                     
                     div(id="container-info",
                         br(),
-                        h4("Esta pestaña permite profundizar en el perfil del turismo receptivo que egresó del país por los pasos de Ezeiza y Aeroparque, a partir de
+                        h4("Esta pestaña permite caracterizar el perfil del turismo receptivo que egresó del país por los pasos de Ezeiza y Aeroparque, a partir de
                            la Encuesta de Turismo Internacional (ETI), desde enero de 2019. Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
                            visitado en la Argentina."),
@@ -203,7 +213,7 @@ navbarPage(title = div(  #### NavBar #####
                             )
                           ),
                           h3("VISUALIZACIÓN"),
-                          h5("Selecciona el nivel de apertura con que se visualizan los datos"),
+                          h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable."),
                           fluidRow(
                             column(3,
                                    selectInput("agrup_p", "Mostrar por:", 
@@ -220,7 +230,10 @@ navbarPage(title = div(  #### NavBar #####
                           
                           # Create a new row for the table.
                           DT::dataTableOutput("tabla_eti"),
-                          h5(tags$b("Fuente: "), "Encuesta de Turismo Internacional (ETI)"),
+                          h5("Fuente: Encuesta de Turismo Internacional (ETI)."),
+                          h6("*Si la columna casos muestrales arroja una baja cantidad de casos, se debe reducir la 
+                          cantidad de variables consideradas,  ampliar el periodo temporal, o agrupar 
+                          localidades/provincias."),
                           h6("*La suma de turistas en las localidades de una provincia es mayor al total provincial, 
                           por los casos que visitan más de una ciudad en la misma provincia."),
                           h6("*Solamente se consideran las visitas a destinos con al menos un pernocte, excepto en 
@@ -295,7 +308,7 @@ navbarPage(title = div(  #### NavBar #####
                             ),
                           ),
                           h3("VISUALIZACIÓN"),
-                          h5("Selecciona el nivel de apertura con que se visualizan los datos"),
+                          h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable"),
                           fluidRow(
                             column(4,
                                    selectInput("agrup_e", "Mostrar por:", choices = c( 'Mes' = 'mes', 
@@ -317,7 +330,9 @@ navbarPage(title = div(  #### NavBar #####
                           
                           # Create a new row for the table.
                           DT::dataTableOutput("table_emisivo") %>% 
-                            withSpinner(), br()
+                            withSpinner(), br(),
+                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes."),
+                          
                         ))),
            
            #METODOLOGIA ####
