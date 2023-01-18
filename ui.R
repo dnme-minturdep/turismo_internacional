@@ -21,8 +21,8 @@ navbarPage(title = div(  #### NavBar #####
                         waiter_show_on_load(html = loading_screen, color = "white"),
                         h4(tags$p("El tablero de TURISMO INTERNACIONAL presenta las estimaciones de turismo receptivo y emisivo de  la Argentina,
                         permitiendo cuantificar y caracterizar a los viajes de los visitantes internacionales (turistas y excursionistas).
-                        En la pestaña ", tags$b("RECEPTIVO"), "puede encontrar información sobre los viajes de turistas no residentes en el país y en la 
-                        solapa", tags$b("EMISIVO"), "sobre los viajes de residentes al exterior. Para profundizar en la caracterización de los
+                        En la pestaña ", tags$b("RECEPTIVO"), "puede encontrar información sobre los viajes de visitantes no residentes en el país y en la 
+                        solapa", tags$b("EMISIVO"), "sobre los viajes de visitantes residentes al exterior. Para profundizar en la caracterización de los
                         turistas receptivos puede hacerlo en la pestaña", tags$b("PERFIL RECEPTIVO,"), " basada en los datos de la Encuesta de Turismo Inernacional (ETI). 
                         Para más información del tablero 
                         y las fuentes de datos diríjase a la sección de ", tags$b("METODOLOGÍA."))),
@@ -232,7 +232,7 @@ navbarPage(title = div(  #### NavBar #####
                           # Create a new row for the table.
                           DT::dataTableOutput("tabla_eti"),
                           h5("Fuente: Encuesta de Turismo Internacional (ETI)."),
-                          h6("*Si la columna casos muestrales arroja una baja cantidad de casos, se debe reducir la 
+                          h6("*Si la columna casos muestrales arroja menos de 50 casos, se sugiere reducir la 
                           cantidad de variables consideradas,  ampliar el periodo temporal, o agrupar 
                           localidades/provincias."),
                           h6("*La suma de turistas en las localidades de una provincia es mayor al total provincial, 
@@ -356,7 +356,8 @@ navbarPage(title = div(  #### NavBar #####
             Turismo Internacional (ETI), realizada por el INDEC y el Ministerio de Turismo y Deportes. La misma tiene 
             como objetivo caracterizar el flujo y medir el gasto de los visitantes no residentes durante su permanencia en 
             Argentina (turismo receptivo) y de los visitantes residentes en Argentina durante su permanencia en el exterior 
-            (turismo emisivo)."), 
+            (turismo emisivo). Solo se presenta información sobre estos aeropuertos debido a que el resto de los pasos donde se realiza la ETI, al tener menor cantidad muestral, no permite mostrar datos mensuales ni aperturas por país tan desagregadas. 
+                           De todas formas, los pasos Ezeiza y Aeroparque representan más del 75% de los turistas relevados por la encuesta. "), 
                         h4("   Para más detalles,", tags$a(href="https://www.yvera.tur.ar/estadistica/documentos/descarga/5dc0460bcfa3e053142696.pdf", "ver el documento metodológico "),
                            "de la estimación del turismo internacional de la Argentina, los apartados correspondientes del",
                            tags$a(href="https://dnme-minturdep.github.io/DT3_registros_adminsitrativos/situaci%C3%B3n-nacional.html", "Documento Técnico N°1"),
