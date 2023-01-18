@@ -149,21 +149,17 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
   
   graf_pais_ti <- ggplot(data_grafico_ac_pais, aes(x= pais_destino, y= turistas, fill = turismo)) +   
     geom_col(position = "dodge")+
-    #coord_flip()+
     geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
                position = position_dodge(width = 1),
-               vjust = -0.25,
-    )+
+               vjust = -0.25)+
     scale_fill_dnmye() +
-    scale_y_continuous(#breaks = seq(min(datos_grafico1_sel()$turistas), max(datos_grafico1_sel()$turistas), by = 200000),
-      #n.breaks = 8,
-      labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
-    #scale_x_discrete(limits = data_grafico_ac_pais$pais_destino[order(data_grafico_ac_pais$pais_destino)] )+
+    scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
     theme_minimal()+
     theme(legend.position = "bottom", 
-          axis.text.x =element_text (size =11,),
+          axis.text.x =element_text (size =11),
           axis.text.y = element_text(size = 11),
-          legend.text = element_text (size =11)) +
+          legend.text = element_text (size =11),
+          title = element_text (size =13)) +
     labs(title = "Viajes de turistas según país de residencia/destino",
          subtitle = glue("Total país. Acumulado a {Mes_ult} {year_ult}."),
          y = "", 
@@ -174,16 +170,15 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
     geom_col(position = "dodge") +
     geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
                position = position_dodge(width = 1),
-               vjust = -0.25,
-    )+
+               vjust = -0.25)+
     scale_fill_dnmye() +
-    scale_y_continuous(#breaks = seq(min(datos_grafico1_sel()$turistas), max(datos_grafico1_sel()$turistas), by = 200000),
-      #n.breaks = 8,
-      labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
+    scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
     theme_minimal()+
     theme(axis.text.x =element_text (size =11),
           axis.text.y = element_text(size = 11),
-          legend.position = "" )+
+          legend.position = "" ,
+          plot.caption  = element_text(size = 11),
+          title = element_text (size =12) )+
     labs(title = "Viajes de turistas según medio de transporte",
          subtitle = glue("Total país. Acumulado a {Mes_ult} {year_ult}."),
          y = "", 
