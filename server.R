@@ -410,6 +410,7 @@ function(input, output, session) {
                                                   etiquetas <- gsub ("alojamiento", "Tipo alojamiento principal en el país", etiquetas)
                                                   etiquetas <- gsub ("motivo_viaje", "Motivo de viaje", etiquetas)
                                                   etiquetas <- gsub ("Casos_Muestrales", "Casos Muestrales", etiquetas)
+                                                  etiquetas <- gsub ("Turistas", "Turistas no residentes", etiquetas)
                                                   
                                                   tabla
                                                 }, rownames= FALSE, colnames = etiquetas)
@@ -443,7 +444,7 @@ output$grafico_serie <- renderPlotly({
     scale_color_manual(values = c(cols_arg2[1], cols_arg2[6])) + 
     scale_x_date(date_breaks = "1 months", date_labels = "%b%y", expand = c(0,10))+ 
     scale_y_continuous(#breaks = seq(min(datos_grafico1_sel()$turistas), max(datos_grafico1_sel()$turistas), by = 200000),
-                       n.breaks = 8,
+                       n.breaks = 6,
                        labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
     theme_minimal()+
     theme(legend.position = "bottom", 

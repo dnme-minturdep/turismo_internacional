@@ -19,11 +19,12 @@ navbarPage(title = div(  #### NavBar #####
                     div(id= "container-info",
                         useWaiter(),
                         waiter_show_on_load(html = loading_screen, color = "white"),
-                        h4(tags$p("El tablero de TURISMO INTERNACIONAL presenta las estimaciones de turismo receptivo y emisivo,
+                        h4(tags$p("El tablero de TURISMO INTERNACIONAL presenta las estimaciones de turismo receptivo y emisivo de  la Argentina,
                         permitiendo cuantificar y caracterizar a los viajes de los visitantes internacionales (turistas y excursionistas).
-                        En la pestaña ", tags$b("RECEPTIVO"), "puede encontrar información sobre los viajes de turistas no residentes y en la 
-                        solapa", tags$b("EMISIVO"), "sobre los viajes de residentes. Para profundizar en la caracterización de los
-                        turistas receptivos puede hacerlo en la pestaña", tags$b("PERFIL RECEPTIVO."), "Para más información del tablero 
+                        En la pestaña ", tags$b("RECEPTIVO"), "puede encontrar información sobre los viajes de turistas no residentes en el país y en la 
+                        solapa", tags$b("EMISIVO"), "sobre los viajes de residentes al exterior. Para profundizar en la caracterización de los
+                        turistas receptivos puede hacerlo en la pestaña", tags$b("PERFIL RECEPTIVO,"), " basada en los datos de la Encuesta de Turismo Inernacional (ETI). 
+                        Para más información del tablero 
                         y las fuentes de datos diríjase a la sección de ", tags$b("METODOLOGÍA."))),
                         br(),
                         fluidRow(
@@ -128,7 +129,7 @@ navbarPage(title = div(  #### NavBar #####
                              los que salieron del país por un paso de la misma. "),
                           
                           h3("VISUALIZACIÓN"),
-                          h5("Selecciona el nivel de apertura con que se visualizan los datos"),
+                          h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable."),
                           fluidRow(
                             column(3,
                                    selectInput("agrup", "Mostrar por:", 
@@ -166,14 +167,14 @@ navbarPage(title = div(  #### NavBar #####
                     
                     div(id="container-info",
                         br(),
-                        h4("Esta pestaña permite caracterizar el perfil del turismo receptivo que egresó del país por los pasos de Ezeiza y Aeroparque, a partir de
+                        h4(glue("Esta pestaña permite caracterizar el perfil del turismo receptivo que egresó del país por los pasos de Ezeiza y Aeroparque, a partir de
                            la Encuesta de Turismo Internacional (ETI), desde enero de 2019. Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
-                           visitado en la Argentina."),
+                           visitado en la Argentina.")),
                         #h4(stringr::str_to_upper(paste("Datos desde enero 2019 hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                         fluidPage(
                           h3("FILTROS"),
-                          h5("Los siguientes comandos permiten filtrar los datos"),
+                          h5("Los siguientes comandos permiten filtrar los datos."),
                           fluidRow(
                             column(3,
                                    selectInput("anio",
