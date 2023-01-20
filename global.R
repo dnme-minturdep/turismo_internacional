@@ -156,15 +156,18 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
     scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
     theme_minimal()+
     theme(legend.position = "bottom", 
-          axis.text.x =element_text (size =11),
+          legend.justification = c(1,1),
+          axis.text.x =element_text (size =11, angle = 45, vjust = 0.6),
           axis.text.y = element_text(size = 11),
           legend.text = element_text (size =11),
-          title = element_text (size =13)) +
+          title = element_text (size =13),
+          plot.caption  = element_text(size = 11, hjust = 0)) +
     labs(title = "Viajes de turistas según país de residencia/destino",
          subtitle = glue("Total país. Acumulado a {Mes_ult} {year_ult}."),
          y = "", 
          x = "", 
-         fill = "")
+         fill = "",
+         caption =  "Fuente: Dirección Nacional de Mercados y Estadstica, Ministerio de Turismo y Deportes")
   
   graf_via_ti <- ggplot(data_grafico_ac_via, aes(x= via, y= turistas, fill = turismo)) +   
     geom_col(position = "dodge") +
@@ -177,15 +180,13 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
     theme(axis.text.x =element_text (size =11),
           axis.text.y = element_text(size = 11),
           legend.position = "" ,
-          plot.caption  = element_text(size = 11),
           title = element_text (size =12) )+
     labs(title = "Viajes de turistas según medio de transporte",
          subtitle = glue("Total país. Acumulado a {Mes_ult} {year_ult}."),
          y = "", 
          x = "", 
          fill = "",
-         color = "",
-         caption =  "Fuente: Dirección Nacional de Mercados y Estadstica, Ministerio de Turismo y Deportes")
+         color = "")
   
   
   
@@ -371,6 +372,10 @@ localidad <- localidad[, mes := .(fcase(mes == 1 ,"Enero", mes == 2 ,"Febrero",
                                 mes == 7 ,"Julio", mes == 8 ,"Agosto",  
                                 mes == 9 ,"Septiembre", mes == 10 ,"Octubre",
                                 mes == 11 ,"Noviembre", mes == 12 ,"Diciembre"))] 						
+
+#defino ultimo mes antes de pasarlo a factor
+mes_eti <- last(localidad$mes)
+year_eti <- last(localidad$anio)
 
 #reordeno niveles
 
