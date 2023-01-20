@@ -43,7 +43,7 @@ navbarPage(title = div(  #### NavBar #####
                         br(),
                         fluidRow(
                           column(7, plotOutput("graf_pais_ti", height = 500)),
-                          column(5, plotOutput('graf_via_ti', height = 500)),
+                          column(5, plotOutput('graf_via_ti', height = 390)),
                           ),
                         br(), 
                         h4("   Aquí puede acceder al último ", tags$a(href="https://tableros.yvera.tur.ar/internacional.html", "reporte "),
@@ -84,7 +84,7 @@ navbarPage(title = div(  #### NavBar #####
                             ),
                             column(3,
                                    selectInput("via",
-                                               "Medio de transporte:",
+                                               "Medio de transporte*:",
                                                c("Todos",
                                                  unique(data_receptivo$via)))
                                    )
@@ -114,19 +114,19 @@ navbarPage(title = div(  #### NavBar #####
                             ),
                             column(3,
                                    selectInput("limita",
-                                               "Limítrofe con:",
+                                               "Limítrofe con*:",
                                                choices = NULL)
                             ),
                             column(3,
                                    selectInput("paso_publ",
-                                               "Paso:", 
+                                               "Paso*:", 
                                                choices = NULL
                                                )
                                    ),
                           ),
                           h5("*Esta información refiere al paso de salida del país. Por ello, al filtrar una provincia o ruta natural no se 
                              obtiene información de la totalidad de turistas internacionales que la visitaron, sino sólo de 
-                             los que salieron del país por un paso de la misma. "),
+                             los que salieron del país por un paso de la misma."),
                           
                           h3("VISUALIZACIÓN"),
                           h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable."),
@@ -168,10 +168,9 @@ navbarPage(title = div(  #### NavBar #####
                     div(id="container-info",
                         br(),
                         h4(glue("Esta pestaña permite caracterizar el perfil del turismo receptivo que egresó del país por los pasos de Ezeiza y Aeroparque, a partir de
-                           la Encuesta de Turismo Internacional (ETI), desde enero de 2019. Se pueden analizar algunas características de los turistas (país de residencia,
+                           la Encuesta de Turismo Internacional (ETI), desde Enero de 2019 a {mes_eti} {year_eti}. Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
                            visitado en la Argentina.")),
-                        #h4(stringr::str_to_upper(paste("Datos desde enero 2019 hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                         fluidPage(
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos."),
@@ -230,7 +229,8 @@ navbarPage(title = div(  #### NavBar #####
                           h3("PERFIL DE TURISTAS NO RESIDENTES. EZEIZA-AEROPARQUE (ETI)"),
                           
                           # Create a new row for the table.
-                          DT::dataTableOutput("tabla_eti"),
+                          DT::dataTableOutput("tabla_eti") %>% 
+                            withSpinner(), br(),
                           h5("Fuente: Encuesta de Turismo Internacional (ETI)."),
                           h6("*Si la columna casos muestrales arroja menos de 50 casos, se sugiere reducir la 
                           cantidad de variables consideradas,  ampliar el periodo temporal, o agrupar 
@@ -278,7 +278,7 @@ navbarPage(title = div(  #### NavBar #####
                             ),
                             column(3,
                                    selectInput("via_e",
-                                               "Medio de transporte:",
+                                               "Medio de transporte*:",
                                                c("Todos",
                                                  unique(data_emisivo$via)))
                             ),),
@@ -291,23 +291,25 @@ navbarPage(title = div(  #### NavBar #####
                             ),
                             column(3,
                                    selectInput("prov_e",
-                                               "Provincia del paso:",
+                                               "Provincia del paso*:",
                                                choices = NULL)
                             ),
                             column(3,
                                    selectInput("limita_e",
-                                               "Limítrofe con:",
+                                               "Limítrofe con*:",
                                                choices = NULL)
                             ),
                             column(3,
                                    selectInput("paso_publ_e",
-                                               "Paso:", 
+                                               "Paso*:", 
                                                #multiple =TRUE,
                                                choices = NULL)
                                                
                                    
                             ),
                           ),
+                          h5("*Esta información refiere al paso de ingreso al país."),
+                          
                           h3("VISUALIZACIÓN"),
                           h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable"),
                           fluidRow(
@@ -347,7 +349,9 @@ navbarPage(title = div(  #### NavBar #####
              de datos."), 
                         h4("   La fuente principal de información de las pestañas RECEPTIVO y EMISIVO son los registros migratorios provistos por la Dirección Nacional de 
              Migraciones (DNM), cuyo análisis permite distinguir los viajes de turistas y excursionistas de otros tipos de viajeros internacionales 
-             (tripulantes, diplomáticos, etc.)."),
+             (tripulantes, diplomáticos, etc.). Los datos por paso refieren al de ingreso al país para el turismo emisivo y al de egreso de la Argentina para el turismo receptivo. 
+             Por ello, al filtrar una provincia o ruta natural no se obtiene información de la totalidad de turistas internacionales que la visitaron, sino sólo de 
+             los que salieron del país por un paso de la misma."),
                         h4("   Los datos por género y edad están disponibles desde noviembre de 2017."),
                         h4("   Los datos de excursionistas residentes por destino están disponibles desde agosto de 2021."),
                         br(),
@@ -356,8 +360,9 @@ navbarPage(title = div(  #### NavBar #####
             Turismo Internacional (ETI), realizada por el INDEC y el Ministerio de Turismo y Deportes. La misma tiene 
             como objetivo caracterizar el flujo y medir el gasto de los visitantes no residentes durante su permanencia en 
             Argentina (turismo receptivo) y de los visitantes residentes en Argentina durante su permanencia en el exterior 
-            (turismo emisivo). Solo se presenta información sobre estos aeropuertos debido a que el resto de los pasos donde se realiza la ETI, al tener menor cantidad muestral, no permite mostrar datos mensuales ni aperturas por país tan desagregadas. 
-                           De todas formas, los pasos Ezeiza y Aeroparque representan más del 75% de los turistas relevados por la encuesta. "), 
+            (turismo emisivo). Solo se presenta información sobre los turistas que salieron por estos aeropuertos debido a que los datos sobre excursionistas y sobre el resto de 
+            los pasos donde se realiza la ETI, al tener menor cantidad muestral, no permite mostrar datos mensuales ni aperturas por país tan desagregadas. 
+            De todas formas, los pasos Ezeiza y Aeroparque representan más del 75% de los turistas relevados por la encuesta."), 
                         h4("   Para más detalles,", tags$a(href="https://www.yvera.tur.ar/estadistica/documentos/descarga/5dc0460bcfa3e053142696.pdf", "ver el documento metodológico "),
                            "de la estimación del turismo internacional de la Argentina, los apartados correspondientes del",
                            tags$a(href="https://dnme-minturdep.github.io/DT3_registros_adminsitrativos/situaci%C3%B3n-nacional.html", "Documento Técnico N°1"),
