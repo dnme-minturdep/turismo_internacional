@@ -23,17 +23,17 @@ Mensual
 
 📌 Turismo Receptivo:  no residentes en Argentina que han visitado el país.
 
-# 📖 Documentación Metodológica
+📌 Perfil Turismo Receptivo:  no residentes en Argentina que han visitado el país, basado en los datos de la Encuesta de Turismo Inernacional (ETI)
 
-Todos los datos refieren a turistas, sin excursionistas.
+# 📖 Documentación Metodológica
 
 * La estimación del turismo internacional (receptivo y emisivo) para el total del país surge de distintas fuentes de datos.
 
-* La fuente principal de información son los registros migratorios provistos por la Dirección Nacional de Migraciones (DNM), cuyo análisis permite distinguir los turistas de otros tipos de viajeros internacionales (excursionistas, tripulantes, etc.).
+* La fuente principal de información de las pestañas RECEPTIVO y EMISIVO son los registros migratorios provistos por la Dirección Nacional de Migraciones (DNM), cuyo análisis permite distinguir los viajes de turistas y excursionistas de otros tipos de viajeros internacionales (tripulantes, diplomáticos, etc.). Los datos por paso refieren al de ingreso al país para el turismo emisivo y al de egreso de la Argentina para el turismo receptivo. 
 
-* Para los Aeropuertos Internacionales de Ezeiza, Córdoba, Mendoza, Aeroparque Jorge Newbery y el Paso Internacional Cristo Redentor (Los Libertadores y Horcones), la fuente de información es la Encuesta de Turismo Internacional (ETI), realizada por el INDEC y el Ministerio de Turismo y Deportes. La misma tiene como objetivo caracterizar el flujo y medir el gasto de los visitantes no residentes durante su permanencia en Argentina (turismo receptivo) y de los visitantes residentes en Argentina durante su permanencia en el exterior (turismo emisivo).
+* La fuente de información de la solapa PERFIL RECEPTIVO, que contiene información sobre el turismo receptivo en el Aeropuerto Internacional de Ezeiza y Aeroparque Jorge Newbery, es la Encuesta de Turismo Internacional (ETI), realizada por el INDEC y el Ministerio de Turismo y Deportes. La misma tiene como objetivo caracterizar el flujo y medir el gasto de los visitantes no residentes durante su permanencia en Argentina (turismo receptivo) y de los visitantes residentes en Argentina durante su permanencia en el exterior (turismo emisivo). 
 
-* Para más detalles, ver el [documento metodológico](https://www.yvera.tur.ar/estadistica/documentos/descarga/5dc0460bcfa3e053142696.pdf) de la estimación del turismo internacional de la Argentina, los apartados correspondientes del [Documento Técnico N°1](https://dnme-minturdep.github.io/DT3_registros_adminsitrativos/situaci%C3%B3n-nacional.html) sobre utilización de los registros migratorios y del [Documento Técnico N°3](https://dnme-minturdep.github.io/DT1_medicion_turismo/encuestas-nacionales.html#eti) sobre la ETI.
+* Para más detalles, ver el [documento metodológico](https://www.yvera.tur.ar/sinta/informe/documentos/descarga/5dc0460bcfa3e053142696.pdf) de la estimación del turismo internacional de la Argentina, los apartados correspondientes del [Documento Técnico N°1](https://dnme-minturdep.github.io/DT3_registros_adminsitrativos/situaci%C3%B3n-nacional.html) sobre utilización de los registros migratorios y del [Documento Técnico N°3](https://dnme-minturdep.github.io/DT1_medicion_turismo/encuestas-nacionales.html#eti) sobre la ETI.
 
 
 
