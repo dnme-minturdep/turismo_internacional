@@ -46,8 +46,17 @@ navbarPage(title = div(  #### NavBar #####
                           column(5, plotOutput('graf_via_ti', height = 390)),
                           ),
                         br(), 
-                        h4("   Aquí puede acceder al último ", tags$a(href="https://tableros.yvera.tur.ar/internacional.html", "reporte "),
-                           "e ", tags$a(href="https://www.yvera.tur.ar/sinta/informe/info/turismo-internacional", "informe mensual.")),
+                        h4("   Aquí puede acceder al último ", 
+                           tags$a(href="https://tableros.yvera.tur.ar/internacional.html", 
+                                  target = '_blank', 
+                                  "reporte, "),
+                           tags$a(href="https://www.yvera.tur.ar/sinta/informe/info/turismo-internacional", 
+                                  target = '_blank', 
+                                  "informe mensual,"), 
+                           tags$a(href="https://datos.yvera.gob.ar/dataset/turismo-internacional-total-pais", 
+                                  target = '_blank',
+                                  "y datos abiertos"),
+                           "de turismo internacional."),
            )),
            
            #RECEPTIVO ####
@@ -170,7 +179,15 @@ navbarPage(title = div(  #### NavBar #####
                         h4(glue("Esta pestaña permite caracterizar el perfil del turismo receptivo que egresó del país por los pasos de Ezeiza y Aeroparque, a partir de
                            la Encuesta de Turismo Internacional (ETI), desde Enero de 2019 a {mes_eti} {year_eti}. Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
-                           visitado en la Argentina.")),
+                           visitado en la Argentina. Aquí puede acceder a los  "), 
+                           tags$a(href="https://datos.yvera.gob.ar/dataset/encuesta-turismo-internacional", 
+                                  target = '_blank', 
+                                  "datos abiertos de la ETI"),
+                           " y a nuestra publicación en la ",
+                           tags$a(href="https://bitacora.yvera.tur.ar/posts/2022-05-31-intro-eti/", 
+                                  target = '_blank', 
+                                  "bitácora.")
+                           ),
                         fluidPage(
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos."),
@@ -180,6 +197,12 @@ navbarPage(title = div(  #### NavBar #####
                                                "Año:",
                                                c("Todos",
                                                  unique(as.character(localidad$anio))),selected = localidad[nrow(localidad),1], multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("trim",
+                                               "Trimestre:",
+                                               c("Todos",
+                                                 unique(as.character(localidad$trim))), selected = "Todos" , multiple =TRUE)
                             ),
                             column(3,
                                    selectInput("mes",
@@ -218,12 +241,13 @@ navbarPage(title = div(  #### NavBar #####
                             column(3,
                                    selectInput("agrup_p", "Mostrar por:", 
                                                choices = c( 'Mes' = 'mes', 
-                                                            'Provincia visitada' = 'provincia', 
-                                                            'Ciudad visitada' = 'ciudad',
+                                                            'Trimestre' = 'trim',
                                                             'Pais de residencia' = 'pais_origen', 
                                                             'Tipo de alojamiento principal en el país' = 'alojamiento', 
-                                                            'Motivo de viaje' = 'motivo_viaje'),
-                                               selected = "mes", multiple = TRUE)
+                                                            'Motivo de viaje' = 'motivo_viaje',
+                                                            'Provincia visitada' = 'provincia',
+                                                            'Ciudad visitada' = 'ciudad'),
+                                               selected = "trim", multiple = TRUE)
                             )),
                           
                           h3("PERFIL DE TURISTAS NO RESIDENTES. EZEIZA-AEROPARQUE (ETI)"),
@@ -232,15 +256,17 @@ navbarPage(title = div(  #### NavBar #####
                           DT::dataTableOutput("tabla_eti") %>% 
                             withSpinner(), br(),
                           h5("Fuente: Encuesta de Turismo Internacional (ETI)."),
-                          h6("*Si la columna casos muestrales arroja menos de 50 casos, se sugiere reducir la 
-                          cantidad de variables consideradas,  ampliar el periodo temporal, o agrupar 
-                          localidades/provincias."),
                           h6("*La suma de turistas en las localidades de una provincia es mayor al total provincial, 
                           por los casos que visitan más de una ciudad en la misma provincia."),
                           h6("*Solamente se consideran las visitas a destinos con al menos un pernocte, excepto en 
                           los casos de cruceros, donde puede no haber pernocte."),
-                          h6("*El gasto por destino visitado (localidad/provincia) está estimado como el gasto promedio 
-                             diario en el país por la cantidad de noches en el destino.")
+                          h6("**El gasto se calibra trimestralmente, por eso, ", tags$b("no se muestra a nivel mensual.")),
+                          h6("**El gasto por destino visitado (localidad/provincia) está estimado como el gasto promedio 
+                             diario en el país por la cantidad de noches en el destino."),
+                          h6("***Si la columna casos muestrales arroja menos de 50 casos, se sugiere reducir la 
+                          cantidad de variables consideradas,  ampliar el periodo temporal, o agrupar 
+                          localidades/provincias.")
+                          
                           )
                     )
            ),
@@ -363,11 +389,11 @@ navbarPage(title = div(  #### NavBar #####
             (turismo emisivo). Solo se presenta información sobre los turistas que salieron por estos aeropuertos debido a que los datos sobre excursionistas y sobre el resto de 
             los pasos donde se realiza la ETI, al tener menor cantidad muestral, no permite mostrar datos mensuales ni aperturas por país tan desagregadas. 
             De todas formas, los pasos Ezeiza y Aeroparque representan más del 75% de los turistas relevados por la encuesta."), 
-                        h4("   Para más detalles,", tags$a(href="https://www.yvera.tur.ar/estadistica/documentos/descarga/5dc0460bcfa3e053142696.pdf", "ver el documento metodológico "),
+                        h4("   Para más detalles,", tags$a(href="https://www.yvera.tur.ar/sinta/informe/documentos/descarga/5dc0460bcfa3e053142696.pdf", target = '_blank', "ver el documento metodológico "),
                            "de la estimación del turismo internacional de la Argentina, los apartados correspondientes del",
-                           tags$a(href="https://dnme-minturdep.github.io/DT3_registros_adminsitrativos/situaci%C3%B3n-nacional.html", "Documento Técnico N°1"),
+                           tags$a(href="https://dnme-minturdep.github.io/DT3_registros_adminsitrativos/situaci%C3%B3n-nacional.html", target = '_blank', "Documento Técnico N°1"),
                            "sobre utilización de los registros migratorios y del",
-                           tags$a(href="https://dnme-minturdep.github.io/DT1_medicion_turismo/encuestas-nacionales.html#eti", "Documento Técnico N°3"),
+                           tags$a(href="https://dnme-minturdep.github.io/DT1_medicion_turismo/encuestas-nacionales.html#eti", target = '_blank', "Documento Técnico N°3"),
                            "sobre la ETI."),
                         br(),
                         
