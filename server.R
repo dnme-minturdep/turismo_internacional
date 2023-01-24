@@ -191,6 +191,7 @@ function(input, output, session) {
                                                          
                                                          etiquetas <- gsub ("year", "Año", (colnames(tabla)))
                                                          etiquetas <- gsub ("mes", "Mes", etiquetas)
+                                                         etiquetas <- gsub ("trim", "Trimestre", etiquetas)
                                                          etiquetas <- gsub ("via", "Vía", etiquetas)
                                                          etiquetas <- gsub ("ruta_natural", "Ruta natural", etiquetas)
                                                          etiquetas <- gsub ("pais_agrupado", "País de residencia (agrup.)", etiquetas)
@@ -362,9 +363,14 @@ function(input, output, session) {
                                                                               ))),   
                                                 {
                                                   tabla <- localidad
+                                                  #filtros:
                                                   req(input$anio)
                                                   if (all(input$anio != "Todos")) {
                                                     tabla <- tabla[tabla$anio %in% input$anio,]		
+                                                  }
+                                                  req(input$trim)
+                                                  if (all(input$trim != "Todos")) {
+                                                    tabla <- tabla[tabla$trim %in% input$trim,]		
                                                   }
                                                   req(input$mes)
                                                   if (all(input$mes != "Todos")) {
@@ -386,17 +392,22 @@ function(input, output, session) {
                                                   if (all(input$pais_origen != "Todos")) {
                                                     tabla <- tabla[tabla$pais_origen %in% input$pais_origen,]		
                                                   }
+                                                  # Grupos
                                                   tabla <- tabla %>%
-                                                    group_by_at(.vars = c( "anio", "id", input$agrup_p)) %>%
+                                                    group_by_at(.vars = c( "anio", "trim", "id", input$agrup_p)) %>%
                                                     summarise (turistas = first(wpf),
                                                                casos =  first(p18_1), 
                                                                noches = sum(noches * wpf),
                                                                gasto = sum(gasto * wpf),                                                                      ) %>%
-                                                    group_by_at(.vars = c( "anio", input$agrup_p)) %>%
+                                                    group_by_at(.vars = c( "anio", "trim", input$agrup_p)) %>%
                                                     summarise (Turistas = sum(turistas),
                                                                Noches = sum(noches),
                                                                Gasto = round(sum(gasto),1),
                                                                Casos_Muestrales = sum(casos))
+                                                  #saco gasto al mostrar por mes
+                                                  if (any(input$agrup_p == "mes")) {
+                                                    tabla <- tabla %>% select (-Gasto)
+                                                  }
                                                   
                                                   #etiquetas receptivo según selección en ui.
                                                   
@@ -405,12 +416,12 @@ function(input, output, session) {
                                                   etiquetas <- gsub ("trim", "Trimestre", etiquetas)
                                                   etiquetas <- gsub ("provincia", "Provincia visitada", etiquetas)
                                                   etiquetas <- gsub ("ciudad", "Ciudad visitada", etiquetas)
-                                                  etiquetas <- gsub ("provincia", "Provincia visitada", etiquetas)
                                                   etiquetas <- gsub ("pais_origen", "País de residencia", etiquetas)
                                                   etiquetas <- gsub ("alojamiento", "Tipo alojamiento principal en el país", etiquetas)
                                                   etiquetas <- gsub ("motivo_viaje", "Motivo de viaje", etiquetas)
-                                                  etiquetas <- gsub ("Casos_Muestrales", "Casos Muestrales", etiquetas)
-                                                  etiquetas <- gsub ("Turistas", "Turistas no residentes", etiquetas)
+                                                  etiquetas <- gsub ("Turistas", "Turistas no residentes*", etiquetas)
+                                                  etiquetas <- gsub ("Gasto", "Gasto**", etiquetas)
+                                                  etiquetas <- gsub ("Casos_Muestrales", "Casos Muestrales***", etiquetas)
                                                   
                                                   tabla
                                                 }, rownames= FALSE, colnames = etiquetas)
