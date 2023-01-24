@@ -260,7 +260,7 @@ navbarPage(title = div(  #### NavBar #####
                           por los casos que visitan más de una ciudad en la misma provincia."),
                           h6("*Solamente se consideran las visitas a destinos con al menos un pernocte, excepto en 
                           los casos de cruceros, donde puede no haber pernocte."),
-                          h6("**El gasto se calibra trimestralmente, por eso, ", tags$b("no se muestra a nivel mensual.")),
+                          h6("**Los datos del gasto se calculan trimestralmente, por eso", tags$b("no se muestran a nivel mensual.")),
                           h6("**El gasto por destino visitado (localidad/provincia) está estimado como el gasto promedio 
                              diario en el país por la cantidad de noches en el destino."),
                           h6("***Si la columna casos muestrales arroja menos de 50 casos, se sugiere reducir la 

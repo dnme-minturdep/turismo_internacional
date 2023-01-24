@@ -420,7 +420,7 @@ function(input, output, session) {
                                                   etiquetas <- gsub ("alojamiento", "Tipo alojamiento principal en el país", etiquetas)
                                                   etiquetas <- gsub ("motivo_viaje", "Motivo de viaje", etiquetas)
                                                   etiquetas <- gsub ("Turistas", "Turistas no residentes*", etiquetas)
-                                                  etiquetas <- gsub ("Gasto", "Gasto**", etiquetas)
+                                                  etiquetas <- gsub ("Gasto", "Gasto en U$**", etiquetas)
                                                   etiquetas <- gsub ("Casos_Muestrales", "Casos Muestrales***", etiquetas)
                                                   
                                                   tabla
