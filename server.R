@@ -342,6 +342,8 @@ function(input, output, session) {
                                                               etiquetas_e <- gsub ("paso_publ" , "Paso", etiquetas_e)
                                                               etiquetas_e <- gsub ("prov", "Provincia del paso", etiquetas_e)
                                                               etiquetas_e <- gsub ("limita" ,"Limita con", etiquetas_e)
+                                                              etiquetas_e <- gsub ("sexo", "Género", etiquetas_e)
+                                                              etiquetas_e <- gsub ("grupoetario", "Tramos de edad", etiquetas_e)
                                                               etiquetas_e <- gsub ("tipo_visitante" ,"Tipo de visitante", etiquetas_e)
                                                               
                                                               tabla_e
@@ -377,7 +379,7 @@ function(input, output, session) {
                                                     tabla <- tabla[tabla$mes %in% input$mes,]		
                                                   }
                                                   req(input$provincia)
-                                                  if (all(input$provincia != "Todos")) {
+                                                  if (all(input$provincia != "Todas")) {
                                                     tabla <- tabla[tabla$provincia %in% input$provincia,]		
                                                   }
                                                   req(input$motivo_viaje)
@@ -392,14 +394,16 @@ function(input, output, session) {
                                                   if (all(input$pais_origen != "Todos")) {
                                                     tabla <- tabla[tabla$pais_origen %in% input$pais_origen,]		
                                                   }
+                                                  
+                                                  
                                                   # Grupos
                                                   tabla <- tabla %>%
-                                                    group_by_at(.vars = c( "anio", "trim", "id", input$agrup_p)) %>%
+                                                    group_by_at(.vars = c( "id", input$agrup_p)) %>%
                                                     summarise (turistas = first(wpf),
                                                                casos =  first(p18_1), 
                                                                noches = sum(noches * wpf),
                                                                gasto = sum(gasto * wpf),                                                                      ) %>%
-                                                    group_by_at(.vars = c( "anio", "trim", input$agrup_p)) %>%
+                                                    group_by_at(.vars = c( input$agrup_p)) %>%
                                                     summarise (Turistas = sum(turistas),
                                                                Noches = sum(noches),
                                                                Gasto = round(sum(gasto),1),
@@ -452,7 +456,7 @@ output$grafico_serie <- renderPlotly({
     geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) + 
     geom_line(size = 1.2 , alpha = 0.8) + 
     geom_point(size = 2.0, alpha = 0.8)+ 
-    scale_color_manual(values = c(cols_arg2[1], cols_arg2[6])) + 
+    scale_color_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
     scale_x_date(date_breaks = "1 months", date_labels = "%b%y", expand = c(0,10))+ 
     scale_y_continuous(#breaks = seq(min(datos_grafico1_sel()$turistas), max(datos_grafico1_sel()$turistas), by = 200000),
                        n.breaks = 6,

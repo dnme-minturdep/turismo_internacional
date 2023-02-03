@@ -8,7 +8,7 @@ library(waiter)
 library(shinycssloaders)
 library (readxl)									
 library(herramientas)
-library(comunicacion)
+#library(comunicacion)
 
 # language en DT::
 
@@ -152,7 +152,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
     geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
                position = position_dodge(width = 1),
                vjust = -0.25)+
-    scale_fill_dnmye() +
+    scale_fill_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
     scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
     theme_minimal()+
     theme(legend.position = "bottom", 
@@ -174,7 +174,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
     geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
                position = position_dodge(width = 1),
                vjust = -0.25)+
-    scale_fill_dnmye() +
+    scale_fill_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
     scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
     theme_minimal()+
     theme(axis.text.x =element_text (size =11),

@@ -213,8 +213,8 @@ navbarPage(title = div(  #### NavBar #####
                             column(3,
                                    selectInput("provincia",
                                                "Provincia visitada:",
-                                               c("Todos",
-                                                 sort(unique(as.character(localidad$provincia)))), selected = "Todos" , multiple =TRUE)
+                                               c("Todas",
+                                                 sort(unique(as.character(localidad$provincia)))), selected = "Todas" , multiple =TRUE)
                             ),
                             column(3,
                                    selectInput("pais_origen",
@@ -235,19 +235,21 @@ navbarPage(title = div(  #### NavBar #####
                                                  unique(as.character(localidad$motivo_viaje))), selected = "Todos" , multiple =TRUE)
                             )
                           ),
+                          
                           h3("VISUALIZACIÓN"),
                           h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable."),
                           fluidRow(
                             column(3,
                                    selectInput("agrup_p", "Mostrar por:", 
-                                               choices = c( 'Mes' = 'mes', 
+                                               choices = c( 'Año' = 'anio', 
                                                             'Trimestre' = 'trim',
+                                                            'Mes' = 'mes', 
                                                             'Pais de residencia' = 'pais_origen', 
                                                             'Tipo de alojamiento principal en el país' = 'alojamiento', 
                                                             'Motivo de viaje' = 'motivo_viaje',
                                                             'Provincia visitada' = 'provincia',
                                                             'Ciudad visitada' = 'ciudad'),
-                                               selected = "trim", multiple = TRUE)
+                                               selected = c("anio", "trim"), multiple = TRUE)
                             )),
                           
                           h3("PERFIL DE TURISTAS NO RESIDENTES. EZEIZA-AEROPARQUE (ETI)"),
