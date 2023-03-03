@@ -154,10 +154,20 @@ function(input, output, session) {
       paso <- limita()[limita()$paso_publ == input$paso_publ,  ]
     }
   })
-  
-  
+
   # TABLA RECEPTIVO
   
+#seleccion visitantes para titulo del cuadro:
+
+  seleccion_vis <- reactive ({
+    if (length(input$tipo_visitante) == 1) {
+      seleccion_vis <- paste0("VIAJES DE ", toupper(input$tipo_visitante), " NO RESIDENTES")
+    } else {
+      seleccion_vis <- "VIAJES DE VISITANTES NO RESIDENTES"
+    } 
+  })
+  
+  output$titulo <- renderText({seleccion_vis()})
   output$table_receptivo <- DT::renderDT(server = FALSE,
                                          
                                          DT::datatable(extensions = 'Buttons',
@@ -168,7 +178,7 @@ function(input, output, session) {
                                                                                        extend = 'collection',
                                                                                        buttons = c('csv', 'excel'),
                                                                                        text = 'Download'
-                                                                                     ))),   
+                                                                                     ))),
                                                        {
                                                          tabla <- paso()
                                                          req(input$tipo_visitante)
@@ -183,9 +193,19 @@ function(input, output, session) {
                                                            tabla <- tabla[tabla$mes %in% input$mes,]		
                                                          }
                                                          
+                                                         if (all(input$tipo_visitante == "Turistas")){
                                                          tabla <- tabla %>%
                                                            group_by_at(.vars = c( "year", input$agrup)) %>%
-                                                           summarise ("Viajes de visitantes" = round(sum(turistas))) 
+                                                           summarise ("Viajes de turistas" = round(sum(turistas))) 
+                                                         } else if (all(input$tipo_visitante == "Excursionistas")){
+                                                           tabla <- tabla %>%
+                                                             group_by_at(.vars = c( "year", input$agrup)) %>%
+                                                             summarise ("Viajes de excursionistas" = round(sum(turistas))) 
+                                                         } else {
+                                                           tabla <- tabla %>%
+                                                             group_by_at(.vars = c( "year", input$agrup)) %>%
+                                                             summarise ("Viajes de visitantes" = round(sum(turistas))) 
+                                                         } 
                                                          
                                                          #etiquetas receptivo según selección en ui.
                                                          
@@ -298,6 +318,18 @@ function(input, output, session) {
   
   
   # TABLA EMISIVO
+  #seleccion visitantes para titulo del cuadro:
+  
+  seleccion_vis_e <- reactive ({
+    if (length(input$tipo_visitante_e) == 1) {
+      seleccion_vis_e <- paste0("VIAJES DE ", toupper(input$tipo_visitante_e), " RESIDENTES")
+    } else {
+      seleccion_vis_e <- "VIAJES DE VISITANTES RESIDENTES"
+    } 
+  })
+  
+  output$titulo_e <- renderText({seleccion_vis_e()})
+  
   output$table_emisivo <- DT::renderDataTable(server = FALSE,
                                               
                                               DT::datatable(extensions = 'Buttons', 
@@ -327,10 +359,20 @@ function(input, output, session) {
                                                                 tabla_e <- tabla_e[tabla_e$destino == input$destino,]		
                                                               }
                                                               
+                                                              if (all(input$tipo_visitante_e == "Turistas")){
+                                                                tabla_e <- tabla_e %>%
+                                                                  group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                                  summarise ("Viajes de turistas" = round(sum(turistas))) 
+                                                              } else if (all(input$tipo_visitante_e == "Excursionistas")){
+                                                                tabla_e <- tabla_e %>%
+                                                                  group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                                  summarise ("Viajes de excursionistas" = round(sum(turistas))) 
+                                                              } else {
+                                                                tabla_e <- tabla_e %>%
+                                                                  group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                                  summarise ("Viajes de visitantes" = round(sum(turistas))) 
+                                                              } 
                                                               
-                                                              tabla_e <- tabla_e %>%
-                                                                group_by_at(.vars = c( "year", input$agrup_e)) %>%
-                                                                summarise ("Viajes de visitantes" = round(sum(turistas))) 
                                                               
                                                               #etiquetas emisivo según selección en ui.
                                                               

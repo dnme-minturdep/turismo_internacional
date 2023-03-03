@@ -28,37 +28,10 @@ options(scipen = 999)
 # datos turismo internacional ####
 
 datos <- readRDS("/srv/DataDNMYE/turismo_internacional/turismo_internacional_visitantes.rds")
+
 datos <- datos %>%
-  rename(year = 'anio')  %>% 
-  mutate(casos = str_replace_all(string = casos_ponderados, 
-                                 pattern = ",", replacement = "." ), 
-         sexo = str_replace_all(string = sexo, 
-                                 pattern = "SD", replacement = "Sin dato" ), 
-         sexo = str_replace_all(string = sexo, 
-                                pattern = "X", replacement = "X (identidad no binaria)" ), 
-         casos = as.numeric(casos),
-         paso_publ = str_replace_all(paso_publ, "Aero ", "Aeropuerto "), 
-         grupoetario = case_when(grupoetario == "Menores de 18 años" ~ "Entre 0 y 18 años",
-                                 grupoetario == "60 años y más" ~ "Más de 59 años",
-                                 grupoetario == "SD" ~ "Sin dato", 
-                                 TRUE ~ grupoetario)
-         
-         )
-
-# matcheo ruta natual
-
-ruta <- readRDS("pasos_rutas.RDS")
-ruta <- ruta %>% 
-  mutate (name = gsub("Ruta de las ", "", name),
-          name = gsub("Ruta de la ", "", name),
-          name = gsub("Ruta de los ", "", name),
-          name = gsub("Ruta del ", "", name),
-          name = gsub("la ", "", name), 
-          name = gsub("Los ", "", name)) %>% 
-  rename(ruta_natural =name) %>% 
-  select(paso_publ,ruta_natural)
-
-datos <- left_join(datos,ruta) 
+  rename(year = 'anio', 
+         casos = casos_ponderados)  
 
 #datos para graficos####
 
@@ -79,8 +52,8 @@ data_graficos <- data.table(complete (data_graficos,
 
 # elimino meses posteriores al ultimo, que se completaron por nesting.
 
-mes_ult_nro <- as_tibble(datos[nrow(datos),2])
-year_ult <- as_tibble(datos[nrow(datos),1])
+mes_ult_nro <- as_tibble(datos[nrow(datos),mes])
+year_ult <- as_tibble(datos[nrow(datos),year])
 
 data_graficos <- data_graficos %>%
   filter ((year < as.numeric(year_ult)) | (year == as.numeric(year_ult) 
@@ -103,7 +76,7 @@ data_grafico_ac_via <- datos %>%
   filter (year == as.numeric(year_ult), tipo_visitante == "Turistas") %>% 
   rename(turismo = turismo_internac) %>% 
   group_by(turismo, via) %>% 
-  summarise(turistas = round(sum(casos_ponderados))) %>% 
+  summarise(turistas = round(sum(casos))) %>% 
   ungroup() 
 
 data_grafico_ac_total <- data_grafico_ac_via %>%
@@ -208,6 +181,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
 localidad <- readRDS("/srv/DataDNMYE/eti/bases/eti_localidad.rds")
 
 #defino ultimo mes antes de pasarlo a factor
+
 mes_eti <- last(localidad$mes)
 year_eti <- last(localidad$anio)
 

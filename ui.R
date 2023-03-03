@@ -159,11 +159,8 @@ navbarPage(title = div(  #### NavBar #####
                             
                             
                           ),
-                          h3("VIAJES DE VISITANTES NO RESIDENTES"),
                           
-                          
-                          
-                          
+                          textOutput(outputId = "titulo", container = h3),
                           
                           # Create a new row for the table.
                           DT::dataTableOutput("table_receptivo") %>% 
@@ -356,7 +353,7 @@ navbarPage(title = div(  #### NavBar #####
                             ),
                             
                           ),
-                          h3("VIAJES DE VISITANTES RESIDENTES"),
+                          textOutput(outputId = "titulo_e", container = h3),
                           
                           
                           # Create a new row for the table.
