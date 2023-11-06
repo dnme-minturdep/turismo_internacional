@@ -363,6 +363,91 @@ navbarPage(title = div(  #### NavBar #####
                           
                         ))),
            
+           #SERIE ####
+           tabPanel("SERIE HISTÓRICA",
+                    
+                    div(id= "container-info",
+                        useWaiter(),
+                        waiter_show_on_load(html = loading_screen, color = "white"),
+                        h4(tags$p(" En esta sección se presenta la serie histórica de ",  tags$b("turismo receptivo y emisivo "), 
+                        "de viajes, gasto y pernoctes de turistas y excursionistas . Se incluyen los indicadores de estadía media, 
+                         gasto por viaje y gasto promedio diario")), 
+                        br(),
+                        
+                        
+                        fluidPage(
+                          h3("FILTROS"),
+                          h5("Los siguientes comandos permiten filtrar los datos"),
+                          # Create a new Row in the UI for selectInputs
+                          fluidRow(
+                            column(2,
+                                   radioButtons("tipo_turismo_g",
+                                                      label = "Turismo:",
+                                                      choices = c("Receptivo", 
+                                                                  "Emisivo"),
+                                                      selected = "Receptivo")
+                            ),
+                            
+                            column(2,
+                                   checkboxGroupInput("tipo_visitante_g",
+                                                      label = "Viajes de:",
+                                                      choices = c("Turistas", 
+                                                                  "Excursionistas"),
+                                                      selected = "Turistas")
+                            ),
+                            
+                            column(2,
+                                   selectInput("year_g",
+                                               "Año:",
+                                               c("Todos",
+                                                 unique(as.character(gasto$anio))),
+                                               selected = gasto[nrow(gasto),1], multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("trim_g",
+                                               "Trimestre:",
+                                               c("Todos",
+                                                 unique(as.character(gasto$trim))), selected = "Todos" , multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("pais_agrupado_g",
+                                               "País de residencia/destino:",
+                                               c("Todos",
+                                                 sort(unique(gasto$pais_agrupado))))
+                            ),
+                            
+                            
+                          ),
+                          
+                          h3("VISUALIZACIÓN"),
+                          h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable"),
+                          fluidRow(
+                            column(4,
+                                   selectInput("agrup_g", "Mostrar por:", choices = c( 'Trimestre' = 'trim',
+                                                                                       'Tipo de visitante' = 'tipo_visitante', 
+                                                                                       'País de residencia/destino'= 'pais_agrupado'), 
+                                                                                       
+                                               selected = "trim", multiple = TRUE)
+                                               )
+                                   ),
+                          
+                          h3("Serie histórica"),
+                          
+                          # Create a new row for the table.
+                          DT::dataTableOutput("tabla_serie") %>% 
+                            withSpinner(), br(),
+                          h6("* Gasto en millones de U$. No incluye gasto en pasaje internacional."),
+                          h6("** Estadía media en noches."),
+                          h6("*** Gasto en U$.No incluye gasto en pasaje internacional."),
+                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes."),
+                          
+                         
+                          )
+                        )
+           ),
+                            
+                        
+
            #METODOLOGIA ####
            tabPanel("METODOLOGÍA",
                     

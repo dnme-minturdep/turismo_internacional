@@ -438,6 +438,8 @@ function(input, output, session) {
                                                   }
                                                   
                                                   
+                                                  
+                                                  
                                                   # Grupos
                                                   tabla <- tabla %>%
                                                     group_by_at(.vars = c( "id", input$agrup_p)) %>%
@@ -473,7 +475,67 @@ function(input, output, session) {
                                                 }, rownames= FALSE, colnames = etiquetas)
   )
   
-# GRAFICOS. 
+  # SERIE ####  
+  
+  output$tabla_serie<- DT::renderDT(server = FALSE,
+                                  
+                                  DT::datatable(extensions = 'Buttons',
+                                                options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
+                                                               dom = 'lfrtipB',
+                                                               buttons = list('copy',
+                                                                              list(
+                                                                                extend = 'collection',
+                                                                                buttons = c('csv', 'excel'),
+                                                                                text = 'Download'
+                                                                              ))),
+                                                {
+                                                  tabla <- gasto
+                                                  #filtros:
+                                                  req(input$tipo_turismo_g)
+                                                  tabla <- tabla[tabla$residencia == input$tipo_turismo_g,]	
+                                                  
+                                                  req(input$tipo_visitante_g)
+                                                  tabla <- tabla[tabla$tipo_visitante %in% input$tipo_visitante_g,]		
+                                                  
+                                                  req(input$year_g)
+                                                  if (all(input$year_g != "Todos")) {
+                                                    tabla <- tabla[tabla$anio %in% input$year_g,]		
+                                                  }
+                                                  req(input$trim_g)
+                                                  if (all(input$trim_g != "Todos")) {
+                                                    tabla <- tabla[tabla$trim %in% input$trim_g,]		
+                                                  }
+                                                  req(input$pais_agrupado_g)
+                                                  if (all(input$pais_agrupado_g != "Todos")) {
+                                                    tabla <- tabla[tabla$pais_agrupado %in% input$pais_agrupado_g,]		
+                                                  }
+                                                  
+                                                  tabla <- tabla %>%
+                                                    group_by_at(.vars = c( "anio", input$agrup_g)) %>%
+                                                    summarise ("Viajes" = round(sum(casos_ponderados)), 
+                                                               "Gasto" = round(sum(gasto),1),
+                                                               "Pernoctaciones" = round(sum(pernoctes)), 
+                                                               "Estadía media**" = round(Pernoctaciones/Viajes, 1),
+                                                               "Gasto promedio por viaje*" = round(Gasto/Viajes*1000000,1),
+                                                               "Gasto promedio diario***" = round(Gasto/Pernoctaciones*1000000, 1)) %>% 
+                                                    rename ("Gasto*" = Gasto)
+                                                
+                                                  
+                                                  etiquetas_g <- gsub ("anio", "Año", (colnames(tabla)))
+                                                  etiquetas_g <- gsub ("trim", "Trimestre", etiquetas_g)
+                                                  etiquetas_g <- gsub ("tipo_visitante", "Tipo de visitante", etiquetas_g)
+                                                  etiquetas_g <- gsub ("pais_agrupado", "País residencia/destino", etiquetas_g)
+                                                  #etiquetas_g <- gsub ("Gasto", "Gasto*", etiquetas_g)
+                                                  #etiquetas_g <- gsub ("Gasto*promedio por viaje", "Gasto promedio por viaje*", etiquetas_g)
+                                                  #etiquetas_g <- gsub ("Estadía media", "Estadía media**", etiquetas_g)
+                                                  #etiquetas_g <- gsub ("Gasto*promedio diario", "Gasto promedio diario***", etiquetas_g)
+                                                  
+                                                  tabla
+                                                  } , rownames= FALSE, colnames = etiquetas_g)
+                                  )
+                                                
+  
+# GRAFICOS ####
   
 datos_grafico1_sel <- eventReactive(input$pais_agrup_graf,{
     req(input$pais_agrup_graf)
@@ -523,6 +585,10 @@ output$grafico_serie <- renderPlotly({
 
 output$graf_pais_ti <- renderPlot(graf_pais_ti)
 output$graf_via_ti <- renderPlot(graf_via_ti)
+
+
+
+
 
   
 }

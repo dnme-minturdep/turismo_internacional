@@ -27,7 +27,7 @@ options(scipen = 999)
 
 # datos turismo internacional ####
 
-datos <- readRDS("/srv/DataDNMYE/turismo_internacional/turismo_internacional_visitantes.rds")
+datos <- readRDS("/srv/DataDNMYE/turismo_internacional/bases_proceso/turismo_internacional_visitantes.rds")
 
 datos <- datos %>%
   rename(year = 'anio', 
@@ -178,7 +178,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
 
 # datos eti ####
   
-localidad <- readRDS("/srv/DataDNMYE/eti/bases/eti_localidad.rds")
+localidad <- readRDS("/srv/DataDNMYE/eti/bases/eti_localidad_previo_publ.rds")
 
 #defino ultimo mes antes de pasarlo a factor
 
@@ -197,3 +197,21 @@ loading_screen <- tagList(
   h3("Cargando...", style = "color:gray;"),
   img(src = "https://tableros.yvera.tur.ar/recursos/logo_mintur_color.png", height = "200px")
 )
+
+# serie historica gasto ####
+
+gasto <- readRDS("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_gasto_visitantes.rds")
+
+
+gasto <- gasto %>% 
+  mutate(trim = as.character(trim), 
+         trim= if_else(trim == "0", "Sin dato", trim), 
+         gasto = if_else(trim == 2 & anio == 2020, 0, gasto),
+         pernoctes = if_else(trim == 2 & anio == 2020, 0, pernoctes))
+
+#ver que hacemos con trim 2 2020!
+#base con  datos de trim 2 2020 isna en casos. 
+#Pasados pernoctes y gasto de trim 2 a 0
+#se puede agregar datos por mes y via, con SD en gasto.
+
+trim_ult_gasto <- as_tibble(gasto[nrow(gasto),2])
