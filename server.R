@@ -536,7 +536,8 @@ function(input, output, session) {
                                                 
   
 # GRAFICOS ####
-  
+## 1. Por pais #####
+    
 datos_grafico1_sel <- eventReactive(input$pais_agrup_graf,{
     req(input$pais_agrup_graf)
   if (input$pais_agrup_graf == "Todos") {
@@ -558,8 +559,8 @@ output$grafico_serie <- renderPlotly({
                                                                                                                             decimal.mark = ","), 
                                                                                                        '<br>Turismo:',turismo)))+   
     geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) + 
-    geom_line(size = 1.2 , alpha = 0.8) + 
-    geom_point(size = 2.0, alpha = 0.8)+ 
+    geom_line(size = 0.5 , alpha = 0.8) + 
+    geom_point(size = 1.0, alpha = 0.8)+ 
     scale_color_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
     scale_x_date(date_breaks = "1 months", date_labels = "%b%y", expand = c(0,10))+ 
     scale_y_continuous(#breaks = seq(min(datos_grafico1_sel()$turistas), max(datos_grafico1_sel()$turistas), by = 200000),
@@ -584,8 +585,20 @@ output$grafico_serie <- renderPlotly({
  })
 
 output$graf_pais_ti <- renderPlot(graf_pais_ti)
+
 output$graf_via_ti <- renderPlot(graf_via_ti)
 
+## 2. Gasto #####
+
+gasto_grafico <- gasto %>% 
+  filter(tipo_visitante == "Turistas") %>% 
+  group_by(anio,tipo_visitante, residencia) %>% 
+  summarise (Viajes = round(sum(casos_ponderados)), 
+             Gasto = round(sum(gasto),1),
+             Pernoctaciones = round(sum(pernoctes))) %>% 
+  ungroup()
+             
+# GRAFICO SERIE 1990
 
 
 

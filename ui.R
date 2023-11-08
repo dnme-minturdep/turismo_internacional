@@ -15,18 +15,19 @@ navbarPage(title = div(  #### NavBar #####
            
            #RESUMEN ####
            tabPanel("RESUMEN",
-                    
                     div(id= "container-info",
                         useWaiter(),
                         waiter_show_on_load(html = loading_screen, color = "white"),
-                        h4(tags$p("El tablero de TURISMO INTERNACIONAL presenta las estimaciones de turismo receptivo y emisivo de  la Argentina,
-                        permitiendo cuantificar y caracterizar a los viajes de los visitantes internacionales (turistas y excursionistas).
-                        En la pestaña ", tags$b("RECEPTIVO"), "puede encontrar información sobre los viajes de visitantes no residentes en el país y en la 
-                        solapa", tags$b("EMISIVO"), "sobre los viajes de visitantes residentes al exterior. Para profundizar en la caracterización de los
-                        turistas receptivos puede hacerlo en la pestaña", tags$b("PERFIL RECEPTIVO,"), " basada en los datos de la Encuesta de Turismo Inernacional (ETI). 
-                        Para más información del tablero 
-                        y las fuentes de datos diríjase a la sección de ", tags$b("METODOLOGÍA."))),
+                        h5(tags$p("El tablero de TURISMO INTERNACIONAL presenta las estimaciones de turismo receptivo y emisivo de  la Argentina,
+                        permitiendo cuantificar y caracterizar a los viajes de los visitantes internacionales (turistas y excursionistas). En cada pestaña puede acceder a distinta información.")),
+                        h5(tags$ul(tags$p(tags$b("• RECEPTIVO:"),"Viajes de visitantes no residentes en el país."), 
+                                   tags$p(tags$b("• EMISIVO:"), "Viajes de visitantes residentes al exterior."),
+                                   tags$p(tags$b("• PERFIL RECEPTIVO:"), "Caracterización de los turistas receptivos, basada en los datos de la Encuesta de Turismo Internacional (ETI)."),
+                                   tags$p(tags$b("• SERIE HISTÓRICA:"), "Serie desde 1990 de viajes, gasto y pernoctes de visitantes residentes y no residentes, basada en estimaciones propias y en información de Cuentas Internacionales del INDEC."),
+                                   tags$p(tags$b("• METODOLOGÍA:"), "Detalles metodológicos y fuentes de datos."))
+                           ),
                         br(),
+                        
                         fluidRow(
                           
                           column(4, selectInput("pais_agrup_graf",
@@ -46,7 +47,7 @@ navbarPage(title = div(  #### NavBar #####
                           column(5, plotOutput('graf_via_ti', height = 390)),
                           ),
                         br(), 
-                        h4("   Aquí puede acceder al último ", 
+                        h5("   Aquí puede acceder al último ", 
                            tags$a(href="https://tableros.yvera.tur.ar/internacional.html", 
                                   target = '_blank', 
                                   "reporte, "),
@@ -64,7 +65,7 @@ navbarPage(title = div(  #### NavBar #####
                     
                     div(id="container-info",
                         br(),
-                        h4(stringr::str_to_upper(paste("TURISMO RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
+                        h5(stringr::str_to_upper(paste("TURISMO RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                         fluidPage(
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos"),
@@ -173,7 +174,7 @@ navbarPage(title = div(  #### NavBar #####
                     
                     div(id="container-info",
                         br(),
-                        h4(glue("Esta pestaña permite caracterizar el perfil del turismo receptivo que egresó del país por los pasos de Ezeiza y Aeroparque, a partir de
+                        h5(glue("Esta pestaña permite caracterizar el perfil del turismo receptivo que egresó del país por los pasos de Ezeiza y Aeroparque, a partir de
                            la Encuesta de Turismo Internacional (ETI), desde Enero de 2019 a {mes_eti} {year_eti}. Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
                            visitado en la Argentina. Aquí puede acceder a los  "), 
@@ -275,7 +276,7 @@ navbarPage(title = div(  #### NavBar #####
                     div(id="container-info",
                         
                         br(),
-                        h4(stringr::str_to_upper(paste("TURISMO EMISIVO- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
+                        h5(stringr::str_to_upper(paste("TURISMO EMISIVO- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
                         fluidPage(
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos"),
@@ -369,9 +370,9 @@ navbarPage(title = div(  #### NavBar #####
                     div(id= "container-info",
                         useWaiter(),
                         waiter_show_on_load(html = loading_screen, color = "white"),
-                        h4(tags$p(" En esta sección se presenta la serie histórica de ",  tags$b("turismo receptivo y emisivo "), 
+                        h5(tags$p(" En esta sección se presenta la serie histórica de ",  tags$b("turismo receptivo y emisivo "), 
                         "de viajes, gasto y pernoctes de turistas y excursionistas . Se incluyen los indicadores de estadía media, 
-                         gasto por viaje y gasto promedio diario")), 
+                         gasto promedio por viaje y gasto promedio diario")), 
                         br(),
                         
                         
@@ -455,17 +456,17 @@ navbarPage(title = div(  #### NavBar #####
                         br(),
                         h3("NOTAS TÉCNICAS"),
                         br(),
-                        h4("   La estimación del turismo internacional (receptivo y emisivo) para el total del país surge de distintas fuentes 
+                        h5("   La estimación del turismo internacional (receptivo y emisivo) para el total del país surge de distintas fuentes 
              de datos."), 
-                        h4("   La fuente principal de información de las pestañas RECEPTIVO y EMISIVO son los registros migratorios provistos por la Dirección Nacional de 
+                        h5("   La fuente principal de información de las pestañas RECEPTIVO y EMISIVO son los registros migratorios provistos por la Dirección Nacional de 
              Migraciones (DNM), cuyo análisis permite distinguir los viajes de turistas y excursionistas de otros tipos de viajeros internacionales 
              (tripulantes, diplomáticos, etc.). Los datos por paso refieren al de ingreso al país para el turismo emisivo y al de egreso de la Argentina para el turismo receptivo. 
              Por ello, al filtrar una provincia o ruta natural no se obtiene información de la totalidad de turistas internacionales que la visitaron, sino sólo de 
              los que salieron del país por un paso de la misma."),
-                        h4("   Los datos por género y edad están disponibles desde noviembre de 2017."),
-                        h4("   Los datos de excursionistas residentes por destino están disponibles desde agosto de 2021."),
+                        h5("   Los datos por género y edad están disponibles desde noviembre de 2017."),
+                        h5("   Los datos de excursionistas residentes por destino están disponibles desde agosto de 2021."),
                         br(),
-                        h4("   La fuente de información de la solapa PERFIL RECEPTIVO, que contiene información sobre el turismo receptivo en el Aeropuerto Internacional de 
+                        h5("   La fuente de información de la solapa PERFIL RECEPTIVO, que contiene información sobre el turismo receptivo en el Aeropuerto Internacional de 
                         Ezeiza y Aeroparque Jorge Newbery, es la Encuesta de 
             Turismo Internacional (ETI), realizada por el INDEC y el Ministerio de Turismo y Deportes. La misma tiene 
             como objetivo caracterizar el flujo y medir el gasto de los visitantes no residentes durante su permanencia en 
@@ -473,7 +474,10 @@ navbarPage(title = div(  #### NavBar #####
             (turismo emisivo). Solo se presenta información sobre los turistas que salieron por estos aeropuertos debido a que los datos sobre excursionistas y sobre el resto de 
             los pasos donde se realiza la ETI, al tener menor cantidad muestral, no permite mostrar datos mensuales ni aperturas por país tan desagregadas. 
             De todas formas, los pasos Ezeiza y Aeroparque representan más del 75% de los turistas relevados por la encuesta."), 
-                        h4("   Para más detalles,", tags$a(href="https://www.yvera.tur.ar/sinta/informe/documentos/descarga/5dc0460bcfa3e053142696.pdf", target = '_blank', "ver el documento metodológico "),
+                        h5("   Los datos de la serie histórica de viajes son estimaciones propias hasta el 2021 siendo,  a partir de 2022, elaboradas en conjunto con INDEC.
+                        En tanto, los datos de gasto y pernoctaciones desde 2016 surgen de estimaciones elaboradas por la Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (DNESEyCI) del INDEC. Tanto en 2013 como en 2016 dicho organismo realizó mejoras en las estimaciones de los datos, gracias a un conjunto de revisiones metodológicas y a una mayor explotación de los datos migratorios. Para poder tener una serie comparable, desde la DNMyE 
+                        se realizó un empalme de la serie a partir de las variaciones trimestrales por medio de transporte y país de la serie anterior."),
+                        h5("   Para más detalles,", tags$a(href="https://www.yvera.tur.ar/sinta/informe/documentos/descarga/5dc0460bcfa3e053142696.pdf", target = '_blank', "ver el documento metodológico "),
                            "de la estimación del turismo internacional de la Argentina, los apartados correspondientes del",
                            tags$a(href="https://dnme-minturdep.github.io/DT3_registros_adminsitrativos/situaci%C3%B3n-nacional.html", target = '_blank', "Documento Técnico N°1"),
                            "sobre utilización de los registros migratorios y del",
@@ -483,7 +487,7 @@ navbarPage(title = div(  #### NavBar #####
                         
                         h3 ("DEFINICIONES Y CONCEPTOS"),
                         br(),
-                        h4(tags$ul(tags$p(tags$b(" • Viaje"),": Refiere a todo desplazamiento de una persona a un lugar fuera de su entorno habitual, por cualquier 
+                        h5(tags$ul(tags$p(tags$b(" • Viaje"),": Refiere a todo desplazamiento de una persona a un lugar fuera de su entorno habitual, por cualquier 
                     motivo y duración, desde el momento de su salida hasta su regreso."),
                                    tags$p(tags$b(" • Viaje receptor"),": Es el viaje a un país efectuado por una persona no residente desde el
 momento en que llega a un país hasta el momento en que sale del mismo."),
