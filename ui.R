@@ -65,7 +65,7 @@ navbarPage(title = div(  #### NavBar #####
                     
                     div(id="container-info",
                         br(),
-                        h5(stringr::str_to_upper(paste("TURISMO RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
+                        h4(stringr::str_to_upper(paste("TURISMO RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                         fluidPage(
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos"),
@@ -174,6 +174,7 @@ navbarPage(title = div(  #### NavBar #####
                     
                     div(id="container-info",
                         br(),
+                        h4("PERFIL TURISMO RECEPTIVO"),
                         h5(glue("Esta pestaña permite caracterizar el perfil del turismo receptivo que egresó del país por los pasos de Ezeiza y Aeroparque, a partir de
                            la Encuesta de Turismo Internacional (ETI), desde Enero de 2019 a {mes_eti} {year_eti}. Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
@@ -274,9 +275,8 @@ navbarPage(title = div(  #### NavBar #####
            tabPanel("EMISIVO",
                     
                     div(id="container-info",
-                        
                         br(),
-                        h5(stringr::str_to_upper(paste("TURISMO EMISIVO- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
+                        h4(stringr::str_to_upper(paste("TURISMO EMISIVO- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
                         fluidPage(
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos"),
@@ -360,7 +360,7 @@ navbarPage(title = div(  #### NavBar #####
                           # Create a new row for the table.
                           DT::dataTableOutput("table_emisivo") %>% 
                             withSpinner(), br(),
-                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes."),
+                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes"),
                           
                         ))),
            
@@ -368,11 +368,12 @@ navbarPage(title = div(  #### NavBar #####
            tabPanel("SERIE HISTÓRICA",
                     
                     div(id= "container-info",
-                        useWaiter(),
-                        waiter_show_on_load(html = loading_screen, color = "white"),
+                        br(),
+                        h4("SERIE HISTÓRICA DE VIAJES, GASTO Y PERNOCTES"),
+                        h5(tags$p(glue("Datos hasta trimestre {trim_ult_gasto} del año {anio_ult_gasto}."))), 
                         h5(tags$p(" En esta sección se presenta la serie histórica de ",  tags$b("turismo receptivo y emisivo "), 
                         "de viajes, gasto y pernoctes de turistas y excursionistas . Se incluyen los indicadores de estadía media, 
-                         gasto promedio por viaje y gasto promedio diario")), 
+                         gasto promedio por viaje y gasto promedio diario.")),
                         br(),
                         
                         
@@ -432,7 +433,7 @@ navbarPage(title = div(  #### NavBar #####
                                                )
                                    ),
                           
-                          h3("Serie histórica"),
+                          h3("TABLA"),
                           
                           # Create a new row for the table.
                           DT::dataTableOutput("tabla_serie") %>% 
@@ -440,12 +441,55 @@ navbarPage(title = div(  #### NavBar #####
                           h6("* Gasto en millones de U$. No incluye gasto en pasaje internacional."),
                           h6("** Estadía media en noches."),
                           h6("*** Gasto en U$.No incluye gasto en pasaje internacional."),
-                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes."),
+                          h6("Nota: Hasta 1994 no se dispone de datos a nivel trimestral. Hasta 2003 no hay datos de excursionistas por país de residencia/destino."),
+                          h5("Fuente: Dirección Nacional de Mercados y Estadistica (Ministerio de Turismo y Deportes) y Cuentas Internacionales (INDEC)"),
+                          br(),
                           
-                         
-                          )
-                        )
-           ),
+                          h3("GRÁFICO INTERACTIVO"),
+                          fluidRow(
+                                                      
+                            
+                            column(3,
+                                   radioButtons("metrica",
+                                                label = "Métrica:",
+                                                choiceNames =  list("Viajes","Gasto","Estadia media", "Gasto por viaje","Gasto diario"),
+                                                choiceValues = list("Viajes","Gasto","Estadia_media", "Gasto_viaje","Gasto_diario"),
+                                                #choices = c("Viajes","Gasto","Estadia_media", "Gasto_viaje","Gasto_diario"),
+                                                selected = "Viajes")
+                            ),
+                            
+                            column(2,
+                                   radioButtons("periodo",
+                                                label = "Serie:",
+                                                choices = c("Anual","Trimestral"),
+                                                selected = "Anual")
+                            ),
+                            
+                            column(3,
+                                   checkboxGroupInput("tipo_visitante_graf",
+                                                      label = "Tipo de visitante:",
+                                                      choices = c("Turistas", 
+                                                                  "Excursionistas"),
+                                                      selected = "Turistas")
+                            ),
+                            
+                            column(3,
+                                   selectInput("pais_agrup_graf_serie",
+                                               "País de residencia/destino:",
+                                               c("Todos",
+                                                 sort(unique(data_receptivo$pais_agrupado))))
+                            ),
+                          ),
+                          
+                          plotlyOutput("grafico_gasto"),
+                          helpText("Nota: Hasta 1994 no se dispone de datos a nivel trimestral. Hasta 2003 no hay datos de excursionistas por país de residencia/destino.",  
+                                   style = "text-align: left;"),
+                          helpText("Fuente: Dirección Nacional de Mercados y Estadistica (Ministerio de Turismo y Deportes) y Cuentas Internacionales (INDEC).",  
+                                   style = "text-align: left;"),
+                          br(),
+                          
+                        
+           ))),
                             
                         
 

@@ -516,9 +516,13 @@ function(input, output, session) {
                                                                "Gasto" = round(sum(gasto),1),
                                                                "Pernoctaciones" = round(sum(pernoctes)), 
                                                                "Estadía media**" = round(Pernoctaciones/Viajes, 1),
-                                                               "Gasto promedio por viaje*" = round(Gasto/Viajes*1000000,1),
-                                                               "Gasto promedio diario***" = round(Gasto/Pernoctaciones*1000000, 1)) %>% 
-                                                    rename ("Gasto*" = Gasto)
+                                                               gasto_viaje = round(Gasto/Viajes*1000000,1),
+                                                               gasto_diario = round(Gasto/Pernoctaciones*1000000, 1)) %>%
+                                                    ungroup() %>% 
+                                                    mutate(gasto_diario= if_else(Pernoctaciones == 0, gasto_viaje, gasto_diario)) %>%  #Excursionistas gasto diario es el gasto por viaje 
+                                                    rename ("Gasto*" = Gasto, 
+                                                            "Gasto promedio por viaje*" = gasto_viaje,
+                                                            "Gasto promedio diario***" = gasto_diario)
                                                 
                                                   
                                                   etiquetas_g <- gsub ("anio", "Año", (colnames(tabla)))
@@ -590,17 +594,66 @@ output$graf_via_ti <- renderPlot(graf_via_ti)
 
 ## 2. Gasto #####
 
-gasto_grafico <- gasto %>% 
-  filter(tipo_visitante == "Turistas") %>% 
-  group_by(anio,tipo_visitante, residencia) %>% 
-  summarise (Viajes = round(sum(casos_ponderados)), 
-             Gasto = round(sum(gasto),1),
-             Pernoctaciones = round(sum(pernoctes))) %>% 
-  ungroup()
-             
-# GRAFICO SERIE 1990
+datos_gasto_grafico2_sel <-eventReactive(list(input$pais_agrup_graf_serie, 
+                                              input$tipo_visitante_graf, 
+                                              input$periodo),{
+  req(input$pais_agrup_graf_serie, input$tipo_visitante_graf,input$periodo)
+  datos_gasto_grafico2_sel <- gasto %>% 
+    filter(tipo_visitante %in% input$tipo_visitante_graf)
+  if (input$periodo == "Anual") {
+    datos_gasto_grafico2_sel <- datos_gasto_grafico2_sel %>% 
+      mutate(periodo = as.Date(paste0(anio,"-01-01"), "%Y-%m-%d"))
+  }
+  if (input$pais_agrup_graf_serie != "Todos") {
+    datos_gasto_grafico2_sel <- datos_gasto_grafico2_sel %>% 
+    filter(pais_agrupado == input$pais_agrup_graf_serie)
+    } 
+  datos_grafico2_sel <- datos_gasto_grafico2_sel %>% 
+    group_by(periodo, residencia) %>% 
+    summarise (Viajes = round(sum(casos_ponderados)), 
+               Gasto = round(sum(gasto),1),
+               Pernoctaciones = round(sum(pernoctes)), 
+               Estadia_media= if_else(Viajes == 0,0, round(Pernoctaciones/Viajes, 1)),
+               Gasto_viaje= if_else(Viajes == 0,0,round(Gasto/Viajes*1000000,1)),
+               Gasto_diario= round(Gasto/Pernoctaciones*1000000, 1)) %>% 
+    ungroup() %>% 
+    mutate(Gasto_diario= if_else(Pernoctaciones == 0, Gasto_viaje, Gasto_diario)) #Excursionistas gasto diario es el gasto por viaje 
+})
 
-
+output$grafico_gasto <- renderPlotly({ 
+  req(input$metrica)
+  eje_y <- input$metrica
+  grafico_2  <- ggplot(datos_gasto_grafico2_sel(), 
+                       aes(x=periodo, y = !!as.name(eje_y), 
+                           colour = residencia, 
+                           group =1,
+                           text = paste('Año:', format(periodo,"%Y"),
+                                        '<br>Valor:',format(!!as.name(eje_y),big.mark=".",
+                                                            decimal.mark = ","), 
+                                        '<br>Turismo:',residencia),
+                       ))+
+    geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) + 
+    geom_line(linewidth = 1 , alpha = 0.8) + 
+    geom_point(size = 1.5, alpha = 0.8)+ 
+    scale_color_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
+    scale_x_date(date_breaks = "1 year", date_labels = "%Y", expand = c(.01,.01))+ 
+    scale_y_continuous(#breaks = seq(min(datos_grafico1_sel()$turistas), max(datos_grafico1_sel()$turistas), by = 200000),
+      n.breaks = 5,
+      labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
+    theme_minimal()+
+    theme(legend.position = "bottom", 
+          axis.text.x =element_text (size =12, angle=90),
+          axis.text.y = element_text(size = 12),
+          legend.text = element_text (size =12),
+          plot.caption =  element_text (size =12, hjust = 0.0)) +
+    labs( x = "", 
+          color= ""
+      )
+  
+  ggplotly(grafico_2, tooltip = "text")  %>% 
+    layout(legend = list(orientation = "h", x = 0.4, y = -0.6))
+  
+})
 
 
   

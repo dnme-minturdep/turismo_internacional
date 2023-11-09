@@ -122,9 +122,10 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
   
   graf_pais_ti <- ggplot(data_grafico_ac_pais, aes(x= pais_destino, y= turistas, fill = turismo)) +   
     geom_col(position = "dodge")+
-    geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
+    geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ","), group = turismo),
                position = position_dodge(width = 1),
-               vjust = -0.25)+
+               vjust = -0.25, 
+               size = 3.5)+
     scale_fill_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
     scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
     theme_minimal()+
@@ -142,6 +143,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
          fill = "",
          caption =  "Fuente: Dirección Nacional de Mercados y Estadstica, Ministerio de Turismo y Deportes")
   
+  graf_pais_ti
   graf_via_ti <- ggplot(data_grafico_ac_via, aes(x= via, y= turistas, fill = turismo)) +   
     geom_col(position = "dodge") +
     geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
@@ -200,18 +202,21 @@ loading_screen <- tagList(
 
 # serie historica gasto ####
 
-gasto <- readRDS("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_gasto_visitantes.rds")
+gasto <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_gasto_visitantes.xlsx")
 
 
 gasto <- gasto %>% 
-  mutate(trim = as.character(trim), 
+  mutate(periodo = if_else(trim == 0,
+                           yq(paste(anio,1)),
+                           yq(paste(anio, trim))),#para graficos
+         trim = as.character(trim), 
          trim= if_else(trim == "0", "Sin dato", trim), 
-         gasto = if_else(trim == 2 & anio == 2020, 0, gasto),
-         pernoctes = if_else(trim == 2 & anio == 2020, 0, pernoctes))
+         #gasto = if_else(trim == 2 & anio == 2020, 0, gasto),
+         #pernoctes = if_else(trim == 2 & anio == 2020, 0, pernoctes)
+  )
 
-#ver que hacemos con trim 2 2020!
-#base con  datos de trim 2 2020 isna en casos. 
-#Pasados pernoctes y gasto de trim 2 a 0
+#Por ahora dejamos viajes 0 y gasto y pernoctes en trim 2 2020
 #se puede agregar datos por mes y via, con SD en gasto.
 
 trim_ult_gasto <- as_tibble(gasto[nrow(gasto),2])
+anio_ult_gasto <- as_tibble(gasto[nrow(gasto),1])
