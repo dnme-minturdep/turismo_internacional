@@ -8,6 +8,7 @@ library(waiter)
 library(shinycssloaders)
 library (readxl)									
 library(herramientas)
+#library(shinyWidgets)
 #library(comunicacion)
 
 # language en DT::
@@ -25,9 +26,19 @@ cols_arg2 <- c("#EE3D8F", # "(rosa)"
 #saco notacion cientifica
 options(scipen = 999)
 
-# datos turismo internacional ####
+#Levanto serie historica (es hasta 2022, pero se toman datos hasta 2015)
 
-datos <- readRDS("/srv/DataDNMYE/turismo_internacional/bases_proceso/turismo_internacional_visitantes.rds")
+serie_visitantes <- read_file_srv("turismo_internacional/bases_proceso/base_visitantes_1990_2022.xlsx") %>% 
+  filter (anio < 2016) %>% 
+  filter(!(anio >= 2010 & tipo_visitante == "Turistas" & turismo_internac == "Receptivo"))
+
+serie_visitantes <- serie_visitantes %>%
+  rename(year = 'anio', 
+         casos = casos_ponderados)
+
+# datos turismo internacional visitantes desde 2016 + receptivo turistas 2010-2015   ####
+
+datos <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/turismo_internacional_visitantes.rds")
 
 datos <- datos %>%
   rename(year = 'anio', 
@@ -90,6 +101,13 @@ data_grafico_ac_via <- bind_rows(data_grafico_ac_via, data_grafico_ac_total)
 
 # datos para tabla ####
 
+# matcheo datos de serie: 
+
+datos <- datos %>% bind_rows(serie_visitantes)
+
+datos<- datos %>% 
+  arrange(year,mes)
+
 #mes de numero a texto.
 
 datos <- datos[, mes := .(fcase(mes == 1 ,"Enero", mes == 2 ,"Febrero", 
@@ -97,7 +115,8 @@ datos <- datos[, mes := .(fcase(mes == 1 ,"Enero", mes == 2 ,"Febrero",
                                 mes == 5 ,"Mayo",    mes == 6 ,"Junio",
                                 mes == 7 ,"Julio", mes == 8 ,"Agosto",  
                                 mes == 9 ,"Septiembre", mes == 10 ,"Octubre",
-                                mes == 11 ,"Noviembre", mes == 12 ,"Diciembre"))] 						
+                                mes == 11 ,"Noviembre", mes == 12 ,"Diciembre", 
+                                mes == 0, "Sin dato"))] 						
 
 Mes_ult <- as_tibble(datos[nrow(datos),2])
 
@@ -106,7 +125,7 @@ Mes_ult <- as_tibble(datos[nrow(datos),2])
 datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",	
                                          "Mayo",	"Junio",	"Julio",	"Agosto",	
                                          "Septiembre", "Octubre",	"Noviembre",	
-                                         "Diciembre"), 
+                                         "Diciembre", "Sin dato"), 
                    ordered = TRUE)	
 
   ## RECEPTIVO 
@@ -164,9 +183,6 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
          color = "")
   
   
-  
-  
-  
   #### EMISIVO
   
   data_emisivo <-  datos[turismo_internac == "Emisivo", ] 
@@ -180,7 +196,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
 
 # datos eti ####
   
-localidad <- readRDS("/srv/DataDNMYE/eti/bases/eti_localidad_previo_publ.rds")
+localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad_previo_publ.rds")
 
 #defino ultimo mes antes de pasarlo a factor
 
@@ -220,3 +236,4 @@ gasto <- gasto %>%
 
 trim_ult_gasto <- as_tibble(gasto[nrow(gasto),2])
 anio_ult_gasto <- as_tibble(gasto[nrow(gasto),1])
+

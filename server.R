@@ -193,19 +193,31 @@ function(input, output, session) {
                                                            tabla <- tabla[tabla$mes %in% input$mes,]		
                                                          }
                                                          
-                                                         if (all(input$tipo_visitante == "Turistas")){
                                                          tabla <- tabla %>%
                                                            group_by_at(.vars = c( "year", input$agrup)) %>%
-                                                           summarise ("Viajes de turistas" = round(sum(turistas))) 
-                                                         } else if (all(input$tipo_visitante == "Excursionistas")){
+                                                           summarise (viajes = sum(turistas)) 
+                                                         
+                                                         
+                                                         #opcion decimales
+                                                         req(input$round)
+                                                         if (input$round == "Sin decimales"){
                                                            tabla <- tabla %>%
-                                                             group_by_at(.vars = c( "year", input$agrup)) %>%
-                                                             summarise ("Viajes de excursionistas" = round(sum(turistas))) 
-                                                         } else {
-                                                           tabla <- tabla %>%
-                                                             group_by_at(.vars = c( "year", input$agrup)) %>%
-                                                             summarise ("Viajes de visitantes" = round(sum(turistas))) 
-                                                         } 
+                                                             mutate(viajes = round(viajes))
+                                                         }
+                                                         
+                                                           #opcion tipo visitante:
+                                                           
+                                                           req(input$tipo_visitante)
+                                                           if (all(input$tipo_visitante == "Turistas")){
+                                                             tabla <- tabla %>%
+                                                              rename ("Viajes de turistas" = viajes) 
+                                                           } else if (all(input$tipo_visitante == "Excursionistas")){
+                                                             tabla <- tabla %>%
+                                                               rename ("Viajes de excursionistas" = viajes)  
+                                                           } else {
+                                                             tabla <- tabla %>%
+                                                               rename ("Viajes de visitantes" = viajes)   
+                                                           }
                                                          
                                                          #etiquetas receptivo según selección en ui.
                                                          
@@ -359,22 +371,50 @@ function(input, output, session) {
                                                                 tabla_e <- tabla_e[tabla_e$destino == input$destino,]		
                                                               }
                                                               
+                                                              tabla_e <- tabla_e %>%
+                                                                group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                                summarise (viajes = sum(turistas)) 
+                                                              
+                                                              
+                                                              #opcion decimales
+                                                              req(input$round_e)
+                                                              if (input$round_e == "Sin decimales"){
+                                                                tabla_e <- tabla_e %>%
+                                                                  mutate(viajes = round(viajes))
+                                                              }
+                                                              
+                                                              #opcion tipo visitante:
+                                                              
+                                                              req(input$tipo_visitante_e)
                                                               if (all(input$tipo_visitante_e == "Turistas")){
                                                                 tabla_e <- tabla_e %>%
-                                                                  group_by_at(.vars = c( "year", input$agrup_e)) %>%
-                                                                  summarise ("Viajes de turistas" = round(sum(turistas))) 
+                                                                  rename ("Viajes de turistas" = viajes) 
                                                               } else if (all(input$tipo_visitante_e == "Excursionistas")){
                                                                 tabla_e <- tabla_e %>%
-                                                                  group_by_at(.vars = c( "year", input$agrup_e)) %>%
-                                                                  summarise ("Viajes de excursionistas" = round(sum(turistas))) 
+                                                                  rename ("Viajes de excursionistas" = viajes)  
                                                               } else {
                                                                 tabla_e <- tabla_e %>%
-                                                                  group_by_at(.vars = c( "year", input$agrup_e)) %>%
-                                                                  summarise ("Viajes de visitantes" = round(sum(turistas))) 
-                                                              } 
+                                                                  rename ("Viajes de visitantes" = viajes)   
+                                                              }
                                                               
                                                               
-                                                              #etiquetas emisivo según selección en ui.
+                                                              
+                                                              #if (all(input$tipo_visitante_e == "Turistas")){
+                                                              #  tabla_e <- tabla_e %>%
+                                                              #    group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                              #    summarise ("Viajes de turistas" = round(sum(turistas))) 
+                                                              #} else if (all(input$tipo_visitante_e == "Excursionistas")){
+                                                              #  tabla_e <- tabla_e %>%
+                                                              #    group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                              #    summarise ("Viajes de excursionistas" = round(sum(turistas))) 
+                                                              #} else {
+                                                              #  tabla_e <- tabla_e %>%
+                                                              #    group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                              #    summarise ("Viajes de visitantes" = round(sum(turistas))) 
+                                                              #} 
+                                                              
+                                                              
+                                                              ##etiquetas emisivo según selección en ui.
                                                               
                                                               etiquetas_e <- gsub ("year", "Año", (colnames(tabla_e)))
                                                               etiquetas_e <- gsub ("mes", "Mes", etiquetas_e)
@@ -512,30 +552,41 @@ function(input, output, session) {
                                                   
                                                   tabla <- tabla %>%
                                                     group_by_at(.vars = c( "anio", input$agrup_g)) %>%
-                                                    summarise ("Viajes" = round(sum(casos_ponderados)), 
-                                                               "Gasto" = round(sum(gasto),1),
-                                                               "Pernoctaciones" = round(sum(pernoctes)), 
-                                                               "Estadía media**" = round(Pernoctaciones/Viajes, 1),
+                                                    summarise (Viajes = sum(casos_ponderados), 
+                                                               Gasto = sum(gasto),1,
+                                                               Pernoctaciones = sum(pernoctes), 
+                                                               estadia = round(Pernoctaciones/Viajes, 1),
                                                                gasto_viaje = round(Gasto/Viajes*1000000,1),
                                                                gasto_diario = round(Gasto/Pernoctaciones*1000000, 1)) %>%
-                                                    ungroup() %>% 
-                                                    mutate(gasto_diario= if_else(Pernoctaciones == 0, gasto_viaje, gasto_diario)) %>%  #Excursionistas gasto diario es el gasto por viaje 
-                                                    rename ("Gasto*" = Gasto, 
-                                                            "Gasto promedio por viaje*" = gasto_viaje,
-                                                            "Gasto promedio diario***" = gasto_diario)
-                                                
+                                                    ungroup()
                                                   
-                                                  etiquetas_g <- gsub ("anio", "Año", (colnames(tabla)))
-                                                  etiquetas_g <- gsub ("trim", "Trimestre", etiquetas_g)
-                                                  etiquetas_g <- gsub ("tipo_visitante", "Tipo de visitante", etiquetas_g)
-                                                  etiquetas_g <- gsub ("pais_agrupado", "País residencia/destino", etiquetas_g)
-                                                  #etiquetas_g <- gsub ("Gasto", "Gasto*", etiquetas_g)
-                                                  #etiquetas_g <- gsub ("Gasto*promedio por viaje", "Gasto promedio por viaje*", etiquetas_g)
-                                                  #etiquetas_g <- gsub ("Estadía media", "Estadía media**", etiquetas_g)
-                                                  #etiquetas_g <- gsub ("Gasto*promedio diario", "Gasto promedio diario***", etiquetas_g)
+                                                  # Redondeo Basico
+                                                  req(input$round_s)
+                                                  if (input$round_s == "Básico") {
+                                                    tabla <- tabla %>% 
+                                                      mutate(Viajes = round(Viajes), 
+                                                             Gasto = round(Gasto,1),
+                                                             Pernoctaciones = round(Pernoctaciones), 
+                                                      ) 
+                                                  }
+                                                    
+                                                  tabla <- tabla %>% 
+                                                    mutate(gasto_diario= if_else(Pernoctaciones == 0, gasto_viaje, gasto_diario)) %>%  #Excursionistas gasto diario es el gasto por viaje 
+                                                    rename ("Gasto en millones de U$" = Gasto, 
+                                                            "Gasto promedio por viaje en millones de U$" = gasto_viaje,
+                                                            "Gasto promedio diario" = gasto_diario, 
+                                                            "Estadía media en noches" = estadia, 
+                                                            "Año"= anio
+                                                            )
+                                                  
+                                                  #etiquetas de columnas opcionales segun seleccion: 
+                                                  
+                                                  etiquetas <- gsub ("trim", "Trimestre", colnames(tabla))
+                                                  etiquetas <- gsub ("tipo_visitante", "Tipo de visitante", etiquetas)
+                                                  etiquetas <- gsub ("pais_agrupado", "País residencia/destino", etiquetas)
                                                   
                                                   tabla
-                                                  } , rownames= FALSE, colnames = etiquetas_g)
+                                                  } , rownames= FALSE, colnames = colnames(tabla))
                                   )
                                                 
   
