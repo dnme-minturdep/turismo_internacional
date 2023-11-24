@@ -591,7 +591,7 @@ del país de referencia, como parte de un viaje turístico emisor."),
                     )
            ),
            
-           footer = includeHTML("https://tableros.yvera.tur.ar/recursos/shiny_footer.html")
+           footer = includeHTML("/srv/shiny-server/recursos/shiny_footer.html")
            
 )
            
