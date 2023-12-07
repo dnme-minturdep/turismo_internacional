@@ -13,40 +13,30 @@ navbarPage(title = div(  #### NavBar #####
            collapsible = TRUE,
            header = includeCSS("styles.css"),
            
-           #RESUMEN ####
+           #RESUMEN####
            tabPanel("RESUMEN",
-                    
                     div(id= "container-info",
                         useWaiter(),
                         waiter_show_on_load(html = loading_screen, color = "white"),
-                        h4(tags$p("El tablero de TURISMO INTERNACIONAL presenta las estimaciones de turismo receptivo y emisivo de  la Argentina,
-                        permitiendo cuantificar y caracterizar a los viajes de los visitantes internacionales (turistas y excursionistas).
-                        En la pestaña ", tags$b("RECEPTIVO"), "puede encontrar información sobre los viajes de visitantes no residentes en el país y en la 
-                        solapa", tags$b("EMISIVO"), "sobre los viajes de visitantes residentes al exterior. Para profundizar en la caracterización de los
-                        turistas receptivos puede hacerlo en la pestaña", tags$b("PERFIL RECEPTIVO,"), " basada en los datos de la Encuesta de Turismo Inernacional (ETI). 
-                        Para más información del tablero 
-                        y las fuentes de datos diríjase a la sección de ", tags$b("METODOLOGÍA."))),
                         br(),
-                        fluidRow(
-                          
-                          column(4, selectInput("pais_agrup_graf",
-                                                "País de residencia/destino:",
-                                                choices = c("Todos", sort(unique(data_receptivo$pais_agrupado))),
-                                                selected = "Todos" )),
-                          ),
+                        h5(tags$p("El tablero de TURISMO INTERNACIONAL presenta las estimaciones de turismo receptivo y emisivo de  la Argentina,
+                        permitiendo cuantificar y caracterizar a los viajes de los visitantes internacionales (turistas y excursionistas). En cada pestaña puede acceder a distinta información.")),
+                        h5(tags$ul(tags$p(tags$b("• SERIE HISTÓRICA:"), "Serie trimestral de viajes, gasto en dólares y pernoctaciones de visitantes residentes y no residentes, basada en estimaciones propias y en información de la Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (INDEC). Gráfico y tabla interactiva."),
+                                   tags$p(tags$b("• RECEPTIVO:"),"Viajes de visitantes no residentes en el país.Tabla interactiva."), 
+                                   tags$p(tags$b("• EMISIVO:"), "Viajes de visitantes residentes al exterior.Tabla interactiva."),
+                                   tags$p(tags$b("• PERFIL RECEPTIVO:"), "Caracterización de los turistas receptivos, basada en los datos de la Encuesta de Turismo Internacional (ETI)."),
+                                   tags$p(tags$b("• METODOLOGÍA:"), "Fuentes de datos, detalles técnicos y metodológicos y definiciones y conceptos utilizados."))
+                           ),
+                        br(),
                         
-                        br(), br(), br(),
-                        
-                        plotlyOutput("grafico_serie"),
-                        helpText("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes.",  
-                                 style = "text-align: left;"),
+                        h3(glue("Datos acumulados a {Mes_ult} {year_ult}")),
                         br(),
                         fluidRow(
                           column(7, plotOutput("graf_pais_ti", height = 500)),
                           column(5, plotOutput('graf_via_ti', height = 390)),
                           ),
                         br(), 
-                        h4("   Aquí puede acceder al último ", 
+                        h5("   Aquí puede acceder al último ", 
                            tags$a(href="https://tableros.yvera.tur.ar/internacional.html", 
                                   target = '_blank', 
                                   "reporte, "),
@@ -57,14 +47,164 @@ navbarPage(title = div(  #### NavBar #####
                                   target = '_blank',
                                   "y datos abiertos"),
                            "de turismo internacional."),
-           )),
+                        
+                        
+                        #fluidRow(
+                        #  
+                        #  column(4, selectInput("pais_agrup_graf",
+                        #                        "País de residencia/destino:",
+                        #                        choices = c("Todos", sort(unique(data_receptivo$pais_agrupado))),
+                        #                        selected = "Todos" )),
+                        #  ),
+                        #
+                        #br(), br(), br(),
+                        #
+                        #plotlyOutput("grafico_serie"),
+                        #helpText("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes.",  
+                        #         style = "text-align: left;"),
+                        #
+                        )),
+           
+           #SERIE ####
+           tabPanel("SERIE HISTÓRICA",
+                    
+                    div(id= "container-info",
+                        br(),
+                        h4("SERIE HISTÓRICA TRIMESTRAL DE VIAJES, GASTO Y PERNOCTACIONES"),
+                        h5(tags$p(glue("Datos hasta trimestre {trim_ult_gasto} del año {anio_ult_gasto}."))), 
+                        h5(tags$p(" En esta sección se presenta la serie histórica trimestral de ",  
+                        tags$b("turismo receptivo y emisivo de viajes,
+                               gasto en dólares y pernoctaciones de turistas y excursionistas,"),
+                               "incluyendo los indicadores de estadía media, 
+                         gasto promedio por viaje y gasto promedio diario. Pueden 
+                      visualizarse en forma de gráfico o tabla.")),
+                        br(),
+                          
+                          h3("GRÁFICO INTERACTIVO"),
+                          fluidRow(
+                            
+                            
+                            column(3,
+                                   radioButtons("metrica",
+                                                label = "Métrica:",
+                                                choiceNames =  list("Viajes","Gasto (en millones de U$)","Estadía media", "Gasto por viaje (en millones de U$)","Gasto diario (en U$)"),
+                                                choiceValues = list("Viajes","Gasto","Estadia_media", "Gasto_viaje","Gasto_diario"),
+                                                #choices = c("Viajes","Gasto","Estadia_media", "Gasto_viaje","Gasto_diario"),
+                                                selected = "Viajes")
+                            ),
+                            
+                            column(2,
+                                   radioButtons("periodo",
+                                                label = "Serie:",
+                                                choices = c("Anual","Trimestral"),
+                                                selected = "Anual")
+                            ),
+                            
+                            column(3,
+                                   checkboxGroupInput("tipo_visitante_graf",
+                                                      label = "Tipo de visitante:",
+                                                      choices = c("Turistas", 
+                                                                  "Excursionistas"),
+                                                      selected = "Turistas")
+                            ),
+                            
+                            column(3,
+                                   selectInput("pais_agrup_graf_serie",
+                                               "País de residencia/destino:",
+                                               c("Todos",
+                                                 sort(unique(data_receptivo$pais_agrupado))))
+                            ),
+                          ),
+                          
+                          plotlyOutput("grafico_gasto"),
+                          helpText("Nota: Hasta 1994 no se dispone de datos a nivel trimestral. Hasta 2003 no hay datos de excursionistas por país de residencia/destino.",  
+                                   style = "text-align: left;"),
+                          helpText("Fuente: Dirección Nacional de Mercados y Estadistica (Ministerio de Turismo y Deportes) y Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (INDEC).",  
+                                   style = "text-align: left;"),
+                          br(),
+                          
+                          
+                          h3("TABLA INTERACTIVA"),
+                          
+                        
+                        
+                        fluidPage(
+                          h3("FILTROS"),
+                          h5("Los siguientes comandos permiten filtrar los datos"),
+                          # Create a new Row in the UI for selectInputs
+                          fluidRow(
+                            column(2,
+                                   radioButtons("tipo_turismo_g",
+                                                label = "Turismo:",
+                                                choices = c("Receptivo", 
+                                                            "Emisivo"),
+                                                selected = "Receptivo")
+                            ),
+                            
+                            column(2,
+                                   checkboxGroupInput("tipo_visitante_g",
+                                                      label = "Viajes de:",
+                                                      choices = c("Turistas", 
+                                                                  "Excursionistas"),
+                                                      selected = "Turistas")
+                            ),
+                            
+                            column(2,
+                                   selectInput("year_g",
+                                               "Año:",
+                                               c("Todos",
+                                                 unique(as.character(gasto$anio))),
+                                               selected = gasto[nrow(gasto),1], multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("trim_g",
+                                               "Trimestre:",
+                                               c("Todos",
+                                                 unique(as.character(gasto$trim))), selected = "Todos" , multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("pais_agrupado_g",
+                                               "País de residencia/destino:",
+                                               c("Todos",
+                                                 sort(unique(gasto$pais_agrupado))))
+                            ),
+                          ),
+                          h3("VISUALIZACIÓN"),
+                          h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable"),
+                          fluidRow(
+                            column(4,
+                                   selectInput("agrup_g", "Mostrar por:", choices = c( 'Trimestre' = 'trim',
+                                                                                       'Tipo de visitante' = 'tipo_visitante', 
+                                                                                       'País de residencia/destino'= 'pais_agrupado'), 
+                                               
+                                               selected = "trim", multiple = TRUE)
+                            ), 
+                            #column(2,
+                            #       radioButtons("round_s",
+                            #                    label = "Redondeo:",
+                            #                    choices = c("Básico","Decimales"),
+                            #                    selected = "Básico")
+                            #)
+                          ),
+                          
+                          # Create a new row for the table.
+                          DT::dataTableOutput("tabla_serie") %>% 
+                            withSpinner(), br(),
+                          h6("* Hasta 1994 no se dispone de datos a nivel trimestral. Hasta 2003 no hay datos de excursionistas por país de residencia/destino. Datos provisorios desde 2020."),
+                          h5("Fuente: Dirección Nacional de Mercados y Estadistica (Ministerio de Turismo y Deportes) y Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (INDEC)"),
+                          br(),
+                          
+                          
+                        ))),
+           
+           
            
            #RECEPTIVO ####
            tabPanel("RECEPTIVO",
                     
                     div(id="container-info",
                         br(),
-                        h4(stringr::str_to_upper(paste("TURISMO RECEPTIVO- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
+                        h4(stringr::str_to_upper(paste("VIAJES DE VISITANTES NO RESIDENTES- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
                         fluidPage(
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos"),
@@ -82,8 +222,14 @@ navbarPage(title = div(  #### NavBar #####
                                                "Año:",
                                                c("Todos",
                                                  unique(as.character(data_receptivo$year))),
-                                               selected = data_receptivo[nrow(data_receptivo),1], multiple =TRUE)
-                                  ),
+                                               selected = data_receptivo[nrow(data_receptivo),1], 
+                                               multiple =TRUE)
+                                   ),
+                                   #sliderTextInput("year",
+                                   #            "Año:",
+                                   #            grid = TRUE, force_edges = TRUE,
+                                   #            choices = seq(1990, 2023, by = 1),
+                                   #            selected = 2023)),
                             column(3,
                                    selectInput("mes",
                                                "Mes:",
@@ -133,14 +279,13 @@ navbarPage(title = div(  #### NavBar #####
                                                )
                                    ),
                           ),
-                          h5("*Esta información refiere al paso de salida del país. Por ello, al filtrar una provincia o ruta natural no se 
-                             obtiene información de la totalidad de turistas internacionales que la visitaron, sino sólo de 
-                             los que salieron del país por un paso de la misma."),
+                          h5('*Esta información no refleja la estimación de turismo 
+                             receptivo por provincia/ruta natural. Ver "Notas técnicas", en la pestaña Metodología.'),
                           
                           h3("VISUALIZACIÓN"),
                           h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable."),
                           fluidRow(
-                            column(3,
+                            column(6,
                                    selectInput("agrup", "Mostrar por:", 
                                                choices = c( 'Mes' = 'mes', 
                                                             'Trimestre' = 'trim',
@@ -156,6 +301,16 @@ navbarPage(title = div(  #### NavBar #####
                                                             'Tramos de edad' = 'grupoetario'),
                                                selected = "mes", multiple = TRUE)
                             ),
+                            column(6,
+                                   radioButtons("round",
+                                                label = "Redondeo:",
+                                                choiceNames =  list("Sin decimales","Con decimales 
+                                                                    (recomendado para descarga: suma de parciales 
+                                                                    puede diferir del total)."),
+                                                choiceValues = list("Sin decimales","Con decimales"),
+                                                #choices = c("Sin decimales","Con decimales"),
+                                                selected = "Sin decimales")
+                            )
                             
                             
                           ),
@@ -167,24 +322,148 @@ navbarPage(title = div(  #### NavBar #####
                             withSpinner(), br(),
                           h5("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes."),
                           
+                          br(), 
+                          h5("   Aquí puede acceder al último ", 
+                             tags$a(href="https://tableros.yvera.tur.ar/internacional.html", 
+                                    target = '_blank', 
+                                    "reporte, "),
+                             tags$a(href="https://www.yvera.tur.ar/sinta/informe/info/turismo-internacional", 
+                                    target = '_blank', 
+                                    "informe mensual,"), 
+                             tags$a(href="https://datos.yvera.gob.ar/dataset/turismo-internacional-total-pais", 
+                                    target = '_blank',
+                                    "y datos abiertos"),
+                             "de turismo internacional."),
+                          
+                          
                         ))),
+           
+           #EMISIVO ####
+           tabPanel("EMISIVO",
+                    
+                    div(id="container-info",
+                        br(),
+                        h4(stringr::str_to_upper(paste("VIAJES AL EXTERIOR DE TURISTAS RESIDENTES- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
+                        fluidPage(
+                          h3("FILTROS"),
+                          h5("Los siguientes comandos permiten filtrar los datos"),
+                          
+                          # Create a new Row in the UI for selectInputs
+                          fluidRow(
+                            column(3,
+                                   checkboxGroupInput("tipo_visitante_e",
+                                                      label = "Viajes de:",
+                                                      choices = c("Turistas", 
+                                                                  "Excursionistas"),
+                                                      selected = "Turistas")
+                            ),
+                            column(3,
+                                   selectInput("year_e",
+                                               "Año:",
+                                               c("Todos",
+                                                 unique(as.character(data_emisivo$year))),selected = data_emisivo[nrow(data_emisivo),1], multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("mes_e",
+                                               "Mes:",
+                                               c("Todos",
+                                                 unique(as.character(data_emisivo$mes))),selected = "Todos" , multiple =TRUE)
+                            ),
+                            column(3,
+                                   selectInput("via_e",
+                                               "Medio de transporte:",
+                                               c("Todos",
+                                                 unique(data_emisivo$via)))
+                            ),),
+                          fluidRow(
+                            column(3,
+                                   selectInput("destino",
+                                               "Destino principal:",
+                                               c("Todos",
+                                                 sort(unique(data_emisivo$destino_agrup))))
+                            ),
+                            column(3,
+                                   selectInput("prov_e",
+                                               "Provincia del paso:",
+                                               choices = NULL)
+                            ),
+                            column(3,
+                                   selectInput("limita_e",
+                                               "Limítrofe con:",
+                                               choices = NULL)
+                            ),
+                            column(3,
+                                   selectInput("paso_publ_e",
+                                               "Paso:", 
+                                               #multiple =TRUE,
+                                               choices = NULL)
+                                               
+                                   
+                            ),
+                          ),
+                          
+                          h3("VISUALIZACIÓN"),
+                          h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable"),
+                          fluidRow(
+                            column(6,
+                                   selectInput("agrup_e", "Mostrar por:", choices = c( 'Mes' = 'mes', 
+                                                                                       'Trimestre' = 'trim',
+                                                                                       'Vía' = 'via', 
+                                                                                       'Tipo de visitante' = 'tipo_visitante', 
+                                                                                       'Destino principal'= 'destino_agrup', 
+                                                                                       'Paso' = 'paso_publ', 
+                                                                                       'Provincia del paso' = 'prov', 
+                                                                                       'País con el que limita' = 'limita',
+                                                                                       'Género' = 'sexo',
+                                                                                       'Tramos de edad' = 'grupoetario'),
+                                               selected = "mes", multiple = TRUE)
+                            ),
+                            column(6,
+                                   radioButtons("round_e",
+                                                label = "Redondeo:",
+                                                choiceNames =  list("Sin decimales","Con decimales 
+                                                                    (recomendado para descarga: suma de parciales 
+                                                                    puede diferir del total)."),
+                                                choiceValues = list("Sin decimales","Con decimales"),
+                                                selected = "Sin decimales")
+                            )
+                            
+                            
+                          ),
+                          textOutput(outputId = "titulo_e", container = h3),
+                          
+                          
+                          # Create a new row for the table.
+                          DT::dataTableOutput("table_emisivo") %>% 
+                            withSpinner(), br(),
+                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes"),
+                          br(), 
+                          h5("   Aquí puede acceder al último ", 
+                             tags$a(href="https://tableros.yvera.tur.ar/internacional.html", 
+                                    target = '_blank', 
+                                    "reporte, "),
+                             tags$a(href="https://www.yvera.tur.ar/sinta/informe/info/turismo-internacional", 
+                                    target = '_blank', 
+                                    "informe mensual,"), 
+                             tags$a(href="https://datos.yvera.gob.ar/dataset/turismo-internacional-total-pais", 
+                                    target = '_blank',
+                                    "y datos abiertos"),
+                             "de turismo internacional."),
+                          
+                          
+                        ))),
+           
            #PERFIL RECEPTIVO ####
            tabPanel("PERFIL RECEPTIVO",
                     
                     div(id="container-info",
                         br(),
-                        h4(glue("Esta pestaña permite caracterizar el perfil del turismo receptivo que egresó del país por los pasos de Ezeiza y Aeroparque, a partir de
-                           la Encuesta de Turismo Internacional (ETI), desde Enero de 2019 a {mes_eti} {year_eti}. Se pueden analizar algunas características de los turistas (país de residencia,
+                        h4("PERFIL TURISMO RECEPTIVO"),
+                        h5(glue("Datos desde Enero de 2019 a {mes_eti} {year_eti}.")),
+                        h5("Esta pestaña permite caracterizar el perfil del turismo receptivo por los pasos de Ezeiza y Aeroparque, a partir de
+                           la Encuesta de Turismo Internacional (ETI). Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
-                           visitado en la Argentina. Aquí puede acceder a los  "), 
-                           tags$a(href="https://datos.yvera.gob.ar/dataset/encuesta-turismo-internacional", 
-                                  target = '_blank', 
-                                  "datos abiertos de la ETI"),
-                           " y a nuestra publicación en la ",
-                           tags$a(href="https://bitacora.yvera.tur.ar/posts/2022-05-31-intro-eti/", 
-                                  target = '_blank', 
-                                  "bitácora.")
-                           ),
+                           visitado en la Argentina."),
                         fluidPage(
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos."),
@@ -247,7 +526,8 @@ navbarPage(title = div(  #### NavBar #####
                                                             'Provincia visitada' = 'provincia',
                                                             'Ciudad visitada' = 'ciudad'),
                                                selected = c("anio", "trim"), multiple = TRUE)
-                            )),
+                                   )
+                            ),
                           
                           h3("PERFIL DE TURISTAS NO RESIDENTES. EZEIZA-AEROPARQUE (ETI)"),
                           
@@ -264,147 +544,91 @@ navbarPage(title = div(  #### NavBar #####
                              diario en el país por la cantidad de noches en el destino."),
                           h6("***Si la columna casos muestrales arroja menos de 50 casos, se sugiere reducir la 
                           cantidad de variables consideradas,  ampliar el periodo temporal, o agrupar 
-                          localidades/provincias.")
-                          
-                          )
-                    )
-           ),
-           #EMISIVO ####
-           tabPanel("EMISIVO",
+                          localidades/provincias."), 
+                          br(), 
+                          h5("Aquí puede acceder a los", 
+                             tags$a(href="https://datos.yvera.gob.ar/dataset/encuesta-turismo-internacional", 
+                                         target = '_blank', 
+                                         "datos abiertos de la ETI"
+                                    ),
+                             "y a nuestra publicación en la ",
+                             tags$a(href="https://bitacora.yvera.tur.ar/posts/2022-05-31-intro-eti/", 
+                                         target = '_blank', 
+                                         "bitácora."
+                                    )
+                             )
+                          )#cierre fluid page
+                          )#cierre div
+                        ),#cierre tabpanel
                     
-                    div(id="container-info",
-                        
-                        br(),
-                        h4(stringr::str_to_upper(paste("TURISMO EMISIVO- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
-                        fluidPage(
-                          h3("FILTROS"),
-                          h5("Los siguientes comandos permiten filtrar los datos"),
-                          
-                          # Create a new Row in the UI for selectInputs
-                          fluidRow(
-                            column(3,
-                                   checkboxGroupInput("tipo_visitante_e",
-                                                      label = "Viajes de:",
-                                                      choices = c("Turistas", 
-                                                                  "Excursionistas"),
-                                                      selected = "Turistas")
-                            ),
-                            column(3,
-                                   selectInput("year_e",
-                                               "Año:",
-                                               c("Todos",
-                                                 unique(as.character(data_emisivo$year))),selected = data_emisivo[nrow(data_emisivo),1], multiple =TRUE)
-                            ),
-                            column(3,
-                                   selectInput("mes_e",
-                                               "Mes:",
-                                               c("Todos",
-                                                 unique(as.character(data_emisivo$mes))),selected = "Todos" , multiple =TRUE)
-                            ),
-                            column(3,
-                                   selectInput("via_e",
-                                               "Medio de transporte*:",
-                                               c("Todos",
-                                                 unique(data_emisivo$via)))
-                            ),),
-                          fluidRow(
-                            column(3,
-                                   selectInput("destino",
-                                               "Destino principal:",
-                                               c("Todos",
-                                                 sort(unique(data_emisivo$destino_agrup))))
-                            ),
-                            column(3,
-                                   selectInput("prov_e",
-                                               "Provincia del paso*:",
-                                               choices = NULL)
-                            ),
-                            column(3,
-                                   selectInput("limita_e",
-                                               "Limítrofe con*:",
-                                               choices = NULL)
-                            ),
-                            column(3,
-                                   selectInput("paso_publ_e",
-                                               "Paso*:", 
-                                               #multiple =TRUE,
-                                               choices = NULL)
-                                               
-                                   
-                            ),
-                          ),
-                          h5("*Esta información refiere al paso de ingreso al país."),
-                          
-                          h3("VISUALIZACIÓN"),
-                          h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable"),
-                          fluidRow(
-                            column(4,
-                                   selectInput("agrup_e", "Mostrar por:", choices = c( 'Mes' = 'mes', 
-                                                                                       'Trimestre' = 'trim',
-                                                                                       'Vía' = 'via', 
-                                                                                       'Tipo de visitante' = 'tipo_visitante', 
-                                                                                       'Destino principal'= 'destino_agrup', 
-                                                                                       'Paso' = 'paso_publ', 
-                                                                                       'Provincia del paso' = 'prov', 
-                                                                                       'País con el que limita' = 'limita',
-                                                                                       'Género' = 'sexo',
-                                                                                       'Tramos de edad' = 'grupoetario'),
-                                               selected = "mes", multiple = TRUE)
-                            ),
-                            
-                          ),
-                          textOutput(outputId = "titulo_e", container = h3),
-                          
-                          
-                          # Create a new row for the table.
-                          DT::dataTableOutput("table_emisivo") %>% 
-                            withSpinner(), br(),
-                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes."),
-                          
-                        ))),
-           
            #METODOLOGIA ####
            tabPanel("METODOLOGÍA",
                     
                     div(id = "container-info",
+                        
+                        h3("FUENTES DE DATOS"),
                         br(),
-                        h3("NOTAS TÉCNICAS"),
+                        h5("   • La estimación de ", tags$b("viajes"), "del turismo internacional (receptivo y emisivo) 
+                        para el total del país surge de los registros migratorios provistos por la Dirección 
+                        Nacional de 
+             Migraciones (DNM)"),
+                        
+                        h5("   • El", tags$b("gasto y las pernoctaciones,"),"tienen como fuente las estimaciones elaboradas por la 
+                        Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales del INDEC.  "), 
+                        
+                        h5("   • La fuente de información del ", tags$b("perfil receptivo"), " es la Encuesta de 
+            Turismo Internacional (ETI), realizada por el INDEC y el Ministerio de Turismo y Deportes."),
+                        
                         br(),
-                        h4("   La estimación del turismo internacional (receptivo y emisivo) para el total del país surge de distintas fuentes 
-             de datos."), 
-                        h4("   La fuente principal de información de las pestañas RECEPTIVO y EMISIVO son los registros migratorios provistos por la Dirección Nacional de 
-             Migraciones (DNM), cuyo análisis permite distinguir los viajes de turistas y excursionistas de otros tipos de viajeros internacionales 
-             (tripulantes, diplomáticos, etc.). Los datos por paso refieren al de ingreso al país para el turismo emisivo y al de egreso de la Argentina para el turismo receptivo. 
-             Por ello, al filtrar una provincia o ruta natural no se obtiene información de la totalidad de turistas internacionales que la visitaron, sino sólo de 
-             los que salieron del país por un paso de la misma."),
-                        h4("   Los datos por género y edad están disponibles desde noviembre de 2017."),
-                        h4("   Los datos de excursionistas residentes por destino están disponibles desde agosto de 2021."),
+                        
+                        h3("ACLARACIONES TÉCNICAS"),
+                        h5("• Serie histórica: Los datos de gasto desde el 2016 en adelante surgen directamente de la DNESEyCI de INDEC, 
+                        mientras que los datos de años anteriores surgen de un empalme realizado por la DNMyE para poder mantener
+                        la comparabilidad de la serie histórica."), 
+                        
+                        h5("• Receptivo y Emisivo:"),
+                        
+                        tags$ul(h5("-La estimación del turismo internacional se contabiliza al finalizar el viaje, por tanto, el turismo 
+                           receptivo se contabiliza a la salida y el emisivo a la entrada.")), 
+                        tags$ul(h5("-La apertura por provincia/ruta natural no refleja la estimación del turismo receptivo de cada provincia,
+                        sino sólo los viajes de turistas contabilizados en los pasos fronterizos de la misma.")),  
+                        
+                        tags$ul(h5("-Al descargar los datos, se recomienda hacerlo con decimales, debido a que la suma de las aperturas 
+                           parciales puede diferir del total.")),
+                        tags$ul(h5("-A continuación, se muestran las variables disponibles según año, 
+                                   tipo de visitante y tipo de turismo:")),
+                        tableOutput("aperturas_variables"),
+                        
+                        tags$ul(h6("* En emisivo, no hay datos de destino de excursionistas entre 2016 y julio de 2021.")),
+                        
                         br(),
-                        h4("   La fuente de información de la solapa PERFIL RECEPTIVO, que contiene información sobre el turismo receptivo en el Aeropuerto Internacional de 
-                        Ezeiza y Aeroparque Jorge Newbery, es la Encuesta de 
-            Turismo Internacional (ETI), realizada por el INDEC y el Ministerio de Turismo y Deportes. La misma tiene 
-            como objetivo caracterizar el flujo y medir el gasto de los visitantes no residentes durante su permanencia en 
-            Argentina (turismo receptivo) y de los visitantes residentes en Argentina durante su permanencia en el exterior 
-            (turismo emisivo). Solo se presenta información sobre los turistas que salieron por estos aeropuertos debido a que los datos sobre excursionistas y sobre el resto de 
-            los pasos donde se realiza la ETI, al tener menor cantidad muestral, no permite mostrar datos mensuales ni aperturas por país tan desagregadas. 
-            De todas formas, los pasos Ezeiza y Aeroparque representan más del 75% de los turistas relevados por la encuesta."), 
-                        h4("   Para más detalles,", tags$a(href="https://www.yvera.tur.ar/sinta/informe/documentos/descarga/5dc0460bcfa3e053142696.pdf", target = '_blank', "ver el documento metodológico "),
+                        
+                        h5(" • Para más detalles,", tags$a(href="https://www.yvera.tur.ar/sinta/informe/documentos/descarga/5dc0460bcfa3e053142696.pdf", target = '_blank', "ver el documento metodológico "),
                            "de la estimación del turismo internacional de la Argentina, los apartados correspondientes del",
                            tags$a(href="https://dnme-minturdep.github.io/DT3_registros_adminsitrativos/situaci%C3%B3n-nacional.html", target = '_blank', "Documento Técnico N°1"),
                            "sobre utilización de los registros migratorios y del",
                            tags$a(href="https://dnme-minturdep.github.io/DT1_medicion_turismo/encuestas-nacionales.html#eti", target = '_blank', "Documento Técnico N°3"),
                            "sobre la ETI."),
-                        br(),
                         
                         h3 ("DEFINICIONES Y CONCEPTOS"),
                         br(),
-                        h4(tags$ul(tags$p(tags$b(" • Viaje"),": Refiere a todo desplazamiento de una persona a un lugar fuera de su entorno habitual, por cualquier 
+                        h5(tags$ul(tags$p(tags$b(" • Viaje"),": Refiere a todo desplazamiento de una persona a un lugar fuera de su entorno habitual, por cualquier 
                     motivo y duración, desde el momento de su salida hasta su regreso."),
                                    tags$p(tags$b(" • Viaje receptor"),": Es el viaje a un país efectuado por una persona no residente desde el
 momento en que llega a un país hasta el momento en que sale del mismo."),
                                    tags$p(tags$b(" • Viaje emisor"),": Es el viaje realizado fuera de un país por una persona residente en el
 mismo desde el momento en que deja su lugar de residencia habitual hasta su regreso"),
-                                   tags$p(tags$b(" • Viaje turístico"),": Es el viaje realizado por los visitantes."),
+                                   tags$p(tags$b(" • Viaje turístico"),": Es el viaje realizado por los visitantes. El viaje realizado por un visitante no residente (turismo receptivo) se registra desde
+                                      el momento que llega a la Argentina hasta que sale. Un visitante no residente
+                                      (turista o excursionista) puede salir de Argentina para efectuar visitas a otros países
+                                      y volver a ingresar en un corto período de tiempo, antes de regresar a su país de
+                                      residencia habitual. Por ello, la cantidad de viajes receptivos puede ser mayor que la
+                                      cantidad de turistas/excursionistas receptivos.
+                                      En tanto, el viaje realizado por un visitante residente en Argentina (turismo emisivo)
+                                      se registra desde el momento en que sale del país hasta que retorna,
+                                      independientemente de la cantidad de países visitados. Por ello, la cantidad de
+                                      viajes emisivos coincide con la cantidad de visitantes emisivos.
+                                      "),
                                    tags$p(tags$b(" • Visitante"),": Es una persona que viaja a un destino principal distinto al de su entorno habitual, por una duración 
                                 inferior a un año, con cualquier finalidad principal que no sea ser empleado por una entidad residente en el país 
                                 o lugar visitado."),
@@ -419,7 +643,18 @@ en el país de referencia, como parte de un viaje turístico receptor."),
                                    tags$p(tags$b(" • Turismo emisivo"),": Abarca las actividades realizadas por un visitante residente fuera
 del país de referencia, como parte de un viaje turístico emisor."),  
                                    tags$p(tags$b(" • Turismo internacional"),": Comprende el turismo receptivo y el turismo emisivo."),
-                                   tags$p(tags$b(" • País de residencia habitual"),": Es aquel en el cual una persona tiene su lugar de residencia habitual.")
+                                   tags$p(tags$b(" • País de residencia habitual"),": Es aquel en el cual una persona tiene su lugar de 
+                                          residencia habitual."),
+                                   tags$p(tags$b(" • Pernoctaciones:"), " es el número de noches que cada viajero permanece alojado, fuera de su lugar de
+                                   residencia habitual, en el lugar visitado."),
+                                   tags$p(tags$b(" • Estadía media:"), "es el cociente entre las pernoctaciones y la cantidad de viajes de turistas."),
+                                   tags$p(tags$b(" • Gasto total:"), " comprende todo gasto de consumo de bienes y servicios efectuado por un turista o por cuenta de un turista durante su estadía en el lugar visitado.
+                                                    Excluye el valor del transporte internacional, pero incluye el valor del transporte dentro del país visitado. 
+                                                    Expresado en dólares a precios corrientes."),
+                                   tags$p(tags$b(" • Gasto por viaje:"), " resulta del cociente entre el gasto total y la cantidad de viajes de turistas. Es una medida aproximada de lo que cada turista gasta en promedio en un viaje.
+                                   Expresado en dólares a precios corrientes."),
+                                   tags$p(tags$b(" • Gasto promedio diario:"), "resulta del cociente entre el gasto total y el número de pernoctaciones. Es una medida aproximada del gasto diario promedio que cada turista realiza
+                                   en el lugar visitado. Expresado en dólares a precios corrientes."),
                         )), br()
                     )
            ),
