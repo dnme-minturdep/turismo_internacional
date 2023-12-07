@@ -553,22 +553,27 @@ function(input, output, session) {
                                                   tabla <- tabla %>%
                                                     group_by_at(.vars = c( "anio", input$agrup_g)) %>%
                                                     summarise (Viajes = sum(casos_ponderados), 
-                                                               Gasto = sum(gasto),1,
+                                                               Gasto = sum(gasto),
                                                                Pernoctaciones = sum(pernoctes), 
                                                                estadia = round(Pernoctaciones/Viajes, 1),
                                                                gasto_viaje = round(Gasto/Viajes*1000000,1),
                                                                gasto_diario = round(Gasto/Pernoctaciones*1000000, 1)) %>%
-                                                    ungroup()
+                                                    ungroup() %>% 
+                                                    mutate(estadia= if_else( (anio == 2020 & trim >= 3|
+                                                                                anio == 2021 & trim < 4), 
+                                                                             NA_real_, 
+                                                                             estadia)
+                                                           )
                                                   
-                                                  # Redondeo Basico
-                                                  req(input$round_s)
-                                                  if (input$round_s == "Básico") {
+                                                  # Redondeo Basico (saqué opción de no redondear)
+                                                  #req(input$round_s)
+                                                  #if (input$round_s == "Básico") {
                                                     tabla <- tabla %>% 
                                                       mutate(Viajes = round(Viajes), 
                                                              Gasto = round(Gasto,1),
                                                              Pernoctaciones = round(Pernoctaciones), 
                                                       ) 
-                                                  }
+                                                  #}
                                                     
                                                   tabla <- tabla %>% 
                                                     mutate(gasto_diario= if_else(Pernoctaciones == 0, gasto_viaje, gasto_diario)) %>%  #Excursionistas gasto diario es el gasto por viaje 
@@ -586,7 +591,7 @@ function(input, output, session) {
                                                   etiquetas <- gsub ("pais_agrupado", "País residencia/destino", etiquetas)
                                                   
                                                   tabla
-                                                  } , rownames= FALSE, colnames = colnames(tabla))
+                                                  } , rownames= FALSE, colnames = etiquetas)
                                   )
                                                 
   
@@ -668,8 +673,13 @@ datos_gasto_grafico2_sel <-eventReactive(list(input$pais_agrup_graf_serie,
                Gasto_viaje= if_else(Viajes == 0,0,round(Gasto/Viajes*1000000,1)),
                Gasto_diario= round(Gasto/Pernoctaciones*1000000, 1)) %>% 
     ungroup() %>% 
-    mutate(Gasto_diario= if_else(Pernoctaciones == 0, Gasto_viaje, Gasto_diario)) #Excursionistas gasto diario es el gasto por viaje 
-})
+    mutate(Gasto_diario= if_else(Pernoctaciones == 0, Gasto_viaje, Gasto_diario), #Excursionistas gasto diario es el gasto por viaje 
+           Estadia_media =if_else( periodo >= "2020-07-01" & periodo < "2021-10-01", 
+                                   0, 
+                                   Estadia_media
+                                   )# no se muestra estadia media en este periodo a espera de reevaluacion de datos. 
+           )
+  })
 
 output$grafico_gasto <- renderPlotly({ 
   req(input$metrica)
@@ -706,8 +716,12 @@ output$grafico_gasto <- renderPlotly({
   
 })
 
+# METODOLOGIA ####
 
-  
+output$aperturas_variables <- renderTable({
+  aperturas
+})
+
 }
 
 

@@ -8,6 +8,7 @@ library(waiter)
 library(shinycssloaders)
 library (readxl)									
 library(herramientas)
+library(shinydashboard)
 #library(shinyWidgets)
 #library(comunicacion)
 
@@ -38,7 +39,7 @@ serie_visitantes <- serie_visitantes %>%
 
 # datos turismo internacional visitantes desde 2016 + receptivo turistas 2010-2015   ####
 
-datos <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/turismo_internacional_visitantes.rds")
+datos <- read_file_srv("/srv/DataDNMYE/turismo_internacional/turismo_internacional_visitantes.rds")
 
 datos <- datos %>%
   rename(year = 'anio', 
@@ -196,7 +197,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
 
 # datos eti ####
   
-localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad_previo_publ.rds")
+localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad.rds")
 
 #defino ultimo mes antes de pasarlo a factor
 
@@ -237,3 +238,8 @@ gasto <- gasto %>%
 trim_ult_gasto <- as_tibble(gasto[nrow(gasto),2])
 anio_ult_gasto <- as_tibble(gasto[nrow(gasto),1])
 
+#metodologia ####
+
+#abro aperturas de variables según años
+
+aperturas <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/aperturas_serie_ti.xlsx")
