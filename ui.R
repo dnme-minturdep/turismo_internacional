@@ -14,6 +14,7 @@ navbarPage(title = div(  #### NavBar #####
            header = includeCSS("styles.css"),
            
            #RESUMEN####
+           
            tabPanel("RESUMEN",
                     div(id= "container-info",
                         useWaiter(),
@@ -29,7 +30,51 @@ navbarPage(title = div(  #### NavBar #####
                            ),
                         br(),
                         
-                        h3(glue("Datos acumulados a {Mes_ult} {year_ult}")),
+                        h3(glue("Datos de último mes: {Mes_ult} {anio_ult}")),
+                        fluidRow(column(6,
+                                 wellPanel( 
+                                   h6("Turismo receptivo",  style = "color: #37BBED; font-size: 2rem"),
+                                   fluidRow(
+                                     column(6, valueBoxOutput("boxreceptivo", width = "100%")),
+                                     column(6, valueBoxOutput("boxreceptivo_var", width = "100%"))
+                                   )
+                                 )
+                          ),
+                          column(6,
+                                 wellPanel( 
+                                   h6("Turismo emisivo",  style = "color: #37BBED; font-size: 2rem"),
+                                   fluidRow(
+                                     column(6, valueBoxOutput("boxemisivo", width = "100%")),
+                                     column(6, valueBoxOutput("boxemisivo_var", width = "100%"))
+                                   )
+                                 )
+                          )
+                        ),
+                          
+                        h3(glue("Datos de último año: acumulado a {Mes_ult} {anio_ult}")),
+                        fluidRow(column(6,
+                                        wellPanel( 
+                                          h6("Turismo receptivo",  style = "color: #37BBED; font-size: 2rem"),
+                                          fluidRow(
+                                            column(6, valueBoxOutput("boxreceptivo_ac", width = "100%")),
+                                            column(6, valueBoxOutput("boxreceptivo_var_ac", width = "100%"))
+                                          )
+                                        )
+                        ),
+                        column(6,
+                               wellPanel( 
+                                 h6("Turismo emisivo",  style = "color: #37BBED; font-size: 2rem"),
+                                 fluidRow(
+                                   column(6, valueBoxOutput("boxemisivo_ac", width = "100%")),
+                                   column(6, valueBoxOutput("boxemisivo_var_ac", width = "100%"))
+                                 )
+                               )
+                        )
+                        ),
+                        
+                        
+                        
+                        
                         br(),
                         fluidRow(
                           column(7, plotOutput("graf_pais_ti", height = 500)),
@@ -87,7 +132,7 @@ navbarPage(title = div(  #### NavBar #####
                             column(3,
                                    radioButtons("metrica",
                                                 label = "Métrica:",
-                                                choiceNames =  list("Viajes","Gasto (en millones de U$)","Estadía media", "Gasto por viaje (en millones de U$)","Gasto diario (en U$)"),
+                                                choiceNames =  list("Viajes","Gasto (en millones de US$)","Estadía media", "Gasto por viaje (en millones de US$)","Gasto diario (en US$)"),
                                                 choiceValues = list("Viajes","Gasto","Estadia_media", "Gasto_viaje","Gasto_diario"),
                                                 #choices = c("Viajes","Gasto","Estadia_media", "Gasto_viaje","Gasto_diario"),
                                                 selected = "Viajes")
@@ -150,7 +195,7 @@ navbarPage(title = div(  #### NavBar #####
                             ),
                             
                             column(2,
-                                   selectInput("year_g",
+                                   selectInput("anio_g",
                                                "Año:",
                                                c("Todos",
                                                  unique(as.character(gasto$anio))),
@@ -218,14 +263,14 @@ navbarPage(title = div(  #### NavBar #####
                                                       selected = "Turistas")
                                    ),
                             column(3,
-                                   selectInput("year",
+                                   selectInput("anio",
                                                "Año:",
                                                c("Todos",
-                                                 unique(as.character(data_receptivo$year))),
+                                                 unique(as.character(data_receptivo$anio))),
                                                selected = data_receptivo[nrow(data_receptivo),1], 
                                                multiple =TRUE)
                                    ),
-                                   #sliderTextInput("year",
+                                   #sliderTextInput("anio",
                                    #            "Año:",
                                    #            grid = TRUE, force_edges = TRUE,
                                    #            choices = seq(1990, 2023, by = 1),
@@ -304,9 +349,10 @@ navbarPage(title = div(  #### NavBar #####
                             column(6,
                                    radioButtons("round",
                                                 label = "Redondeo:",
-                                                choiceNames =  list("Sin decimales","Con decimales 
-                                                                    (recomendado para descarga: suma de parciales 
-                                                                    puede diferir del total)."),
+                                                choiceNames =  list("Sin decimales (suma de parciales 
+                                                                    puede diferir del total)",
+                                                                    "Con decimales 
+                                                                    (recomendado para descarga)"),
                                                 choiceValues = list("Sin decimales","Con decimales"),
                                                 #choices = c("Sin decimales","Con decimales"),
                                                 selected = "Sin decimales")
@@ -358,10 +404,10 @@ navbarPage(title = div(  #### NavBar #####
                                                       selected = "Turistas")
                             ),
                             column(3,
-                                   selectInput("year_e",
+                                   selectInput("anio_e",
                                                "Año:",
                                                c("Todos",
-                                                 unique(as.character(data_emisivo$year))),selected = data_emisivo[nrow(data_emisivo),1], multiple =TRUE)
+                                                 unique(as.character(data_emisivo$anio))),selected = data_emisivo[nrow(data_emisivo),1], multiple =TRUE)
                             ),
                             column(3,
                                    selectInput("mes_e",
@@ -374,7 +420,7 @@ navbarPage(title = div(  #### NavBar #####
                                                "Medio de transporte:",
                                                c("Todos",
                                                  unique(data_emisivo$via)))
-                            ),),
+                            )),
                           fluidRow(
                             column(3,
                                    selectInput("destino",
@@ -399,7 +445,7 @@ navbarPage(title = div(  #### NavBar #####
                                                choices = NULL)
                                                
                                    
-                            ),
+                            )
                           ),
                           
                           h3("VISUALIZACIÓN"),
@@ -421,9 +467,10 @@ navbarPage(title = div(  #### NavBar #####
                             column(6,
                                    radioButtons("round_e",
                                                 label = "Redondeo:",
-                                                choiceNames =  list("Sin decimales","Con decimales 
-                                                                    (recomendado para descarga: suma de parciales 
-                                                                    puede diferir del total)."),
+                                                choiceNames =  list("Sin decimales (suma de parciales 
+                                                                    puede diferir del total)",
+                                                                    "Con decimales 
+                                                                    (recomendado para descarga)"),
                                                 choiceValues = list("Sin decimales","Con decimales"),
                                                 selected = "Sin decimales")
                             )
@@ -459,7 +506,7 @@ navbarPage(title = div(  #### NavBar #####
                     div(id="container-info",
                         br(),
                         h4("PERFIL TURISMO RECEPTIVO"),
-                        h5(glue("Datos desde Enero de 2019 a {mes_eti} {year_eti}.")),
+                        h5(glue("Datos desde Enero de 2019 a {mes_eti} {anio_eti}.")),
                         h5("Esta pestaña permite caracterizar el perfil del turismo receptivo por los pasos de Ezeiza y Aeroparque, a partir de
                            la Encuesta de Turismo Internacional (ETI). Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
@@ -556,8 +603,7 @@ navbarPage(title = div(  #### NavBar #####
                                          target = '_blank', 
                                          "bitácora."
                                     )
-                             )
-                          )#cierre fluid page
+                             )                          )#cierre fluid page
                           )#cierre div
                         ),#cierre tabpanel
                     
@@ -574,27 +620,34 @@ navbarPage(title = div(  #### NavBar #####
              Migraciones (DNM)"),
                         
                         h5("   • El", tags$b("gasto y las pernoctaciones,"),"tienen como fuente las estimaciones elaboradas por la 
-                        Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales del INDEC.  "), 
+                        Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (DNESEyCI) del INDEC.  "), 
                         
-                        h5("   • La fuente de información del ", tags$b("perfil receptivo"), " es la Encuesta de 
+                        h5("  • La fuente de información del ", tags$b("perfil receptivo"), " es la Encuesta de 
             Turismo Internacional (ETI), realizada por el INDEC y el Ministerio de Turismo y Deportes."),
                         
                         br(),
                         
                         h3("ACLARACIONES TÉCNICAS"),
-                        h5("• Serie histórica: Los datos de gasto desde el 2016 en adelante surgen directamente de la DNESEyCI de INDEC, 
+                        h5("•", tags$b("Serie histórica:"), "Los datos de gasto desde el 2016 en adelante surgen directamente de la DNESEyCI de INDEC, 
                         mientras que los datos de años anteriores surgen de un empalme realizado por la DNMyE para poder mantener
                         la comparabilidad de la serie histórica."), 
                         
-                        h5("• Receptivo y Emisivo:"),
+                        h5("•", tags$b("Receptivo y Emisivo:")),
                         
                         tags$ul(h5("-La estimación del turismo internacional se contabiliza al finalizar el viaje, por tanto, el turismo 
-                           receptivo se contabiliza a la salida y el emisivo a la entrada.")), 
+                           receptivo se contabiliza a la salida y el emisivo a la entrada.")),
+                        tags$ul(h5("-Diferencias entre", tags$b("turistas no residentes y viajes de turistas no residentes:"), 
+                        "Un turista receptivo, luego de visitar la Argentina puede ir a otro país cercano y volver a ingresar antes de regresar a su país de
+                        residencia habitual. Por ello, un turista no residente puede realizar más de un viaje en el mismo mes: la ", tags$b("cantidad de viajes receptivos puede ser mayor que la
+                        cantidad de turistas receptivos."), "Se establece como supuesto que los visitantes no residentes que utilizan la vía aérea siempre abandonan definitivamente el país, por tal motivo
+                        la cantidad de viajes coincide con la cantidad de turistas. Este supuesto no se aplica en el resto de las vías de acceso al país.
+                        ")), 
+                        
                         tags$ul(h5("-La apertura por provincia/ruta natural no refleja la estimación del turismo receptivo de cada provincia,
                         sino sólo los viajes de turistas contabilizados en los pasos fronterizos de la misma.")),  
                         
-                        tags$ul(h5("-Al descargar los datos, se recomienda hacerlo con decimales, debido a que la suma de las aperturas 
-                           parciales puede diferir del total.")),
+                        tags$ul(h5("-Al descargar los datos, se recomienda hacerlo con decimales, para que la suma de los parciales 
+                           coincida con el total.")),
                         tags$ul(h5("-A continuación, se muestran las variables disponibles según año, 
                                    tipo de visitante y tipo de turismo:")),
                         tableOutput("aperturas_variables"),
