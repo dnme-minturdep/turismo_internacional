@@ -8,8 +8,90 @@ function(input, output, session) {
   
   output$fig1 <- renderPlotly(fig1)
   
+  # RESUMEN ####
+  
+  output$boxreceptivo <- renderValueBox({
+    
+    value <- lbl_int(dato_mensual$casos[dato_mensual$turismo_internac == "Receptivo"])
+    valueBox(value = value, 
+             subtitle = "Viajes de turistas",
+             icon = "plane-arrival",
+             color = dnmye_colores("azul verde")
+             )
+  })
+  
+  output$boxreceptivo_var <- renderValueBox({
+    
+    value <- lbl_percent(dato_mensual$var[dato_mensual$turismo_internac == "Receptivo"])
+    valueBox(value = value, 
+             subtitle = "Var.ia %",
+             icon = "chart-line",
+             color = dnmye_colores("azul verde")
+             )
+  })
+  
+  output$boxemisivo <- renderValueBox({
+    
+    value <- lbl_int(dato_mensual$casos[dato_mensual$turismo_internac == "Emisivo"])
+    valueBox(value = value, 
+             subtitle = "Viajes de turistas",
+             icon = "plane-departure",
+             color = dnmye_colores("rosa")
+             )
+  })
+  
+  output$boxemisivo_var <- renderValueBox({
+    
+    value <- lbl_percent(dato_mensual$var[dato_mensual$turismo_internac == "Emisivo"])
+    valueBox(value = value, 
+             subtitle = "Var.ia %",
+             icon = "chart-line",
+             color = dnmye_colores("rosa")
+    )
+  })
   
   
+  
+  output$boxreceptivo_ac <- renderValueBox({
+    
+    value <- lbl_int(625431)
+    valueBox(value = value, 
+             subtitle = "Viajes de turistas",
+             icon = "plane-arrival",
+             color = dnmye_colores("azul verde")
+    )
+  })
+  
+  output$boxreceptivo_var_ac <- renderValueBox({
+    
+    value <- lbl_percent(0.473)
+    valueBox(value = value, 
+             subtitle = "Var.ia %",
+             icon = "chart-line",
+             color = dnmye_colores("azul verde")
+    )
+  })
+  
+  output$boxemisivo_ac <- renderValueBox({
+    
+    value <- lbl_int(524433)
+    valueBox(value = value, 
+             subtitle = "Viajes de turistas",
+             icon = "plane-departure",
+             color = dnmye_colores("rosa")
+             #color = "#EE3D8F"
+    )
+  })
+  
+  output$boxemisivo_var_ac <- renderValueBox({
+    
+    value <- lbl_percent(-0.023)
+    valueBox(value = value, 
+             subtitle = "Var.ia %",
+             icon = "chart-line",
+             color = dnmye_colores("rosa")
+    )
+  })
   
   # RECEPTIVO ####
   
@@ -184,9 +266,9 @@ function(input, output, session) {
                                                          req(input$tipo_visitante)
                                                            tabla <- tabla[tabla$tipo_visitante %in% input$tipo_visitante,]		
                                                          
-                                                         req(input$year)
-                                                         if (all(input$year != "Todos")) {
-                                                           tabla <- tabla[tabla$year %in% input$year,]		
+                                                         req(input$anio)
+                                                         if (all(input$anio != "Todos")) {
+                                                           tabla <- tabla[tabla$anio %in% input$anio,]		
                                                          }
                                                          req(input$mes)
                                                          if (all(input$mes != "Todos")) {
@@ -194,7 +276,7 @@ function(input, output, session) {
                                                          }
                                                          
                                                          tabla <- tabla %>%
-                                                           group_by_at(.vars = c( "year", input$agrup)) %>%
+                                                           group_by_at(.vars = c( "anio", input$agrup)) %>%
                                                            summarise (viajes = sum(turistas)) 
                                                          
                                                          
@@ -221,7 +303,7 @@ function(input, output, session) {
                                                          
                                                          #etiquetas receptivo según selección en ui.
                                                          
-                                                         etiquetas <- gsub ("year", "Año", (colnames(tabla)))
+                                                         etiquetas <- gsub ("anio", "Año", (colnames(tabla)))
                                                          etiquetas <- gsub ("mes", "Mes", etiquetas)
                                                          etiquetas <- gsub ("trim", "Trimestre", etiquetas)
                                                          etiquetas <- gsub ("via", "Vía", etiquetas)
@@ -358,9 +440,9 @@ function(input, output, session) {
                                                               req(input$tipo_visitante_e)
                                                               tabla_e <- tabla_e[tabla_e$tipo_visitante %in% input$tipo_visitante_e,]		
                                                               
-                                                              req(input$year_e)
-                                                              if (all(input$year_e != "Todos")) {
-                                                                tabla_e <- tabla_e[tabla_e$year %in% input$year_e,]		
+                                                              req(input$anio_e)
+                                                              if (all(input$anio_e != "Todos")) {
+                                                                tabla_e <- tabla_e[tabla_e$anio %in% input$anio_e,]		
                                                               }
                                                               req(input$mes_e)
                                                               if (all(input$mes_e != "Todos")) {
@@ -372,7 +454,7 @@ function(input, output, session) {
                                                               }
                                                               
                                                               tabla_e <- tabla_e %>%
-                                                                group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                                group_by_at(.vars = c( "anio", input$agrup_e)) %>%
                                                                 summarise (viajes = sum(turistas)) 
                                                               
                                                               
@@ -401,22 +483,22 @@ function(input, output, session) {
                                                               
                                                               #if (all(input$tipo_visitante_e == "Turistas")){
                                                               #  tabla_e <- tabla_e %>%
-                                                              #    group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                              #    group_by_at(.vars = c( "anio", input$agrup_e)) %>%
                                                               #    summarise ("Viajes de turistas" = round(sum(turistas))) 
                                                               #} else if (all(input$tipo_visitante_e == "Excursionistas")){
                                                               #  tabla_e <- tabla_e %>%
-                                                              #    group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                              #    group_by_at(.vars = c( "anio", input$agrup_e)) %>%
                                                               #    summarise ("Viajes de excursionistas" = round(sum(turistas))) 
                                                               #} else {
                                                               #  tabla_e <- tabla_e %>%
-                                                              #    group_by_at(.vars = c( "year", input$agrup_e)) %>%
+                                                              #    group_by_at(.vars = c( "anio", input$agrup_e)) %>%
                                                               #    summarise ("Viajes de visitantes" = round(sum(turistas))) 
                                                               #} 
                                                               
                                                               
                                                               ##etiquetas emisivo según selección en ui.
                                                               
-                                                              etiquetas_e <- gsub ("year", "Año", (colnames(tabla_e)))
+                                                              etiquetas_e <- gsub ("anio", "Año", (colnames(tabla_e)))
                                                               etiquetas_e <- gsub ("mes", "Mes", etiquetas_e)
                                                               etiquetas_e <- gsub ("trim", "Trimestre", etiquetas_e)
                                                               etiquetas_e <- gsub ("via", "Vía", etiquetas_e)
@@ -508,7 +590,7 @@ function(input, output, session) {
                                                   etiquetas <- gsub ("alojamiento", "Tipo alojamiento principal en el país", etiquetas)
                                                   etiquetas <- gsub ("motivo_viaje", "Motivo de viaje", etiquetas)
                                                   etiquetas <- gsub ("Turistas", "Turistas no residentes*", etiquetas)
-                                                  etiquetas <- gsub ("Gasto", "Gasto en U$**", etiquetas)
+                                                  etiquetas <- gsub ("Gasto", "Gasto en US$**", etiquetas)
                                                   etiquetas <- gsub ("Casos_Muestrales", "Casos Muestrales***", etiquetas)
                                                   
                                                   tabla
@@ -537,9 +619,9 @@ function(input, output, session) {
                                                   req(input$tipo_visitante_g)
                                                   tabla <- tabla[tabla$tipo_visitante %in% input$tipo_visitante_g,]		
                                                   
-                                                  req(input$year_g)
-                                                  if (all(input$year_g != "Todos")) {
-                                                    tabla <- tabla[tabla$anio %in% input$year_g,]		
+                                                  req(input$anio_g)
+                                                  if (all(input$anio_g != "Todos")) {
+                                                    tabla <- tabla[tabla$anio %in% input$anio_g,]		
                                                   }
                                                   req(input$trim_g)
                                                   if (all(input$trim_g != "Todos")) {
@@ -577,9 +659,9 @@ function(input, output, session) {
                                                     
                                                   tabla <- tabla %>% 
                                                     mutate(gasto_diario= if_else(Pernoctaciones == 0, gasto_viaje, gasto_diario)) %>%  #Excursionistas gasto diario es el gasto por viaje 
-                                                    rename ("Gasto en millones de U$" = Gasto, 
-                                                            "Gasto promedio por viaje en millones de U$" = gasto_viaje,
-                                                            "Gasto promedio diario" = gasto_diario, 
+                                                    rename ("Gasto en millones de US$" = Gasto, 
+                                                            "Gasto promedio por viaje en millones de US$" = gasto_viaje,
+                                                            "Gasto promedio diario en US$" = gasto_diario, 
                                                             "Estadía media en noches" = estadia, 
                                                             "Año"= anio
                                                             )
@@ -614,10 +696,11 @@ datos_grafico1_sel <- eventReactive(input$pais_agrup_graf,{
 })
   
 output$grafico_serie <- renderPlotly({ 
-  grafico_1  <- ggplot(datos_grafico1_sel(), aes(periodo, turistas, colour = turismo, group =1, text = paste('Fecha:', format(periodo,"%b%y"),
-                                                                                                       '<br>Viajes:',format(turistas,big.mark=".",
-                                                                                                                            decimal.mark = ","), 
-                                                                                                       '<br>Turismo:',turismo)))+   
+  grafico_1  <- ggplot(datos_grafico1_sel(), aes(periodo, turistas, colour = turismo, group =1, 
+                                                 text = paste('Fecha:', format(periodo,"%b%y"),
+                                                              '<br>Viajes:',format(turistas,big.mark=".",
+                                                                                   decimal.mark = ","),
+                                                              '<br>Turismo:',turismo)))+   
     geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) + 
     geom_line(size = 0.5 , alpha = 0.8) + 
     geom_point(size = 1.0, alpha = 0.8)+ 
@@ -633,14 +716,15 @@ output$grafico_serie <- renderPlotly({
           legend.text = element_text (size =12),
           plot.caption =  element_text (size =12, hjust = 0.0)) +
     labs(title = "Evolución mensual de los viajes de turistas internacionales.",
-         subtitle = glue ("Emisivo y receptivo \n Enero 2016-{Mes_ult}-{year_ult}"),
+         subtitle = glue ("Emisivo y receptivo \n Enero 2016-{Mes_ult}-{anio_ult}"),
          y = "", 
          x = "", 
          color= "",
          caption =  "Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes,
          en base a información de la Dirección Nacional de Migraciones y la Encuesta de Turismo Internacional." )
   
-   ggplotly(grafico_1, tooltip = "text")  %>% 
+  
+ggplotly(grafico_1, tooltip = "text")  %>% 
     layout(legend = list(orientation = "h", x = 0.4, y = -0.6))
  })
 

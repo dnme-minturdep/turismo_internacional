@@ -6,11 +6,14 @@ library(shiny)
 library(plotly)
 library(waiter)
 library(shinycssloaders)
-library (readxl)									
+library(readxl)									
 library(herramientas)
 library(shinydashboard)
-#library(shinyWidgets)
-#library(comunicacion)
+library(shinyWidgets)
+library(comunicacion)
+
+
+source("valuebox.R")
 
 # language en DT::
 
@@ -27,65 +30,70 @@ cols_arg2 <- c("#EE3D8F", # "(rosa)"
 #saco notacion cientifica
 options(scipen = 999)
 
-#Levanto serie historica (es hasta 2022, pero se toman datos hasta 2015)
 
-serie_visitantes <- read_file_srv("turismo_internacional/bases_proceso/base_visitantes_1990_2022.xlsx") %>% 
+# levanto datos: ####
+## serie historica (es hasta 2022, pero se toman datos hasta 2015) ####
+
+serie_visitantes <- read_file_srv(
+  "turismo_internacional/bases_proceso/base_visitantes_1990_2022.xlsx") %>% 
   filter (anio < 2016) %>% 
-  filter(!(anio >= 2010 & tipo_visitante == "Turistas" & turismo_internac == "Receptivo"))
+  filter(!(anio >= 2010 & tipo_visitante == "Turistas" & 
+             turismo_internac == "Receptivo")) %>% 
+  rename(casos = casos_ponderados)
 
-serie_visitantes <- serie_visitantes %>%
-  rename(year = 'anio', 
-         casos = casos_ponderados)
+## datos turismo internacional visitantes (desde 2016 + receptivo turistas 2010-2015) ####
 
-# datos turismo internacional visitantes desde 2016 + receptivo turistas 2010-2015   ####
+datos <- read_file_srv(
+  "/srv/DataDNMYE/turismo_internacional/bases_proceso/turismo_internacional_visitantes.rds") %>% 
+  rename(casos = casos_ponderados)  
 
-datos <- read_file_srv("/srv/DataDNMYE/turismo_internacional/turismo_internacional_visitantes.rds")
+# ultimos datos
+mes_ult_nro <- as_tibble(datos[nrow(datos),mes])
+anio_ult <- as_tibble(datos[nrow(datos),anio])
 
-datos <- datos %>%
-  rename(year = 'anio', 
-         casos = casos_ponderados)  
+#tabla para graficos####
 
-#datos para graficos####
-
-#data para serie, por pais_agrupado y destino
+#data para g por raficos acumulados: pais_agrupado y destino
 
 data_graficos <- datos [tipo_visitante == "Turistas", .(turistas = sum(casos)), 
-                      by = .(year, mes, pais_agrupado, destino_agrup, 
+                      by = .(anio, mes, pais_agrupado, destino_agrup, 
                                turismo_internac)] 
 
-#completo meses faltantes.
-
-data_graficos <- data.table(complete (data_graficos, 
-                                      expand(data_graficos, year, mes, 
-                                             nesting(destino_agrup, 
-                                                    pais_agrupado, 
-                                                    turismo_internac)),
-                                      fill = list(turistas = 0)))
-
-# elimino meses posteriores al ultimo, que se completaron por nesting.
-
-mes_ult_nro <- as_tibble(datos[nrow(datos),mes])
-year_ult <- as_tibble(datos[nrow(datos),year])
+##completo meses faltantes (no es necesario, ya no tengo acá el gráfico de serie mensual)
+#
+#data_graficos <- data.table(complete (data_graficos, 
+#                                      expand(data_graficos, anio, mes, 
+#                                             nesting(destino_agrup, 
+#                                                    pais_agrupado, 
+#                                                    turismo_internac)),
+#                                      fill = list(turistas = 0)))
+#
+## elimino meses posteriores al ultimo, que se completaron por nesting.
+#
+#data_graficos <- data_graficos %>%
+#  filter ((anio < as.numeric(anio_ult)) | (anio == as.numeric(anio_ult) 
+#                                           & mes <= as.numeric(mes_ult_nro))) %>% 
+#  mutate (periodo = dmy(as.character(glue("01/{mes}/{anio}"))))%>% 
+#  rename (turismo = turismo_internac)
 
 data_graficos <- data_graficos %>%
-  filter ((year < as.numeric(year_ult)) | (year == as.numeric(year_ult) 
-                                           & mes <= as.numeric(mes_ult_nro))) %>% 
-  mutate (periodo = dmy(as.character(glue("01/{mes}/{year}"))))%>% 
+  mutate (periodo = dmy(as.character(glue("01/{mes}/{anio}"))))%>% 
   rename (turismo = turismo_internac)
 
 # acumulado por destino:
 
 data_grafico_ac_pais <- data_graficos %>%
-  filter (year == as.numeric(year_ult)) %>% 
+  filter (anio == as.numeric(anio_ult)) %>% 
   mutate(pais_destino = case_when(turismo == "Receptivo" ~ pais_agrupado,
                                   turismo == "Emisivo" ~ destino_agrup)) %>% 
-  group_by(turismo,pais_destino) %>% 
+  group_by(turismo, pais_destino) %>% 
   summarise(turistas = round(sum(turistas))) %>% 
   ungroup() 
+
 # acumulado por via. 
 
 data_grafico_ac_via <- datos %>%
-  filter (year == as.numeric(year_ult), tipo_visitante == "Turistas") %>% 
+  filter (anio == as.numeric(anio_ult), tipo_visitante == "Turistas") %>% 
   rename(turismo = turismo_internac) %>% 
   group_by(turismo, via) %>% 
   summarise(turistas = round(sum(casos))) %>% 
@@ -100,14 +108,64 @@ data_grafico_ac_total <- data_grafico_ac_via %>%
 #agrego total a via. 
 data_grafico_ac_via <- bind_rows(data_grafico_ac_via, data_grafico_ac_total)
 
-# datos para tabla ####
 
-# matcheo datos de serie: 
+# datos para tabla a publicar ####
 
-datos <- datos %>% bind_rows(serie_visitantes)
+#completo meses faltantes (2020 trim 2 principalmente)
 
-datos<- datos %>% 
-  arrange(year,mes)
+datos <- data.table(complete (datos,  expand(datos, anio, mes, 
+                                             nesting(destino_agrup, 
+                                                     pais_agrupado, 
+                                                     turismo_internac,
+                                                     tipo_visitante,
+                                                     via, 
+                                                     sexo, 
+                                                     grupoetario)),
+                                      fill = list(casos = 0, 
+                                                  paso_publ = "Sin dato",
+                                                  prov = "Sin dato",
+                                                  limita = "Sin dato",
+                                                  pais = "Sin dato", 
+                                                  ruta_natural = "Sin dato" 
+                                                  )))
+
+# elimino meses posteriores al ultimo, que se completaron por nesting.
+# creo trim para nuevos meses:
+
+datos <- datos %>%
+  filter ((anio < as.numeric(anio_ult)) | (anio == as.numeric(anio_ult) 
+                                           & mes <= as.numeric(mes_ult_nro))) %>% 
+  mutate(trim = case_when (mes %in% 1:3 ~ 1,
+                           mes %in% 4:6 ~ 2, 
+                           mes %in% 7:9 ~ 3, 
+                           mes %in% 10:12 ~ 4))
+
+#ultimos datos (box) ####
+
+dato_box <-  datos %>% 
+  filter(anio == as.numeric(anio_ult) | anio == as.numeric(anio_ult-1)) %>%  #Año actual y anterior 
+  filter(tipo_visitante == "Turistas") %>% 
+  filter(mes <= as.numeric(mes_ult_nro))
+
+dato_acumulado <- dato_box %>% 
+  group_by(anio, turismo_internac) %>% 
+  summarise(casos = sum(casos)) %>% 
+  ungroup() %>%
+  mutate(var = casos/lag(casos, n = 2)-1) %>% 
+  filter(anio == as.numeric (anio_ult))
+
+dato_mensual <- dato_box %>% 
+  group_by(anio, mes, turismo_internac) %>% 
+  summarise(casos = sum(casos)) %>% 
+  ungroup() %>%
+  filter(mes == as.numeric(mes_ult_nro)) %>% 
+  mutate(var = casos/lag(casos, n = 2)-1) %>% 
+  filter(anio == as.numeric (anio_ult))
+
+#sumo serie historica
+
+datos <- datos %>% bind_rows(serie_visitantes) %>% 
+  arrange(anio,mes)
 
 #mes de numero a texto.
 
@@ -129,14 +187,30 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
                                          "Diciembre", "Sin dato"), 
                    ordered = TRUE)	
 
+# acumulado por via. 
+
+data_grafico_ac_via <- datos %>%
+  filter (anio == as.numeric(anio_ult), tipo_visitante == "Turistas") %>% 
+  rename(turismo = turismo_internac) %>% 
+  group_by(turismo, via) %>% 
+  summarise(turistas = round(sum(casos))) %>% 
+  ungroup() 
+
+data_grafico_ac_total <- data_grafico_ac_via %>%
+  group_by(turismo) %>% 
+  summarise(turistas = round(sum(turistas))) %>% 
+  ungroup() %>% 
+  mutate(via = "Total")
+
   ## RECEPTIVO 
   
   data_receptivo <-  datos[turismo_internac == "Receptivo", ] 
   data_receptivo <- data_receptivo[, .(turistas = sum(casos)), 
-                                   by = .(year, trim, mes, tipo_visitante, via,
+                                   by = .(anio, trim, mes, tipo_visitante, via,
                                           pais_agrupado, pais, 
                                           paso_publ, prov, limita, ruta_natural, 
                                           sexo, grupoetario)] 
+  
   
   # graficos  TI ####
   
@@ -157,7 +231,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
           title = element_text (size =13),
           plot.caption  = element_text(size = 11, hjust = 0)) +
     labs(title = "Viajes de turistas según país de residencia/destino",
-         subtitle = glue("Total país. Acumulado a {Mes_ult} {year_ult}."),
+         subtitle = glue("Total país. Acumulado a {Mes_ult} {anio_ult}."),
          y = "", 
          x = "", 
          fill = "",
@@ -177,7 +251,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
           legend.position = "" ,
           title = element_text (size =12) )+
     labs(title = "Viajes de turistas según medio de transporte",
-         subtitle = glue("Total país. Acumulado a {Mes_ult} {year_ult}."),
+         subtitle = glue("Total país. Acumulado a {Mes_ult} {anio_ult}."),
          y = "", 
          x = "", 
          fill = "",
@@ -188,7 +262,7 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
   
   data_emisivo <-  datos[turismo_internac == "Emisivo", ] 
   data_emisivo <- data_emisivo[, .(turistas = sum(casos)), 
-                               by = .(year, trim, mes,  tipo_visitante, via, 
+                               by = .(anio, trim, mes,  tipo_visitante, via, 
                                       destino_agrup, pais, 
                                       paso_publ, prov, limita,
                                       sexo, grupoetario)] 
@@ -197,12 +271,12 @@ datos$mes<- factor(datos$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",
 
 # datos eti ####
   
-localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad.rds")
+localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad_previo_publ.rds")
 
 #defino ultimo mes antes de pasarlo a factor
 
 mes_eti <- last(localidad$mes)
-year_eti <- last(localidad$anio)
+anio_eti <- last(localidad$anio)
 
 #reordeno niveles
 
@@ -243,3 +317,4 @@ anio_ult_gasto <- as_tibble(gasto[nrow(gasto),1])
 #abro aperturas de variables según años
 
 aperturas <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/aperturas_serie_ti.xlsx")
+

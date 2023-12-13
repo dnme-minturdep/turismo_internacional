@@ -8,10 +8,10 @@ valueBox <- function(value, title = "", subtitle, icon, color) {
               ),
               div(class = "row",
                   div(class = "col-xs-3",
-                      icon(icon)
+                      icon(icon, "fa-3x")
                   ),
                   div(class = ("col-xs-9 text-right"),
-                      div(style = ("font-size: 40px; font-weight: bold;"),
+                      div(style = ("font-size: 3rem; font-weight: bold;"),
                           value
                       ),
                       div(subtitle)
