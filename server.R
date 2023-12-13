@@ -54,7 +54,7 @@ function(input, output, session) {
   
   output$boxreceptivo_ac <- renderValueBox({
     
-    value <- lbl_int(625431)
+    value <- lbl_int(dato_acumulado$casos[dato_acumulado$turismo_internac == "Receptivo"])
     valueBox(value = value, 
              subtitle = "Viajes de turistas",
              icon = "plane-arrival",
@@ -64,7 +64,7 @@ function(input, output, session) {
   
   output$boxreceptivo_var_ac <- renderValueBox({
     
-    value <- lbl_percent(0.473)
+    value <- lbl_percent(dato_acumulado$var[dato_acumulado$turismo_internac == "Receptivo"])
     valueBox(value = value, 
              subtitle = "Var.ia %",
              icon = "chart-line",
@@ -74,7 +74,7 @@ function(input, output, session) {
   
   output$boxemisivo_ac <- renderValueBox({
     
-    value <- lbl_int(524433)
+    value <- lbl_int(dato_acumulado$casos[dato_acumulado$turismo_internac == "Emisivo"])
     valueBox(value = value, 
              subtitle = "Viajes de turistas",
              icon = "plane-departure",
@@ -85,7 +85,7 @@ function(input, output, session) {
   
   output$boxemisivo_var_ac <- renderValueBox({
     
-    value <- lbl_percent(-0.023)
+    value <- lbl_percent(dato_acumulado$var[dato_acumulado$turismo_internac == "Emisivo"])
     valueBox(value = value, 
              subtitle = "Var.ia %",
              icon = "chart-line",

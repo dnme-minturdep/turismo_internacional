@@ -44,7 +44,7 @@ serie_visitantes <- read_file_srv(
 ## datos turismo internacional visitantes (desde 2016 + receptivo turistas 2010-2015) ####
 
 datos <- read_file_srv(
-  "/srv/DataDNMYE/turismo_internacional/bases_proceso/turismo_internacional_visitantes.rds") %>% 
+  "/srv/DataDNMYE/turismo_internacional/turismo_internacional_visitantes.rds") %>% 
   rename(casos = casos_ponderados)  
 
 # ultimos datos
@@ -271,7 +271,7 @@ data_grafico_ac_total <- data_grafico_ac_via %>%
 
 # datos eti ####
   
-localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad_previo_publ.rds")
+localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad.rds")
 
 #defino ultimo mes antes de pasarlo a factor
 
