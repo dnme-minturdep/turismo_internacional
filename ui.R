@@ -54,7 +54,7 @@ navbarPage(title = div(  #### NavBar #####
                         h3(glue("Datos de último año: acumulado a {Mes_ult} {anio_ult}")),
                         fluidRow(column(6,
                                         wellPanel( 
-                                          h6("Turismo receptivo",  style = "font-size: 2rem"),
+                                          h6("Turismo receptivo",  style = "color: #37BBED; font-size: 2rem"),
                                           fluidRow(
                                             column(6, valueBoxOutput("boxreceptivo_ac", width = "100%")),
                                             column(6, valueBoxOutput("boxreceptivo_var_ac", width = "100%"))
@@ -63,7 +63,7 @@ navbarPage(title = div(  #### NavBar #####
                         ),
                         column(6,
                                wellPanel( 
-                                 h6("Turismo emisivo",  style = "font-size: 2rem"),
+                                 h6("Turismo emisivo",  style = "color: #37BBED; font-size: 2rem"),
                                  fluidRow(
                                    column(6, valueBoxOutput("boxemisivo_ac", width = "100%")),
                                    column(6, valueBoxOutput("boxemisivo_var_ac", width = "100%"))
@@ -628,18 +628,18 @@ navbarPage(title = div(  #### NavBar #####
                         br(),
                         
                         h3("ACLARACIONES TÉCNICAS"),
-                        h5("• Serie histórica: Los datos de gasto desde el 2016 en adelante surgen directamente de la DNESEyCI de INDEC, 
+                        h5("•", tags$b("Serie histórica:"), "Los datos de gasto desde el 2016 en adelante surgen directamente de la DNESEyCI de INDEC, 
                         mientras que los datos de años anteriores surgen de un empalme realizado por la DNMyE para poder mantener
                         la comparabilidad de la serie histórica."), 
                         
-                        h5("• Receptivo y Emisivo:"),
+                        h5("•", tags$b("Receptivo y Emisivo:")),
                         
                         tags$ul(h5("-La estimación del turismo internacional se contabiliza al finalizar el viaje, por tanto, el turismo 
                            receptivo se contabiliza a la salida y el emisivo a la entrada.")),
-                        tags$ul(h5("-Diferencias entre turistas no residentes y viajes de turistas no residentes: 
-                        Un turista receptivo, luego de visitar la Argentina puede ir a otro país cercano y volver a ingresar antes de regresar a su país de
-                        residencia habitual. Por ello, un turista no residente puede realizar más de un viaje en el mismo mes: la cantidad de viajes receptivos puede ser mayor que la
-                        cantidad de turistas receptivos. Se establece como supuesto que los visitantes no residentes que utilizan la vía aérea siempre abandonan definitivamente el país, por tal motivo
+                        tags$ul(h5("-Diferencias entre", tags$b("turistas no residentes y viajes de turistas no residentes:"), 
+                        "Un turista receptivo, luego de visitar la Argentina puede ir a otro país cercano y volver a ingresar antes de regresar a su país de
+                        residencia habitual. Por ello, un turista no residente puede realizar más de un viaje en el mismo mes: la ", tags$b("cantidad de viajes receptivos puede ser mayor que la
+                        cantidad de turistas receptivos."), "Se establece como supuesto que los visitantes no residentes que utilizan la vía aérea siempre abandonan definitivamente el país, por tal motivo
                         la cantidad de viajes coincide con la cantidad de turistas. Este supuesto no se aplica en el resto de las vías de acceso al país.
                         ")), 
                         
