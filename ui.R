@@ -51,7 +51,7 @@ navbarPage(title = div(  #### NavBar #####
                           )
                         ),
                           
-                        h3(glue("Datos de último año: acumulado a {Mes_ult} {anio_ult}")),
+                        h3(glue("Datos de último año: acumulado Enero - {Mes_ult} {anio_ult}")),
                         fluidRow(column(6,
                                         wellPanel( 
                                           h6("Turismo receptivo",  style = "color: #37BBED; font-size: 2rem"),
@@ -132,7 +132,7 @@ navbarPage(title = div(  #### NavBar #####
                             column(3,
                                    radioButtons("metrica",
                                                 label = "Métrica:",
-                                                choiceNames =  list("Viajes","Gasto (en millones de US$)","Estadía media", "Gasto por viaje (en millones de US$)","Gasto diario (en US$)"),
+                                                choiceNames =  list("Viajes","Gasto (en millones de US$)","Estadía media", "Gasto por viaje (en US$)","Gasto diario (en US$)"),
                                                 choiceValues = list("Viajes","Gasto","Estadia_media", "Gasto_viaje","Gasto_diario"),
                                                 #choices = c("Viajes","Gasto","Estadia_media", "Gasto_viaje","Gasto_diario"),
                                                 selected = "Viajes")
