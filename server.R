@@ -660,7 +660,7 @@ function(input, output, session) {
                                                   tabla <- tabla %>% 
                                                     mutate(gasto_diario= if_else(Pernoctaciones == 0, gasto_viaje, gasto_diario)) %>%  #Excursionistas gasto diario es el gasto por viaje 
                                                     rename ("Gasto en millones de US$" = Gasto, 
-                                                            "Gasto promedio por viaje en millones de US$" = gasto_viaje,
+                                                            "Gasto promedio por viaje en US$" = gasto_viaje,
                                                             "Gasto promedio diario en US$" = gasto_diario, 
                                                             "Estadía media en noches" = estadia, 
                                                             "Año"= anio
