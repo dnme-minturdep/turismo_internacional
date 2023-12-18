@@ -594,7 +594,7 @@ function(input, output, session) {
                                                   etiquetas <- gsub ("Casos_Muestrales", "Casos Muestrales***", etiquetas)
                                                   
                                                   tabla
-                                                }, rownames= FALSE, colnames = etiquetas)
+                                              }, rownames= FALSE, colnames = etiquetas)
   )
   
   # SERIE ####  
@@ -640,12 +640,14 @@ function(input, output, session) {
                                                                estadia = round(Pernoctaciones/Viajes, 1),
                                                                gasto_viaje = round(Gasto/Viajes*1000000,1),
                                                                gasto_diario = round(Gasto/Pernoctaciones*1000000, 1)) %>%
-                                                    ungroup() %>% 
-                                                    mutate(estadia= if_else( (anio == 2020 & trim >= 3|
-                                                                                anio == 2021 & trim < 4), 
-                                                                             NA_real_, 
-                                                                             estadia)
-                                                           )
+                                                    ungroup() 
+                                                  
+                                                  if (any(input$agrup_g == "trim")) {
+                                                                    tabla <- tabla %>%
+                                                                    mutate(estadia= case_when(anio == 2020 & trim %in% c("3", "4") ~ NA_real_,
+                                                                                anio == 2021 & trim %in% c("1","2","3") ~ NA_real_,
+                                                                                TRUE ~ estadia))
+                                                                    }
                                                   
                                                   # Redondeo Basico (saqué opción de no redondear)
                                                   #req(input$round_s)
@@ -734,37 +736,52 @@ output$graf_via_ti <- renderPlot(graf_via_ti)
 
 ## 2. Gasto #####
 
-datos_gasto_grafico2_sel <-eventReactive(list(input$pais_agrup_graf_serie, 
-                                              input$tipo_visitante_graf, 
-                                              input$periodo),{
-  req(input$pais_agrup_graf_serie, input$tipo_visitante_graf,input$periodo)
-  datos_gasto_grafico2_sel <- gasto %>% 
-    filter(tipo_visitante %in% input$tipo_visitante_graf)
-  if (input$periodo == "Anual") {
-    datos_gasto_grafico2_sel <- datos_gasto_grafico2_sel %>% 
-      mutate(periodo = as.Date(paste0(anio,"-01-01"), "%Y-%m-%d"))
+datos_gasto_grafico2_sel <-eventReactive(
+  list(input$pais_agrup_graf_serie, 
+       input$tipo_visitante_graf, 
+       input$periodo),{
+         req(input$pais_agrup_graf_serie, input$tipo_visitante_graf,input$periodo)
+         
+         datos_gasto_grafico2_sel <- gasto %>% 
+           filter(tipo_visitante %in% input$tipo_visitante_graf)
+         
+         if (input$pais_agrup_graf_serie != "Todos") {
+           datos_gasto_grafico2_sel <- datos_gasto_grafico2_sel %>% 
+             filter(pais_agrupado == input$pais_agrup_graf_serie)
+         }
+         
+         if (input$periodo == "Anual") {
+           datos_gasto_grafico2_sel <- datos_gasto_grafico2_sel %>% 
+             mutate(periodo = as.Date(paste0(anio,"-01-01"), "%Y-%m-%d")) %>% 
+             group_by(periodo, residencia) %>% 
+             summarise (Viajes = round(sum(casos_ponderados)), 
+                        Gasto = round(sum(gasto),1),
+                        Pernoctaciones = round(sum(pernoctes)), 
+                        Estadia_media= if_else(Viajes == 0,0, round(Pernoctaciones/Viajes, 1)),
+                        Gasto_viaje= if_else(Viajes == 0,0,round(Gasto/Viajes*1000000,1)),
+                        Gasto_diario= round(Gasto/Pernoctaciones*1000000, 1)) %>% 
+             ungroup() %>% 
+             mutate(Gasto_diario= if_else(Pernoctaciones == 0, Gasto_viaje, Gasto_diario), #Excursionistas gasto diario es el gasto por viaje 
+             )
+         } else {
+           datos_gasto_grafico2_sel <- datos_gasto_grafico2_sel %>% 
+             group_by(periodo, residencia) %>% 
+             summarise (Viajes = round(sum(casos_ponderados)), 
+                        Gasto = round(sum(gasto),1),
+                        Pernoctaciones = round(sum(pernoctes)), 
+                        Estadia_media= if_else(Viajes == 0,0, round(Pernoctaciones/Viajes, 1)),
+                        Gasto_viaje= if_else(Viajes == 0,0,round(Gasto/Viajes*1000000,1)),
+                        Gasto_diario= round(Gasto/Pernoctaciones*1000000, 1)) %>% 
+             ungroup() %>% 
+             mutate(Gasto_diario= if_else(Pernoctaciones == 0, Gasto_viaje, Gasto_diario), #Excursionistas gasto diario es el gasto por viaje 
+                    Estadia_media = if_else( periodo >= "2020-07-01" & 
+                                              periodo < "2021-10-01",
+                                            0,
+                                            Estadia_media))
+           }
   }
-  if (input$pais_agrup_graf_serie != "Todos") {
-    datos_gasto_grafico2_sel <- datos_gasto_grafico2_sel %>% 
-    filter(pais_agrupado == input$pais_agrup_graf_serie)
-    } 
-  datos_grafico2_sel <- datos_gasto_grafico2_sel %>% 
-    group_by(periodo, residencia) %>% 
-    summarise (Viajes = round(sum(casos_ponderados)), 
-               Gasto = round(sum(gasto),1),
-               Pernoctaciones = round(sum(pernoctes)), 
-               Estadia_media= if_else(Viajes == 0,0, round(Pernoctaciones/Viajes, 1)),
-               Gasto_viaje= if_else(Viajes == 0,0,round(Gasto/Viajes*1000000,1)),
-               Gasto_diario= round(Gasto/Pernoctaciones*1000000, 1)) %>% 
-    ungroup() %>% 
-    mutate(Gasto_diario= if_else(Pernoctaciones == 0, Gasto_viaje, Gasto_diario), #Excursionistas gasto diario es el gasto por viaje 
-           Estadia_media =if_else( periodo >= "2020-07-01" & periodo < "2021-10-01", 
-                                   0, 
-                                   Estadia_media
-                                   )# no se muestra estadia media en este periodo a espera de reevaluacion de datos. 
-           )
-  })
-
+)
+ 
 output$grafico_gasto <- renderPlotly({ 
   req(input$metrica)
   eje_y <- input$metrica

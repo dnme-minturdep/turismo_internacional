@@ -298,13 +298,11 @@ gasto <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_
 
 gasto <- gasto %>% 
   mutate(periodo = if_else(trim == 0,
-                           yq(paste(anio,1)),
-                           yq(paste(anio, trim))),#para graficos
+                           lubridate::yq(paste(anio, 1, "-")),
+                           yq(paste(anio, trim, "-"))),#para graficos
          trim = as.character(trim), 
-         trim= if_else(trim == "0", "Sin dato", trim), 
-         #gasto = if_else(trim == 2 & anio == 2020, 0, gasto),
-         #pernoctes = if_else(trim == 2 & anio == 2020, 0, pernoctes)
-  )
+         trim= if_else(trim == "0", "Sin dato", trim),
+         )
 
 #Por ahora dejamos viajes 0 y gasto y pernoctes en trim 2 2020
 #se puede agregar datos por mes y via, con SD en gasto.
@@ -317,4 +315,6 @@ anio_ult_gasto <- as_tibble(gasto[nrow(gasto),1])
 #abro aperturas de variables según años
 
 aperturas <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/aperturas_serie_ti.xlsx")
+
+
 
