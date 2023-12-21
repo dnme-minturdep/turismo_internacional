@@ -515,7 +515,54 @@ function(input, output, session) {
   )
   
 # ETI ####  
-
+  
+  #  Reactivo de mes segun input en paso ((####SEGUIR))
+  
+  paso_select <- reactive ({
+      paso_select <- localidad %>% filter(paso_final == input$paso)
+})
+  
+  
+  #al cambiar input de paso actualizo choices de pais
+  
+  observeEvent(paso_select(), {
+      updateSelectInput(session, inputId = "pais_origen", choices = c("Todos",
+                                                               sort(unique(paso_select()$pais_origen),)),
+                        selected = "Todos")
+    
+  })
+  
+  #al cambiar input de paso actualizo choices de mes:
+  
+  observeEvent(paso_select(), {
+    updateSelectInput(session, inputId = "mes_encuesta", choices = c("Todos",
+                                                                    unique(as.character(paso_select()$mes))),
+                      selected = "Todos")
+    
+  })
+  
+  # Reactivo de tabla_pais segun input.
+  
+  tabla_pais <- reactive({
+    req(input$pais_origen)
+    if (input$pais_origen == "Todos") {
+      tabla_pais <- paso_select()
+    } else {
+      tabla_pais <- paso_select()[paso_select()$pais_origen == input$pais_origen,  ]
+    }
+  })
+  
+  
+  # Reactivo de tabla_pais segun input.
+  
+  tabla_pais_mes <- reactive({
+    req(input$mes_encuesta)
+    if (input$mes_encuesta == "Todos") {
+      tabla_pais_mes <- tabla_pais()
+    } else {
+      tabla_pais_mes <- tabla_pais()[tabla_pais()$mes == input$mes_encuesta,  ]
+    }
+  })
   output$tabla_eti<- DT::renderDT(server = FALSE,
                                   
                                   DT::datatable(extensions = 'Buttons',
@@ -528,19 +575,22 @@ function(input, output, session) {
                                                                                 text = 'Download'
                                                                               ))),   
                                                 {
-                                                  tabla <- localidad
+                                                  tabla <- tabla_pais_mes()
                                                   #filtros:
-                                                  req(input$anio)
-                                                  if (all(input$anio != "Todos")) {
-                                                    tabla <- tabla[tabla$anio %in% input$anio,]		
+                                                  req(input$paso)
+                                                  tabla <- tabla[tabla$paso_final == input$paso,]		
+                                                  
+                                                  req(input$anio_encuesta)
+                                                  if (all(input$anio_encuesta != "Todos")) {
+                                                    tabla <- tabla[tabla$anio %in% input$anio_encuesta,]		
                                                   }
                                                   req(input$trim)
                                                   if (all(input$trim != "Todos")) {
                                                     tabla <- tabla[tabla$trim %in% input$trim,]		
                                                   }
-                                                  req(input$mes)
-                                                  if (all(input$mes != "Todos")) {
-                                                    tabla <- tabla[tabla$mes %in% input$mes,]		
+                                                  req(input$mes_encuesta)
+                                                  if (all(input$mes_encuesta != "Todos")) {
+                                                    tabla <- tabla[tabla$mes %in% input$mes_encuesta,]		
                                                   }
                                                   req(input$provincia)
                                                   if (all(input$provincia != "Todas")) {
@@ -559,16 +609,13 @@ function(input, output, session) {
                                                     tabla <- tabla[tabla$pais_origen %in% input$pais_origen,]		
                                                   }
                                                   
-                                                  
-                                                  
-                                                  
                                                   # Grupos
                                                   tabla <- tabla %>%
-                                                    group_by_at(.vars = c( "id", input$agrup_p)) %>%
+                                                    group_by_at(.vars = c( "id", input$agrup_p)) %>% #agrupo por id para no duplicar casos por localida
                                                     summarise (turistas = first(wpf),
                                                                casos =  first(p18_1), 
                                                                noches = sum(noches * wpf),
-                                                               gasto = sum(gasto * wpf),                                                                      ) %>%
+                                                               gasto = sum(gasto * wpf)) %>%
                                                     group_by_at(.vars = c( input$agrup_p)) %>%
                                                     summarise (Turistas = sum(turistas),
                                                                Noches = sum(noches),
@@ -703,8 +750,8 @@ output$grafico_serie <- renderPlotly({
                                                               '<br>Viajes:',format(turistas,big.mark=".",
                                                                                    decimal.mark = ","),
                                                               '<br>Turismo:',turismo)))+   
-    geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) + 
-    geom_line(size = 0.5 , alpha = 0.8) + 
+    geom_hline(yintercept = 0, color = "grey", alpha =0.7, linewidth = 0.5) + 
+    geom_line(linewidth = 0.5 , alpha = 0.8) + 
     geom_point(size = 1.0, alpha = 0.8)+ 
     scale_color_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
     scale_x_date(date_breaks = "1 months", date_labels = "%b%y", expand = c(0,10))+ 
@@ -794,7 +841,7 @@ output$grafico_gasto <- renderPlotly({
                                                             decimal.mark = ","), 
                                         '<br>Turismo:',residencia),
                        ))+
-    geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) + 
+    geom_hline(yintercept = 0, color = "grey", alpha =0.7, linewidth = 0.5) + 
     geom_line(linewidth = 1 , alpha = 0.8) + 
     geom_point(size = 1.5, alpha = 0.8)+ 
     scale_color_manual(values = c(cols_arg2[1], cols_arg2[2])) + 

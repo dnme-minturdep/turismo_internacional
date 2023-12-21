@@ -507,7 +507,7 @@ navbarPage(title = div(  #### NavBar #####
                         br(),
                         h4("PERFIL TURISMO RECEPTIVO"),
                         h5(glue("Datos desde Enero de 2019 a {mes_eti} {anio_eti}.")),
-                        h5("Esta pestaña permite caracterizar el perfil del turismo receptivo por los pasos de Ezeiza y Aeroparque, a partir de
+                        h5("Esta pestaña permite caracterizar el perfil del turismo receptivo por los pasos relevados en 
                            la Encuesta de Turismo Internacional (ETI). Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
                            visitado en la Argentina."),
@@ -516,10 +516,19 @@ navbarPage(title = div(  #### NavBar #####
                           h5("Los siguientes comandos permiten filtrar los datos."),
                           fluidRow(
                             column(3,
-                                   selectInput("anio",
+                                   selectInput("paso",
+                                               "Paso:",
+                                               choices = unique(as.character(localidad$paso_final)),
+                                               selected = "Ezeiza y Aeroparque", 
+                                               multiple =FALSE)
+                            ),
+                            column(3,
+                                   selectInput("anio_encuesta",
                                                "Año:",
                                                c("Todos",
-                                                 unique(as.character(localidad$anio))),selected = localidad[nrow(localidad),1], multiple =TRUE)
+                                                 unique(as.character(localidad$anio))),
+                                               selected = localidad[nrow(localidad),1],
+                                               multiple =TRUE)
                             ),
                             column(3,
                                    selectInput("trim",
@@ -528,7 +537,7 @@ navbarPage(title = div(  #### NavBar #####
                                                  unique(as.character(localidad$trim))), selected = "Todos" , multiple =TRUE)
                             ),
                             column(3,
-                                   selectInput("mes",
+                                   selectInput("mes_encuesta",
                                                "Mes:",
                                                c("Todos",
                                                  unique(as.character(localidad$mes))), selected = "Todos" , multiple =TRUE)
@@ -542,8 +551,11 @@ navbarPage(title = div(  #### NavBar #####
                             column(3,
                                    selectInput("pais_origen",
                                                "País de residencia:",
-                                               c("Todos",
-                                                 sort(unique(as.character(localidad$pais_origen)))), selected = "Todos" , multiple =TRUE)
+                                               choices = NULL, 
+                                               #c("Todos",
+                                               #  sort(unique(as.character(localidad$pais_origen)))), 
+                                               #selected = "Todos" , 
+                                               multiple = TRUE)
                             ),
                             column(3,
                                    selectInput("alojamiento",
@@ -576,7 +588,7 @@ navbarPage(title = div(  #### NavBar #####
                                    )
                             ),
                           
-                          h3("PERFIL DE TURISTAS NO RESIDENTES. EZEIZA-AEROPARQUE (ETI)"),
+                          h3("PERFIL DE TURISTAS NO RESIDENTES (ETI)"),
                           
                           # Create a new row for the table.
                           DT::dataTableOutput("tabla_eti") %>% 
@@ -653,6 +665,10 @@ navbarPage(title = div(  #### NavBar #####
                         tableOutput("aperturas_variables"),
                         
                         tags$ul(h6("* En emisivo, no hay datos de destino de excursionistas entre 2016 y julio de 2021.")),
+                        
+                        h5("•", tags$b("Perfil receptivo (ETI):"),"La encuesta presenta información de turistas, no de viajes de turistas. Por tanto, el dato de los pasos 
+                        'Cristo Redentor' y 'Puerto de Buenos Aires' es menor al de la solapa receptivo, ya que en la misma se contabilizan los viajes. En la vía aérea, ambos números coinciden por definición."), 
+                        
                         
                         br(),
                         
