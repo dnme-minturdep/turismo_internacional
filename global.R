@@ -275,7 +275,7 @@ localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad.rds")
 
 #defino ultimo mes antes de pasarlo a factor
 
-mes_eti <- last(localidad$mes)
+mes_eti <- last(localidad$mes[localidad$paso_final == "Ezeiza y Aeroparque"])
 anio_eti <- last(localidad$anio)
 
 #reordeno niveles
@@ -283,7 +283,7 @@ anio_eti <- last(localidad$anio)
 localidad$mes<- factor(localidad$mes, levels = c("Enero",	"Febrero",	"Marzo", "Abril",	
                                          "Mayo",	"Junio",	"Julio",	"Agosto",	
                                          "Septiembre", "Octubre",	"Noviembre",	
-                                         "Diciembre"), 
+                                         "Diciembre", "Sin datos"), 
                    ordered = TRUE)	
 
 loading_screen <- tagList(
@@ -294,7 +294,6 @@ loading_screen <- tagList(
 # serie historica gasto ####
 
 gasto <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_gasto_visitantes.xlsx")
-
 
 gasto <- gasto %>% 
   mutate(periodo = if_else(trim == 0,
