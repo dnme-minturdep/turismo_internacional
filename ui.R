@@ -506,7 +506,7 @@ navbarPage(title = div(  #### NavBar #####
                     div(id="container-info",
                         br(),
                         h4("PERFIL TURISMO RECEPTIVO"),
-                        h5(glue("Datos desde Enero de 2019 a {mes_eti} {anio_eti}.")),
+                        h5(glue("Datos desde Enero de 2019 a {Mes_ult} {anio_ult}.")),
                         h5("Esta pestaña permite caracterizar el perfil del turismo receptivo por los pasos relevados en 
                            la Encuesta de Turismo Internacional (ETI). Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
