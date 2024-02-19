@@ -781,6 +781,7 @@ output$graf_pais_ti <- renderPlot(graf_pais_ti)
 
 output$graf_via_ti <- renderPlot(graf_via_ti)
 
+
 ## 2. Gasto #####
 
 datos_gasto_grafico2_sel <-eventReactive(
@@ -808,11 +809,12 @@ datos_gasto_grafico2_sel <-eventReactive(
                         Gasto_viaje= if_else(Viajes == 0,0,round(Gasto/Viajes*1000000,1)),
                         Gasto_diario= round(Gasto/Pernoctaciones*1000000, 1)) %>% 
              ungroup() %>% 
-             mutate(Gasto_diario= if_else(Pernoctaciones == 0, Gasto_viaje, Gasto_diario), #Excursionistas gasto diario es el gasto por viaje 
+             mutate(trim = "--",
+                    Gasto_diario= if_else(Pernoctaciones == 0, Gasto_viaje, Gasto_diario), #Excursionistas gasto diario es el gasto por viaje 
              )
          } else {
            datos_gasto_grafico2_sel <- datos_gasto_grafico2_sel %>% 
-             group_by(periodo, residencia) %>% 
+             group_by(periodo, residencia, trim) %>% 
              summarise (Viajes = round(sum(casos_ponderados)), 
                         Gasto = round(sum(gasto),1),
                         Pernoctaciones = round(sum(pernoctes)), 
@@ -822,13 +824,13 @@ datos_gasto_grafico2_sel <-eventReactive(
              ungroup() %>% 
              mutate(Gasto_diario= if_else(Pernoctaciones == 0, Gasto_viaje, Gasto_diario), #Excursionistas gasto diario es el gasto por viaje 
                     Estadia_media = if_else( periodo >= "2020-07-01" & 
-                                              periodo < "2021-10-01",
-                                            0,
-                                            Estadia_media))
-           }
-  }
+                                               periodo < "2021-10-01",
+                                             0,
+                                             Estadia_media))
+         }
+       }
 )
- 
+
 output$grafico_gasto <- renderPlotly({ 
   req(input$metrica)
   eje_y <- input$metrica
@@ -836,10 +838,19 @@ output$grafico_gasto <- renderPlotly({
                        aes(x=periodo, y = !!as.name(eje_y), 
                            colour = residencia, 
                            group =1,
-                           text = paste('Año:', format(periodo,"%Y"),
-                                        '<br>Valor:',format(!!as.name(eje_y),big.mark=".",
-                                                            decimal.mark = ","), 
-                                        '<br>Turismo:',residencia),
+                           text = if (input$periodo == "Anual") {
+                             paste('Año:', format(periodo,"%Y"),
+                                   '<br>Valor:',format(!!as.name(eje_y),big.mark=".",
+                                                       decimal.mark = ","), 
+                                   '<br>Turismo:',residencia)
+                           }else{
+                             paste('Año:', format(periodo,"%Y"),
+                                   '<br>Trimestre:', trim,
+                                   '<br>Valor:',format(!!as.name(eje_y),big.mark=".",
+                                                       decimal.mark = ","), 
+                                   '<br>Turismo:',residencia)
+                             
+                           }
                        ))+
     geom_hline(yintercept = 0, color = "grey", alpha =0.7, linewidth = 0.5) + 
     geom_line(linewidth = 1 , alpha = 0.8) + 
@@ -857,7 +868,7 @@ output$grafico_gasto <- renderPlotly({
           plot.caption =  element_text (size =12, hjust = 0.0)) +
     labs( x = "", 
           color= ""
-      )
+    )
   
   ggplotly(grafico_2, tooltip = "text")  %>% 
     layout(legend = list(orientation = "h", x = 0.4, y = -0.6))
