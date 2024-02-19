@@ -43,16 +43,9 @@ serie_visitantes <- read_file_srv(
 
 ## datos turismo internacional visitantes (desde 2016 + receptivo turistas 2010-2015) ####
 
-#previo a public:
-
 datos <- read_file_srv(
-  "/srv/DataDNMYE/turismo_internacional/bases_proceso/turismo_internacional_visitantes.rds") %>% 
+  "/srv/DataDNMYE/turismo_internacional/turismo_internacional_visitantes.rds") %>% 
   rename(casos = casos_ponderados)  
-
-#publicable:
-#datos <- read_file_srv(
-#  "/srv/DataDNMYE/turismo_internacional/turismo_internacional_visitantes.rds") %>% 
-#  rename(casos = casos_ponderados)  
 
 # ultimos datos
 mes_ult_nro <- as_tibble(datos[nrow(datos),mes])
@@ -277,13 +270,8 @@ data_grafico_ac_total <- data_grafico_ac_via %>%
 
 
 # datos eti ####
-
-#previo publicacion
-localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad_previo_publ.rds")
   
-  
-#publicable: 
-#localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad.rds")
+localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad.rds")
 
 #defino ultimo mes antes de pasarlo a factor
 
@@ -304,11 +292,8 @@ loading_screen <- tagList(
 )
 
 # serie historica gasto ####
-
-gasto <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_gasto_visitantes_pre_public.xlsx")
-
-#publicada: 
-#gasto <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_gasto_visitantes.xlsx")
+ 
+gasto <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_gasto_visitantes.xlsx")
 
 gasto <- gasto %>% 
   mutate(periodo = if_else(trim == 0,
