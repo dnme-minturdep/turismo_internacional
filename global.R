@@ -11,7 +11,7 @@ library(herramientas)
 library(shinydashboard)
 library(shinyWidgets)
 library(comunicacion)
-
+library(DT)
 
 source("valuebox.R")
 
@@ -43,16 +43,9 @@ serie_visitantes <- read_file_srv(
 
 ## datos turismo internacional visitantes (desde 2016 + receptivo turistas 2010-2015) ####
 
-#previo a public:
-
 datos <- read_file_srv(
-  "/srv/DataDNMYE/turismo_internacional/bases_proceso/turismo_internacional_visitantes.rds") %>% 
+  "/srv/DataDNMYE/turismo_internacional/turismo_internacional_visitantes.rds") %>% 
   rename(casos = casos_ponderados)  
-
-#publicable:
-#datos <- read_file_srv(
-#  "/srv/DataDNMYE/turismo_internacional/turismo_internacional_visitantes.rds") %>% 
-#  rename(casos = casos_ponderados)  
 
 # ultimos datos
 mes_ult_nro <- as_tibble(datos[nrow(datos),mes])
@@ -222,11 +215,13 @@ data_grafico_ac_total <- data_grafico_ac_via %>%
   # graficos  TI ####
   
   graf_pais_ti <- ggplot(data_grafico_ac_pais, aes(x= pais_destino, y= turistas, fill = turismo)) +   
-    geom_col(position = "dodge")+
-    geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ","), group = turismo),
-               position = position_dodge(width = 1),
-               vjust = -0.25, 
-               size = 3.5)+
+    geom_col(position = "dodge", 
+             aes(text = paste0(pais_destino, "<br>", 
+                               turismo, ": ", format(turistas, big.mark = ".", decimal.mark = ",")))) +
+    # geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ","), group = turismo),
+    #            position = position_dodge(width = 1),
+    #            vjust = -0.25, 
+    #            size = 3.5)+
     scale_fill_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
     scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
     theme_minimal()+
@@ -246,10 +241,12 @@ data_grafico_ac_total <- data_grafico_ac_via %>%
   
   graf_pais_ti
   graf_via_ti <- ggplot(data_grafico_ac_via, aes(x= via, y= turistas, fill = turismo)) +   
-    geom_col(position = "dodge") +
-    geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
-               position = position_dodge(width = 1),
-               vjust = -0.25)+
+    geom_col(position = "dodge",
+             aes(text = paste0(via, "<br>", 
+                               turismo, ": ", format(turistas, big.mark = ".", decimal.mark = ",")))) +
+    # geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
+    #            position = position_dodge(width = 1),
+    #            vjust = -0.25)+
     scale_fill_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
     scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
     theme_minimal()+
@@ -277,13 +274,8 @@ data_grafico_ac_total <- data_grafico_ac_via %>%
 
 
 # datos eti ####
-
-#previo publicacion
-localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad_previo_publ.rds")
   
-  
-#publicable: 
-#localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad.rds")
+localidad <- read_file_srv("/srv/DataDNMYE/eti/bases/eti_localidad.rds")
 
 #defino ultimo mes antes de pasarlo a factor
 
@@ -304,11 +296,8 @@ loading_screen <- tagList(
 )
 
 # serie historica gasto ####
-
-gasto <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_gasto_visitantes_pre_public.xlsx")
-
-#publicada: 
-#gasto <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_gasto_visitantes.xlsx")
+ 
+gasto <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_gasto_visitantes.xlsx")
 
 gasto <- gasto %>% 
   mutate(periodo = if_else(trim == 0,
