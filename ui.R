@@ -77,8 +77,8 @@ navbarPage(title = div(  #### NavBar #####
                         
                         br(),
                         fluidRow(
-                          column(7, plotOutput("graf_pais_ti", height = 500)),
-                          column(5, plotOutput('graf_via_ti', height = 390)),
+                          column(7, plotlyOutput("graf_pais_ti", height = 500)),
+                          column(5, plotlyOutput('graf_via_ti', height = 390)),
                           ),
                         br(), 
                         h5("   Aquí puede acceder al último ", 
@@ -234,7 +234,12 @@ navbarPage(title = div(  #### NavBar #####
                           
                           # Create a new row for the table.
                           DT::dataTableOutput("tabla_serie") %>% 
-                            withSpinner(), br(),
+                            withSpinner(), 
+                          
+                          fluidRow(downloadButton("downloadExcelSerie","Descargar en excel"),
+                                   downloadButton("downloadCSVSerie","Descargar en csv")),
+                          
+                          br(),
                           h6("* Hasta 1994 no se dispone de datos a nivel trimestral. Hasta 2003 no hay datos de excursionistas por país de residencia/destino. Datos provisorios desde 2020."),
                           h5("Fuente: Dirección Nacional de Mercados y Estadistica (Ministerio de Turismo y Deportes) y Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (INDEC)"),
                           br(),
@@ -345,18 +350,18 @@ navbarPage(title = div(  #### NavBar #####
                                                             'Género' = 'sexo',
                                                             'Tramos de edad' = 'grupoetario'),
                                                selected = "mes", multiple = TRUE)
-                            ),
-                            column(6,
-                                   radioButtons("round",
-                                                label = "Redondeo:",
-                                                choiceNames =  list("Sin decimales (suma de parciales 
-                                                                    puede diferir del total)",
-                                                                    "Con decimales 
-                                                                    (recomendado para descarga)"),
-                                                choiceValues = list("Sin decimales","Con decimales"),
-                                                #choices = c("Sin decimales","Con decimales"),
-                                                selected = "Sin decimales")
-                            )
+                            )#,
+                            # column(6,
+                            #        radioButtons("round",
+                            #                     label = "Redondeo:",
+                            #                     choiceNames =  list("Sin decimales (suma de parciales 
+                            #                                         puede diferir del total)",
+                            #                                         "Con decimales 
+                            #                                         (recomendado para descarga)"),
+                            #                     choiceValues = list("Sin decimales","Con decimales"),
+                            #                     #choices = c("Sin decimales","Con decimales"),
+                            #                     selected = "Sin decimales")
+                            # )
                             
                             
                           ),
@@ -364,9 +369,13 @@ navbarPage(title = div(  #### NavBar #####
                           textOutput(outputId = "titulo", container = h3),
                           
                           # Create a new row for the table.
-                          DT::dataTableOutput("table_receptivo") %>% 
-                            withSpinner(), br(),
-                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes."),
+                          dataTableOutput("table_receptivo") %>% 
+                            withSpinner(), 
+                          
+                          fluidRow(downloadButton("downloadExcelRec","Descargar en excel"),
+                                                    downloadButton("downloadCSVRec","Descargar en csv")),
+                          br(),
+                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Subsecretaría de Turismo."),
                           
                           br(), 
                           h5("   Aquí puede acceder al último ", 
@@ -463,17 +472,17 @@ navbarPage(title = div(  #### NavBar #####
                                                                                        'Género' = 'sexo',
                                                                                        'Tramos de edad' = 'grupoetario'),
                                                selected = "mes", multiple = TRUE)
-                            ),
-                            column(6,
-                                   radioButtons("round_e",
-                                                label = "Redondeo:",
-                                                choiceNames =  list("Sin decimales (suma de parciales 
-                                                                    puede diferir del total)",
-                                                                    "Con decimales 
-                                                                    (recomendado para descarga)"),
-                                                choiceValues = list("Sin decimales","Con decimales"),
-                                                selected = "Sin decimales")
                             )
+                            # column(6,
+                            #        radioButtons("round_e",
+                            #                     label = "Redondeo:",
+                            #                     choiceNames =  list("Sin decimales (suma de parciales 
+                            #                                         puede diferir del total)",
+                            #                                         "Con decimales 
+                            #                                         (recomendado para descarga)"),
+                            #                     choiceValues = list("Sin decimales","Con decimales"),
+                            #                     selected = "Sin decimales")
+                            # )
                             
                             
                           ),
@@ -481,9 +490,14 @@ navbarPage(title = div(  #### NavBar #####
                           
                           
                           # Create a new row for the table.
-                          DT::dataTableOutput("table_emisivo") %>% 
-                            withSpinner(), br(),
-                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes"),
+                          dataTableOutput("table_emisivo") %>% 
+                            withSpinner(), 
+                          
+                          fluidRow(downloadButton("downloadExcelEmi","Descargar en excel"),
+                                   downloadButton("downloadCSVEmi","Descargar en csv")),
+                          
+                          br(),
+                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Subsecretaría de Turismo"),
                           br(), 
                           h5("   Aquí puede acceder al último ", 
                              tags$a(href="https://tableros.yvera.tur.ar/internacional.html", 
@@ -591,8 +605,14 @@ navbarPage(title = div(  #### NavBar #####
                           h3("PERFIL DE TURISTAS NO RESIDENTES (ETI)"),
                           
                           # Create a new row for the table.
-                          DT::dataTableOutput("tabla_eti") %>% 
-                            withSpinner(), br(),
+                          dataTableOutput("tabla_eti") %>% 
+                            withSpinner(), 
+                          
+                          
+                          fluidRow(downloadButton("downloadExcelPerfil","Descargar en excel"),
+                                   downloadButton("downloadCSVPerfil","Descargar en csv")),
+                          
+                          br(),
                           h5("Fuente: Encuesta de Turismo Internacional (ETI)."),
                           h6("*La suma de turistas en las localidades de una provincia es mayor al total provincial, 
                           por los casos que visitan más de una ciudad en la misma provincia."),

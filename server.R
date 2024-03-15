@@ -3,8 +3,6 @@
 function(input, output, session) {
   
   # GRAFICO ####
-  Sys.sleep(3)
-  waiter_hide()  
   
   output$fig1 <- renderPlotly(fig1)
   
@@ -91,7 +89,9 @@ function(input, output, session) {
              icon = "chart-line",
              color = dnmye_colores("rosa")
     )
+    
   })
+  
   
   # RECEPTIVO ####
   
@@ -249,79 +249,125 @@ function(input, output, session) {
     } 
   })
   
-  output$titulo <- renderText({seleccion_vis()})
-  output$table_receptivo <- DT::renderDT(server = FALSE,
-                                         
-                                         DT::datatable(extensions = 'Buttons',
-                                                       options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
-                                                                      dom = 'lfrtipB',
-                                                                      buttons = list('copy',
-                                                                                     list(
-                                                                                       extend = 'collection',
-                                                                                       buttons = c('csv', 'excel'),
-                                                                                       text = 'Download'
-                                                                                     ))),
-                                                       {
-                                                         tabla <- paso()
-                                                         req(input$tipo_visitante)
-                                                           tabla <- tabla[tabla$tipo_visitante %in% input$tipo_visitante,]		
-                                                         
-                                                         req(input$anio)
-                                                         if (all(input$anio != "Todos")) {
-                                                           tabla <- tabla[tabla$anio %in% input$anio,]		
-                                                         }
-                                                         req(input$mes)
-                                                         if (all(input$mes != "Todos")) {
-                                                           tabla <- tabla[tabla$mes %in% input$mes,]		
-                                                         }
-                                                         
-                                                         tabla <- tabla %>%
-                                                           group_by_at(.vars = c( "anio", input$agrup)) %>%
-                                                           summarise (viajes = sum(turistas)) 
-                                                         
-                                                         
-                                                         #opcion decimales
-                                                         req(input$round)
-                                                         if (input$round == "Sin decimales"){
-                                                           tabla <- tabla %>%
-                                                             mutate(viajes = round(viajes))
-                                                         }
-                                                         
-                                                           #opcion tipo visitante:
-                                                           
-                                                           req(input$tipo_visitante)
-                                                           if (all(input$tipo_visitante == "Turistas")){
-                                                             tabla <- tabla %>%
-                                                              rename ("Viajes de turistas" = viajes) 
-                                                           } else if (all(input$tipo_visitante == "Excursionistas")){
-                                                             tabla <- tabla %>%
-                                                               rename ("Viajes de excursionistas" = viajes)  
-                                                           } else {
-                                                             tabla <- tabla %>%
-                                                               rename ("Viajes de visitantes" = viajes)   
-                                                           }
-                                                         
-                                                         #etiquetas receptivo según selección en ui.
-                                                         
-                                                         etiquetas <- gsub ("anio", "Año", (colnames(tabla)))
-                                                         etiquetas <- gsub ("mes", "Mes", etiquetas)
-                                                         etiquetas <- gsub ("trim", "Trimestre", etiquetas)
-                                                         etiquetas <- gsub ("via", "Vía", etiquetas)
-                                                         etiquetas <- gsub ("ruta_natural", "Ruta natural", etiquetas)
-                                                         etiquetas <- gsub ("pais_agrupado", "País de residencia (agrup.)", etiquetas)
-                                                         etiquetas <- gsub ("pais" , "País de residencia", etiquetas)
-                                                         etiquetas <- gsub ("paso_publ" , "Paso", etiquetas)
-                                                         etiquetas <- gsub ("prov", "Provincia del paso", etiquetas)
-                                                         etiquetas <- gsub ("limita" ,"Limita con", etiquetas)
-                                                         etiquetas <- gsub ("sexo", "Género", etiquetas)
-                                                         etiquetas <- gsub ("grupoetario", "Tramos de edad", etiquetas)
-                                                         etiquetas <- gsub ("tipo_visitante" ,"Tipo de visitante", etiquetas)
   
-                                                         tabla
-                                                       }, rownames= FALSE, colnames = etiquetas)
+  tabla_final_rec <- reactive({
+    
+    tabla <- paso()
+    req(input$tipo_visitante)
+    tabla <- tabla[tabla$tipo_visitante %in% input$tipo_visitante,]		
+    
+    req(input$anio)
+    if (all(input$anio != "Todos")) {
+      tabla <- tabla[tabla$anio %in% input$anio,]		
+    }
+    req(input$mes)
+    if (all(input$mes != "Todos")) {
+      tabla <- tabla[tabla$mes %in% input$mes,]		
+    }
+    
+    tabla <- tabla %>%
+      group_by_at(.vars = c( "anio", input$agrup)) %>%
+      summarise (viajes = sum(turistas)) %>% 
+      ungroup()
+    
+    
+    #opcion decimales
+    # req(input$round)
+    # if (input$round == "Sin decimales"){
+    #   tabla <- tabla %>%
+    #     mutate(viajes = round(viajes))
+    # }
+    
+    #opcion tipo visitante:
+    
+    req(input$tipo_visitante)
+    if (all(input$tipo_visitante == "Turistas")){
+      tabla <- tabla %>%
+        rename ("Viajes de turistas" = viajes) 
+    } else if (all(input$tipo_visitante == "Excursionistas")){
+      tabla <- tabla %>%
+        rename ("Viajes de excursionistas" = viajes)  
+    } else {
+      tabla <- tabla %>%
+        rename ("Viajes de visitantes" = viajes)   
+    }
+    
+    tabla <- tabla %>% 
+      rename(any_of(c("Año"="anio",
+                      "Mes"="mes",
+                      "Trimestre"="trim",
+                      "Vía"="via",
+                      "Ruta Natural"="ruta_natural",
+                      "País de residencia (agrup.)"="pais_agrupado",
+                      "País de residencia"="pais",
+                      "Paso"="paso_publ",
+                      "Provincia del paso"="prov",
+                      "Limita con"="limita",
+                      "Género"="sexo",
+                      "Tramos de edad"="grupoetario",
+                      "tipo_visitante"="Tipo de visitante"
+                      )))
+    
+    #etiquetas receptivo según selección en ui.
+    # etiquetas <- gsub ("anio", "Año", (colnames(tabla)))
+    # etiquetas <- gsub ("mes", "Mes", etiquetas)
+    # etiquetas <- gsub ("trim", "Trimestre", etiquetas)
+    # etiquetas <- gsub ("via", "Vía", etiquetas)
+    # etiquetas <- gsub ("ruta_natural", "Ruta natural", etiquetas)
+    # etiquetas <- gsub ("pais_agrupado", "País de residencia (agrup.)", etiquetas)
+    # etiquetas <- gsub ("pais" , "País de residencia", etiquetas)
+    # etiquetas <- gsub ("paso_publ" , "Paso", etiquetas)
+    # etiquetas <- gsub ("prov", "Provincia del paso", etiquetas)
+    # etiquetas <- gsub ("limita" ,"Limita con", etiquetas)
+    # etiquetas <- gsub ("sexo", "Género", etiquetas)
+    # etiquetas <- gsub ("grupoetario", "Tramos de edad", etiquetas)
+    # etiquetas <- gsub ("tipo_visitante" ,"Tipo de visitante", etiquetas)
+  })
+  
+  
+  col_format <- reactive({
+    
+    tabla_final_rec() %>% select(starts_with("Viajes de")) %>% colnames()
+    })
+  
+  output$titulo <- renderText({seleccion_vis()})
+  output$table_receptivo <- renderDT(server = FALSE,
+                                         
+                                         datatable(#extensions = 'Buttons',
+                                                       options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
+                                                                      dom = 'lfrtipB'
+                                                                      # buttons = list('copy',
+                                                                      #                list(
+                                                                      #                  extend = 'collection',
+                                                                      #                  buttons = c('csv', 'excel'),
+                                                                      #                  text = 'Download'
+                                                                      #                ))
+                                                                      ),
+                                                       tabla_final_rec()
+                                                       , rownames= FALSE#, colnames = etiquetas
+                                                       ) %>% 
+                                       formatRound(columns = col_format(), mark = ".", digits = 0)
   )
   
+  output$downloadExcelRec <- downloadHandler(
+    filename = function() {
+      "turismo_receptivo.xlsx"
+    },
+    content = function(file) {
+      writexl::write_xlsx(tabla_final_rec(), file)
+    }
+  )
   
+  output$downloadCSVRec <- downloadHandler(
+    filename = function() {
+      "turismo_receptivo.csv"
+    },
+    content = function(file) {
+      write_csv(tabla_final_rec(), file)
+    }
+  )
+  
+  waiter_hide()
   
   # EMISIVO ####
   
@@ -422,96 +468,142 @@ function(input, output, session) {
     } 
   })
   
+  
+  tabla_final_emi <- reactive({
+    
+    
+    tabla_e <- paso_e()
+    req(input$tipo_visitante_e)
+    tabla_e <- tabla_e[tabla_e$tipo_visitante %in% input$tipo_visitante_e,]		
+    
+    req(input$anio_e)
+    if (all(input$anio_e != "Todos")) {
+      tabla_e <- tabla_e[tabla_e$anio %in% input$anio_e,]		
+    }
+    req(input$mes_e)
+    if (all(input$mes_e != "Todos")) {
+      tabla_e <- tabla_e[tabla_e$mes %in% input$mes_e,]		
+    }
+    req(input$destino)
+    if (all(input$destino != "Todos")) {
+      tabla_e <- tabla_e[tabla_e$destino == input$destino,]		
+    }
+    
+    tabla_e <- tabla_e %>%
+      group_by_at(.vars = c( "anio", input$agrup_e)) %>%
+      summarise (viajes = sum(turistas)) %>% 
+      ungroup()
+    
+    
+    #opcion decimales
+    # req(input$round_e)
+    # if (input$round_e == "Sin decimales"){
+    #   tabla_e <- tabla_e %>%
+    #     mutate(viajes = round(viajes))
+    # }
+    
+    #opcion tipo visitante:
+    
+    req(input$tipo_visitante_e)
+    if (all(input$tipo_visitante_e == "Turistas")){
+      tabla_e <- tabla_e %>%
+        rename ("Viajes de turistas" = viajes) 
+    } else if (all(input$tipo_visitante_e == "Excursionistas")){
+      tabla_e <- tabla_e %>%
+        rename ("Viajes de excursionistas" = viajes)  
+    } else {
+      tabla_e <- tabla_e %>%
+        rename ("Viajes de visitantes" = viajes)   
+    }
+    
+    
+    tabla_e <- tabla_e %>% 
+      rename(any_of(c("Año"="anio",
+                      "Mes"="mes",
+                      "Trimestre"="trim",
+                      "Vía"="via",
+                      "Destino principal"="destino_agrup",
+                      "Paso"="paso_publ",
+                      "Provincia del paso"="prov",
+                      "Limita con"="limita",
+                      "Género"="sexo",
+                      "Tramos de edad"="grupoetario",
+                      "tipo_visitante"="Tipo de visitante"
+      )))
+    
+    #if (all(input$tipo_visitante_e == "Turistas")){
+    #  tabla_e <- tabla_e %>%
+    #    group_by_at(.vars = c( "anio", input$agrup_e)) %>%
+    #    summarise ("Viajes de turistas" = round(sum(turistas))) 
+    #} else if (all(input$tipo_visitante_e == "Excursionistas")){
+    #  tabla_e <- tabla_e %>%
+    #    group_by_at(.vars = c( "anio", input$agrup_e)) %>%
+    #    summarise ("Viajes de excursionistas" = round(sum(turistas))) 
+    #} else {
+    #  tabla_e <- tabla_e %>%
+    #    group_by_at(.vars = c( "anio", input$agrup_e)) %>%
+    #    summarise ("Viajes de visitantes" = round(sum(turistas))) 
+    #} 
+    
+    
+    ##etiquetas emisivo según selección en ui.
+    
+    # etiquetas_e <- gsub ("anio", "Año", (colnames(tabla_e)))
+    # etiquetas_e <- gsub ("mes", "Mes", etiquetas_e)
+    # etiquetas_e <- gsub ("trim", "Trimestre", etiquetas_e)
+    # etiquetas_e <- gsub ("via", "Vía", etiquetas_e)
+    # etiquetas_e <- gsub ("destino_agrup" , "Destino principal", etiquetas_e)
+    # etiquetas_e <- gsub ("paso_publ" , "Paso", etiquetas_e)
+    # etiquetas_e <- gsub ("prov", "Provincia del paso", etiquetas_e)
+    # etiquetas_e <- gsub ("limita" ,"Limita con", etiquetas_e)
+    # etiquetas_e <- gsub ("sexo", "Género", etiquetas_e)
+    # etiquetas_e <- gsub ("grupoetario", "Tramos de edad", etiquetas_e)
+    # etiquetas_e <- gsub ("tipo_visitante" ,"Tipo de visitante", etiquetas_e)
+    
+  })
+  
+  col_format_e <- reactive({
+    
+    tabla_final_emi() %>% select(starts_with("Viajes de")) %>% colnames()
+  })
+  
   output$titulo_e <- renderText({seleccion_vis_e()})
   
-  output$table_emisivo <- DT::renderDataTable(server = FALSE,
+  output$table_emisivo <- renderDataTable(server = FALSE,
                                               
-                                              DT::datatable(extensions = 'Buttons', 
+                                              datatable(#extensions = 'Buttons', 
                                                             options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
-                                                                           dom = 'lfrtipB',
-                                                                           buttons = list('copy',
-                                                                                          list(
-                                                                                            extend = 'collection',
-                                                                                            buttons = c('csv', 'excel'),
-                                                                                            text = 'Download'
-                                                                                          ))),
-                                                            {
-                                                              tabla_e <- paso_e()
-                                                              req(input$tipo_visitante_e)
-                                                              tabla_e <- tabla_e[tabla_e$tipo_visitante %in% input$tipo_visitante_e,]		
-                                                              
-                                                              req(input$anio_e)
-                                                              if (all(input$anio_e != "Todos")) {
-                                                                tabla_e <- tabla_e[tabla_e$anio %in% input$anio_e,]		
-                                                              }
-                                                              req(input$mes_e)
-                                                              if (all(input$mes_e != "Todos")) {
-                                                                tabla_e <- tabla_e[tabla_e$mes %in% input$mes_e,]		
-                                                              }
-                                                              req(input$destino)
-                                                              if (all(input$destino != "Todos")) {
-                                                                tabla_e <- tabla_e[tabla_e$destino == input$destino,]		
-                                                              }
-                                                              
-                                                              tabla_e <- tabla_e %>%
-                                                                group_by_at(.vars = c( "anio", input$agrup_e)) %>%
-                                                                summarise (viajes = sum(turistas)) 
-                                                              
-                                                              
-                                                              #opcion decimales
-                                                              req(input$round_e)
-                                                              if (input$round_e == "Sin decimales"){
-                                                                tabla_e <- tabla_e %>%
-                                                                  mutate(viajes = round(viajes))
-                                                              }
-                                                              
-                                                              #opcion tipo visitante:
-                                                              
-                                                              req(input$tipo_visitante_e)
-                                                              if (all(input$tipo_visitante_e == "Turistas")){
-                                                                tabla_e <- tabla_e %>%
-                                                                  rename ("Viajes de turistas" = viajes) 
-                                                              } else if (all(input$tipo_visitante_e == "Excursionistas")){
-                                                                tabla_e <- tabla_e %>%
-                                                                  rename ("Viajes de excursionistas" = viajes)  
-                                                              } else {
-                                                                tabla_e <- tabla_e %>%
-                                                                  rename ("Viajes de visitantes" = viajes)   
-                                                              }
-                                                              
-                                                              
-                                                              
-                                                              #if (all(input$tipo_visitante_e == "Turistas")){
-                                                              #  tabla_e <- tabla_e %>%
-                                                              #    group_by_at(.vars = c( "anio", input$agrup_e)) %>%
-                                                              #    summarise ("Viajes de turistas" = round(sum(turistas))) 
-                                                              #} else if (all(input$tipo_visitante_e == "Excursionistas")){
-                                                              #  tabla_e <- tabla_e %>%
-                                                              #    group_by_at(.vars = c( "anio", input$agrup_e)) %>%
-                                                              #    summarise ("Viajes de excursionistas" = round(sum(turistas))) 
-                                                              #} else {
-                                                              #  tabla_e <- tabla_e %>%
-                                                              #    group_by_at(.vars = c( "anio", input$agrup_e)) %>%
-                                                              #    summarise ("Viajes de visitantes" = round(sum(turistas))) 
-                                                              #} 
-                                                              
-                                                              
-                                                              ##etiquetas emisivo según selección en ui.
-                                                              
-                                                              etiquetas_e <- gsub ("anio", "Año", (colnames(tabla_e)))
-                                                              etiquetas_e <- gsub ("mes", "Mes", etiquetas_e)
-                                                              etiquetas_e <- gsub ("trim", "Trimestre", etiquetas_e)
-                                                              etiquetas_e <- gsub ("via", "Vía", etiquetas_e)
-                                                              etiquetas_e <- gsub ("destino_agrup" , "Destino principal", etiquetas_e)
-                                                              etiquetas_e <- gsub ("paso_publ" , "Paso", etiquetas_e)
-                                                              etiquetas_e <- gsub ("prov", "Provincia del paso", etiquetas_e)
-                                                              etiquetas_e <- gsub ("limita" ,"Limita con", etiquetas_e)
-                                                              etiquetas_e <- gsub ("sexo", "Género", etiquetas_e)
-                                                              etiquetas_e <- gsub ("grupoetario", "Tramos de edad", etiquetas_e)
-                                                              etiquetas_e <- gsub ("tipo_visitante" ,"Tipo de visitante", etiquetas_e)
-                                                              
-                                                              tabla_e
-                                                            }, rownames= FALSE, colnames = etiquetas_e)
+                                                                           dom = 'lfrtipB'
+                                                                           # buttons = list('copy',
+                                                                           #                list(
+                                                                           #                  extend = 'collection',
+                                                                           #                  buttons = c('csv', 'excel'),
+                                                                           #                  text = 'Download'
+                                                                           #                ))
+                                                                           ),
+                                                            
+                                                              tabla_final_emi()
+                                                            
+                                                            , rownames= FALSE) %>% 
+                                            formatRound(columns = col_format_e(), mark = ".", digits =  0)
+  )
+  
+  output$downloadExcelEmi <- downloadHandler(
+    filename = function() {
+      "turismo_emisivo.xlsx"
+    },
+    content = function(file) {
+      writexl::write_xlsx(tabla_final_emi(), file)
+    }
+  )
+  
+  output$downloadCSVEmi <- downloadHandler(
+    filename = function() {
+      "turismo_emisivo.csv"
+    },
+    content = function(file) {
+      write_csv(tabla_final_emi(), file)
+    }
   )
   
 # ETI ####  
@@ -563,168 +655,258 @@ function(input, output, session) {
       tabla_pais_mes <- tabla_pais()[tabla_pais()$mes == input$mes_encuesta,  ]
     }
   })
-  output$tabla_eti<- DT::renderDT(server = FALSE,
+  
+  tabla_final_perfil <- reactive({
+    
+    tabla <- tabla_pais_mes()
+    #filtros:
+    req(input$paso)
+    tabla <- tabla[tabla$paso_final == input$paso,]		
+    
+    req(input$anio_encuesta)
+    if (all(input$anio_encuesta != "Todos")) {
+      tabla <- tabla[tabla$anio %in% input$anio_encuesta,]		
+    }
+    req(input$trim)
+    if (all(input$trim != "Todos")) {
+      tabla <- tabla[tabla$trim %in% input$trim,]		
+    }
+    req(input$mes_encuesta)
+    if (all(input$mes_encuesta != "Todos")) {
+      tabla <- tabla[tabla$mes %in% input$mes_encuesta,]		
+    }
+    req(input$provincia)
+    if (all(input$provincia != "Todas")) {
+      tabla <- tabla[tabla$provincia %in% input$provincia,]		
+    }
+    req(input$motivo_viaje)
+    if (all(input$motivo_viaje != "Todos")) {
+      tabla <- tabla[tabla$motivo_viaje %in% input$motivo_viaje,]		
+    }
+    req(input$alojamiento)
+    if (all(input$alojamiento != "Todos")) {
+      tabla <- tabla[tabla$alojamiento %in% input$alojamiento,]		
+    }
+    req(input$pais_origen)
+    if (all(input$pais_origen != "Todos")) {
+      tabla <- tabla[tabla$pais_origen %in% input$pais_origen,]		
+    }
+    
+    # Grupos
+    tabla <- tabla %>%
+      group_by_at(.vars = c( "id", input$agrup_p)) %>% #agrupo por id para no duplicar casos por localida
+      summarise (turistas = first(wpf),
+                 casos =  first(p18_1), 
+                 noches = sum(noches * wpf),
+                 gasto = sum(gasto * wpf)) %>%
+      group_by_at(.vars = c( input$agrup_p)) %>%
+      summarise (Turistas = sum(turistas),
+                 Noches = sum(noches),
+                 Gasto = round(sum(gasto),1),
+                 Casos_Muestrales = sum(casos)) %>% 
+      ungroup()
+    
+    #saco gasto al mostrar por mes
+    if (any(input$agrup_p == "mes")) {
+      tabla <- tabla %>% select (-Gasto)
+    }
+    
+    tabla <- tabla %>% 
+      rename(any_of(c(
+        "Año"="anio",
+        "Mes"="mes",
+        "Trimestre"="trim",
+        "Provincia visitada"="provincia",
+        "Ciudad visitada"="ciudad",
+        "País de residencia"="pais_origen",
+        "Tipo alojamiento principal en el país"="alojamiento",
+        "Motivo de viaje"="motivo_viaje",
+        "Turistas no residentes*"="Turistas",
+        "Gasto en US$**"="Gasto",
+        "Casos Muestrales***"="Casos_Muestrales"
+      )
+      ))
+    
+    #etiquetas receptivo según selección en ui.
+    
+    # etiquetas <- gsub ("anio", "Año", (colnames(tabla)))
+    # etiquetas <- gsub ("mes", "Mes", etiquetas)
+    # etiquetas <- gsub ("trim", "Trimestre", etiquetas)
+    # etiquetas <- gsub ("provincia", "Provincia visitada", etiquetas)
+    # etiquetas <- gsub ("ciudad", "Ciudad visitada", etiquetas)
+    # etiquetas <- gsub ("pais_origen", "País de residencia", etiquetas)
+    # etiquetas <- gsub ("alojamiento", "Tipo alojamiento principal en el país", etiquetas)
+    # etiquetas <- gsub ("motivo_viaje", "Motivo de viaje", etiquetas)
+    # etiquetas <- gsub ("Turistas", "Turistas no residentes*", etiquetas)
+    # etiquetas <- gsub ("Gasto", "Gasto en US$**", etiquetas)
+    # etiquetas <- gsub ("Casos_Muestrales", "Casos Muestrales***", etiquetas)
+    
+  })
+  output$tabla_eti<- renderDT(server = FALSE,
                                   
-                                  DT::datatable(extensions = 'Buttons',
+                                  datatable(#extensions = 'Buttons',
                                                 options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
-                                                               dom = 'lfrtipB',
-                                                               buttons = list('copy',
-                                                                              list(
-                                                                                extend = 'collection',
-                                                                                buttons = c('csv', 'excel'),
-                                                                                text = 'Download'
-                                                                              ))),   
-                                                {
-                                                  tabla <- tabla_pais_mes()
-                                                  #filtros:
-                                                  req(input$paso)
-                                                  tabla <- tabla[tabla$paso_final == input$paso,]		
-                                                  
-                                                  req(input$anio_encuesta)
-                                                  if (all(input$anio_encuesta != "Todos")) {
-                                                    tabla <- tabla[tabla$anio %in% input$anio_encuesta,]		
-                                                  }
-                                                  req(input$trim)
-                                                  if (all(input$trim != "Todos")) {
-                                                    tabla <- tabla[tabla$trim %in% input$trim,]		
-                                                  }
-                                                  req(input$mes_encuesta)
-                                                  if (all(input$mes_encuesta != "Todos")) {
-                                                    tabla <- tabla[tabla$mes %in% input$mes_encuesta,]		
-                                                  }
-                                                  req(input$provincia)
-                                                  if (all(input$provincia != "Todas")) {
-                                                    tabla <- tabla[tabla$provincia %in% input$provincia,]		
-                                                  }
-                                                  req(input$motivo_viaje)
-                                                  if (all(input$motivo_viaje != "Todos")) {
-                                                    tabla <- tabla[tabla$motivo_viaje %in% input$motivo_viaje,]		
-                                                  }
-                                                  req(input$alojamiento)
-                                                  if (all(input$alojamiento != "Todos")) {
-                                                    tabla <- tabla[tabla$alojamiento %in% input$alojamiento,]		
-                                                  }
-                                                  req(input$pais_origen)
-                                                  if (all(input$pais_origen != "Todos")) {
-                                                    tabla <- tabla[tabla$pais_origen %in% input$pais_origen,]		
-                                                  }
-                                                  
-                                                  # Grupos
-                                                  tabla <- tabla %>%
-                                                    group_by_at(.vars = c( "id", input$agrup_p)) %>% #agrupo por id para no duplicar casos por localida
-                                                    summarise (turistas = first(wpf),
-                                                               casos =  first(p18_1), 
-                                                               noches = sum(noches * wpf),
-                                                               gasto = sum(gasto * wpf)) %>%
-                                                    group_by_at(.vars = c( input$agrup_p)) %>%
-                                                    summarise (Turistas = sum(turistas),
-                                                               Noches = sum(noches),
-                                                               Gasto = round(sum(gasto),1),
-                                                               Casos_Muestrales = sum(casos))
-                                                  #saco gasto al mostrar por mes
-                                                  if (any(input$agrup_p == "mes")) {
-                                                    tabla <- tabla %>% select (-Gasto)
-                                                  }
-                                                  
-                                                  #etiquetas receptivo según selección en ui.
-                                                  
-                                                  etiquetas <- gsub ("anio", "Año", (colnames(tabla)))
-                                                  etiquetas <- gsub ("mes", "Mes", etiquetas)
-                                                  etiquetas <- gsub ("trim", "Trimestre", etiquetas)
-                                                  etiquetas <- gsub ("provincia", "Provincia visitada", etiquetas)
-                                                  etiquetas <- gsub ("ciudad", "Ciudad visitada", etiquetas)
-                                                  etiquetas <- gsub ("pais_origen", "País de residencia", etiquetas)
-                                                  etiquetas <- gsub ("alojamiento", "Tipo alojamiento principal en el país", etiquetas)
-                                                  etiquetas <- gsub ("motivo_viaje", "Motivo de viaje", etiquetas)
-                                                  etiquetas <- gsub ("Turistas", "Turistas no residentes*", etiquetas)
-                                                  etiquetas <- gsub ("Gasto", "Gasto en US$**", etiquetas)
-                                                  etiquetas <- gsub ("Casos_Muestrales", "Casos Muestrales***", etiquetas)
-                                                  
-                                                  tabla
-                                              }, rownames= FALSE, colnames = etiquetas)
+                                                               dom = 'lfrtipB'#,
+                                                               # buttons = list('copy',
+                                                               #                list(
+                                                               #                  extend = 'collection',
+                                                               #                  buttons = c('csv', 'excel'),
+                                                               #                  text = 'Download'
+                                                               #                ))
+                                                               ),   
+                                                
+                                                tabla_final_perfil()
+                                                
+                                                , rownames= FALSE) %>% 
+                                formatRound(columns = c("Turistas no residentes*",
+                                                        "Casos Muestrales***"), mark = ".", digits = 0) %>% 
+                                formatCurrency(columns = c("Gasto en US$**"), mark = ".", dec.mark = ",", digits = 1, currency = "$ ")
   )
+  
+  output$downloadExcelPerfil<- downloadHandler(
+    filename = function() {
+      "perfil_receptivo.xlsx"
+    },
+    content = function(file) {
+      writexl::write_xlsx(tabla_final_perfil(), file)
+    }
+  )
+  
+  output$downloadCSVPerfil <- downloadHandler(
+    filename = function() {
+      "perfil_receptivo.csv"
+    },
+    content = function(file) {
+      write_csv(tabla_final_perfil(), file)
+    }
+  )
+  
+  
+  
+  tabla_final_serie <- reactive({
+    
+    tabla <- gasto
+    #filtros:
+    req(input$tipo_turismo_g)
+    tabla <- tabla[tabla$residencia == input$tipo_turismo_g,]	
+    
+    req(input$tipo_visitante_g)
+    tabla <- tabla[tabla$tipo_visitante %in% input$tipo_visitante_g,]		
+    
+    req(input$anio_g)
+    if (all(input$anio_g != "Todos")) {
+      tabla <- tabla[tabla$anio %in% input$anio_g,]		
+    }
+    req(input$trim_g)
+    if (all(input$trim_g != "Todos")) {
+      tabla <- tabla[tabla$trim %in% input$trim_g,]		
+    }
+    req(input$pais_agrupado_g)
+    if (all(input$pais_agrupado_g != "Todos")) {
+      tabla <- tabla[tabla$pais_agrupado %in% input$pais_agrupado_g,]		
+    }
+    
+    tabla <- tabla %>%
+      group_by_at(.vars = c( "anio", input$agrup_g)) %>%
+      summarise (Viajes = sum(casos_ponderados), 
+                 Gasto = sum(gasto),
+                 Pernoctaciones = sum(pernoctes), 
+                 estadia = round(Pernoctaciones/Viajes, 1),
+                 gasto_viaje = round(Gasto/Viajes*1000000,1),
+                 gasto_diario = round(Gasto/Pernoctaciones*1000000, 1)) %>%
+      ungroup() 
+    
+    if (any(input$agrup_g == "trim")) {
+      tabla <- tabla %>%
+        mutate(estadia= case_when(anio == 2020 & trim %in% c("3", "4") ~ NA_real_,
+                                  anio == 2021 & trim %in% c("1","2","3") ~ NA_real_,
+                                  TRUE ~ estadia))
+    }
+    
+    # Redondeo Basico (saqué opción de no redondear)
+    #req(input$round_s)
+    #if (input$round_s == "Básico") {
+    tabla <- tabla %>% 
+      mutate(Viajes = round(Viajes), 
+             Gasto = round(Gasto,1),
+             Pernoctaciones = round(Pernoctaciones), 
+      ) 
+    #}
+    
+    tabla <- tabla %>% 
+      mutate(gasto_diario= if_else(Pernoctaciones == 0, gasto_viaje, gasto_diario)) %>%  #Excursionistas gasto diario es el gasto por viaje 
+      rename ("Gasto en millones de US$" = Gasto, 
+              "Gasto promedio por viaje en US$" = gasto_viaje,
+              "Gasto promedio diario en US$" = gasto_diario, 
+              "Estadía media en noches" = estadia, 
+              "Año"= anio
+      )
+    
+    
+    tabla <- tabla %>% 
+      rename(any_of(c(
+        "Trimestre"="trim",
+        "Tipo de visitantes"="tipo_visitante",
+        "País residencia/destino"
+      )))
+    
+    #etiquetas de columnas opcionales segun seleccion: 
+    
+    # etiquetas <- gsub ("trim", "Trimestre", colnames(tabla))
+    # etiquetas <- gsub ("tipo_visitante", "Tipo de visitante", etiquetas)
+    # etiquetas <- gsub ("pais_agrupado", "País residencia/destino", etiquetas)
+    
+    
+  })
+  
   
   # SERIE ####  
   
-  output$tabla_serie<- DT::renderDT(server = FALSE,
+  output$tabla_serie<- renderDT(server = FALSE,
+                                
+                                datatable(#extensions = 'Buttons',
+                                  options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
+                                                 dom = 'lfrtipB'#,
+                                                 # buttons = list('copy',
+                                                 #                list(
+                                                 #                  extend = 'collection',
+                                                 #                  buttons = c('csv', 'excel'),
+                                                 #                  text = 'Download'
+                                                 #                ))
+                                  ),
                                   
-                                  DT::datatable(extensions = 'Buttons',
-                                                options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
-                                                               dom = 'lfrtipB',
-                                                               buttons = list('copy',
-                                                                              list(
-                                                                                extend = 'collection',
-                                                                                buttons = c('csv', 'excel'),
-                                                                                text = 'Download'
-                                                                              ))),
-                                                {
-                                                  tabla <- gasto
-                                                  #filtros:
-                                                  req(input$tipo_turismo_g)
-                                                  tabla <- tabla[tabla$residencia == input$tipo_turismo_g,]	
-                                                  
-                                                  req(input$tipo_visitante_g)
-                                                  tabla <- tabla[tabla$tipo_visitante %in% input$tipo_visitante_g,]		
-                                                  
-                                                  req(input$anio_g)
-                                                  if (all(input$anio_g != "Todos")) {
-                                                    tabla <- tabla[tabla$anio %in% input$anio_g,]		
-                                                  }
-                                                  req(input$trim_g)
-                                                  if (all(input$trim_g != "Todos")) {
-                                                    tabla <- tabla[tabla$trim %in% input$trim_g,]		
-                                                  }
-                                                  req(input$pais_agrupado_g)
-                                                  if (all(input$pais_agrupado_g != "Todos")) {
-                                                    tabla <- tabla[tabla$pais_agrupado %in% input$pais_agrupado_g,]		
-                                                  }
-                                                  
-                                                  tabla <- tabla %>%
-                                                    group_by_at(.vars = c( "anio", input$agrup_g)) %>%
-                                                    summarise (Viajes = sum(casos_ponderados), 
-                                                               Gasto = sum(gasto),
-                                                               Pernoctaciones = sum(pernoctes), 
-                                                               estadia = round(Pernoctaciones/Viajes, 1),
-                                                               gasto_viaje = round(Gasto/Viajes*1000000,1),
-                                                               gasto_diario = round(Gasto/Pernoctaciones*1000000, 1)) %>%
-                                                    ungroup() 
-                                                  
-                                                  if (any(input$agrup_g == "trim")) {
-                                                                    tabla <- tabla %>%
-                                                                    mutate(estadia= case_when(anio == 2020 & trim %in% c("3", "4") ~ NA_real_,
-                                                                                anio == 2021 & trim %in% c("1","2","3") ~ NA_real_,
-                                                                                TRUE ~ estadia))
-                                                                    }
-                                                  
-                                                  # Redondeo Basico (saqué opción de no redondear)
-                                                  #req(input$round_s)
-                                                  #if (input$round_s == "Básico") {
-                                                    tabla <- tabla %>% 
-                                                      mutate(Viajes = round(Viajes), 
-                                                             Gasto = round(Gasto,1),
-                                                             Pernoctaciones = round(Pernoctaciones), 
-                                                      ) 
-                                                  #}
-                                                    
-                                                  tabla <- tabla %>% 
-                                                    mutate(gasto_diario= if_else(Pernoctaciones == 0, gasto_viaje, gasto_diario)) %>%  #Excursionistas gasto diario es el gasto por viaje 
-                                                    rename ("Gasto en millones de US$" = Gasto, 
-                                                            "Gasto promedio por viaje en US$" = gasto_viaje,
-                                                            "Gasto promedio diario en US$" = gasto_diario, 
-                                                            "Estadía media en noches" = estadia, 
-                                                            "Año"= anio
-                                                            )
-                                                  
-                                                  #etiquetas de columnas opcionales segun seleccion: 
-                                                  
-                                                  etiquetas <- gsub ("trim", "Trimestre", colnames(tabla))
-                                                  etiquetas <- gsub ("tipo_visitante", "Tipo de visitante", etiquetas)
-                                                  etiquetas <- gsub ("pais_agrupado", "País residencia/destino", etiquetas)
-                                                  
-                                                  tabla
-                                                  } , rownames= FALSE, colnames = etiquetas)
-                                  )
-                                                
+                                  tabla_final_serie()
+                                  
+                                  , rownames= FALSE) %>% 
+                                  formatCurrency(columns = c(
+                                    "Gasto en millones de US$",
+                                    "Gasto promedio por viaje en US$",
+                                    "Gasto promedio diario en US$"
+                                  ), mark = ".", dec.mark = ",", digits = 1, currency = "$ "
+                                  ) %>% 
+                                  formatRound(columns = c("Estadía media en noches"),
+                                              mark = ".", dec.mark = ",", digits = 1) %>% 
+                                  formatRound(columns = c("Viajes", "Pernoctaciones"),
+                                              mark = ".", digits = 0)
+  )
+  
+  output$downloadExcelSerie <- downloadHandler(
+    filename = function() {
+      "ti_indicadores.xlsx"
+    },
+    content = function(file) {
+      writexl::write_xlsx(tabla_final_serie(), file)
+    }
+  )
+  
+  output$downloadCSVSerie <- downloadHandler(
+    filename = function() {
+      "ti_indicadores.csv"
+    },
+    content = function(file) {
+      write_csv(tabla_final_serie(), file)
+    }
+  )
   
 # GRAFICOS ####
 ## 1. Por pais #####
@@ -777,9 +959,9 @@ ggplotly(grafico_1, tooltip = "text")  %>%
     layout(legend = list(orientation = "h", x = 0.4, y = -0.6))
  })
 
-output$graf_pais_ti <- renderPlot(graf_pais_ti)
+output$graf_pais_ti <- renderPlotly(ggplotly(graf_pais_ti, tooltip = "text"))
 
-output$graf_via_ti <- renderPlot(graf_via_ti)
+output$graf_via_ti <- renderPlotly(ggplotly(graf_via_ti, tooltip = "text"))
 
 
 ## 2. Gasto #####

@@ -11,7 +11,7 @@ library(herramientas)
 library(shinydashboard)
 library(shinyWidgets)
 library(comunicacion)
-
+library(DT)
 
 source("valuebox.R")
 
@@ -215,11 +215,13 @@ data_grafico_ac_total <- data_grafico_ac_via %>%
   # graficos  TI ####
   
   graf_pais_ti <- ggplot(data_grafico_ac_pais, aes(x= pais_destino, y= turistas, fill = turismo)) +   
-    geom_col(position = "dodge")+
-    geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ","), group = turismo),
-               position = position_dodge(width = 1),
-               vjust = -0.25, 
-               size = 3.5)+
+    geom_col(position = "dodge", 
+             aes(text = paste0(pais_destino, "<br>", 
+                               turismo, ": ", format(turistas, big.mark = ".", decimal.mark = ",")))) +
+    # geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ","), group = turismo),
+    #            position = position_dodge(width = 1),
+    #            vjust = -0.25, 
+    #            size = 3.5)+
     scale_fill_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
     scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
     theme_minimal()+
@@ -239,10 +241,12 @@ data_grafico_ac_total <- data_grafico_ac_via %>%
   
   graf_pais_ti
   graf_via_ti <- ggplot(data_grafico_ac_via, aes(x= via, y= turistas, fill = turismo)) +   
-    geom_col(position = "dodge") +
-    geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
-               position = position_dodge(width = 1),
-               vjust = -0.25)+
+    geom_col(position = "dodge",
+             aes(text = paste0(via, "<br>", 
+                               turismo, ": ", format(turistas, big.mark = ".", decimal.mark = ",")))) +
+    # geom_text (aes(label= format(turistas, big.mark = ".", decimal.mark = ",")),
+    #            position = position_dodge(width = 1),
+    #            vjust = -0.25)+
     scale_fill_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
     scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
     theme_minimal()+
@@ -292,7 +296,7 @@ loading_screen <- tagList(
 )
 
 # serie historica gasto ####
-
+ 
 gasto <- read_file_srv("/srv/DataDNMYE/turismo_internacional/bases_proceso/base_gasto_visitantes.xlsx")
 
 gasto <- gasto %>% 
