@@ -324,6 +324,7 @@ function(input, output, session) {
     # etiquetas <- gsub ("tipo_visitante" ,"Tipo de visitante", etiquetas)
   })
   
+  waiter_hide()
   
   col_format <- reactive({
     
@@ -367,7 +368,6 @@ function(input, output, session) {
     }
   )
   
-  waiter_hide()
   
   # EMISIVO ####
   
