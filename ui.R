@@ -35,8 +35,8 @@ navbarPage(title = div(  #### NavBar #####
                                  wellPanel( 
                                    h6("Turismo receptivo",  style = "color: #37BBED; font-size: 2rem"),
                                    fluidRow(
-                                     column(6, valueBoxOutput("boxreceptivo", width = "100%")),
-                                     column(6, valueBoxOutput("boxreceptivo_var", width = "100%"))
+                                     column(6, valueBoxOutput("boxreceptivo", width = "100%") %>% withSpinner()),
+                                     column(6, valueBoxOutput("boxreceptivo_var", width = "100%") %>% withSpinner())
                                    )
                                  )
                           ),
@@ -44,8 +44,8 @@ navbarPage(title = div(  #### NavBar #####
                                  wellPanel( 
                                    h6("Turismo emisivo",  style = "color: #37BBED; font-size: 2rem"),
                                    fluidRow(
-                                     column(6, valueBoxOutput("boxemisivo", width = "100%")),
-                                     column(6, valueBoxOutput("boxemisivo_var", width = "100%"))
+                                     column(6, valueBoxOutput("boxemisivo", width = "100%") %>% withSpinner()),
+                                     column(6, valueBoxOutput("boxemisivo_var", width = "100%") %>% withSpinner())
                                    )
                                  )
                           )
@@ -56,8 +56,8 @@ navbarPage(title = div(  #### NavBar #####
                                         wellPanel( 
                                           h6("Turismo receptivo",  style = "color: #37BBED; font-size: 2rem"),
                                           fluidRow(
-                                            column(6, valueBoxOutput("boxreceptivo_ac", width = "100%")),
-                                            column(6, valueBoxOutput("boxreceptivo_var_ac", width = "100%"))
+                                            column(6, valueBoxOutput("boxreceptivo_ac", width = "100%") %>% withSpinner()),
+                                            column(6, valueBoxOutput("boxreceptivo_var_ac", width = "100%") %>% withSpinner())
                                           )
                                         )
                         ),
@@ -65,8 +65,8 @@ navbarPage(title = div(  #### NavBar #####
                                wellPanel( 
                                  h6("Turismo emisivo",  style = "color: #37BBED; font-size: 2rem"),
                                  fluidRow(
-                                   column(6, valueBoxOutput("boxemisivo_ac", width = "100%")),
-                                   column(6, valueBoxOutput("boxemisivo_var_ac", width = "100%"))
+                                   column(6, valueBoxOutput("boxemisivo_ac", width = "100%") %>% withSpinner()),
+                                   column(6, valueBoxOutput("boxemisivo_var_ac", width = "100%") %>% withSpinner())
                                  )
                                )
                         )
