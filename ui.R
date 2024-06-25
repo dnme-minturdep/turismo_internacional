@@ -14,7 +14,7 @@ navbarPage(title = div(  #### NavBar #####
            header = includeCSS("styles.css"),
            
            #RESUMEN####
-           
+           tags$head(includeHTML("/srv/DataDNMYE/login_shiny/turismo-internacional.html")),
            tabPanel("RESUMEN",
                     div(id= "container-info",
                         useWaiter(),
