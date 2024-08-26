@@ -2,7 +2,7 @@
 /* Customize fonts */
   label { 
     font-family: 'Encode Sans Normal', Helvetica;
-    color : #37BBED;
+    color : #252C4F;
     font-weight: 400;
   }
 
@@ -21,7 +21,7 @@
 
   h1, h2, h3 { font-weight: 400; 
     font-family: 'Encode Sans Normal', Helvetica;
-    color: #37BBED;}
+    color: #252C4F;}
 
   h4 { font-weight: 400; 
     font-family: 'Encode Sans Normal', Helvetica;
@@ -33,7 +33,7 @@
 
 #controls {
 /* Appearance */
-  color: #37BBED;
+  color: #252C4F;
   background-color: lightgray;
 padding: 0 20px 20px 20px;
 cursor: move;
@@ -79,7 +79,7 @@ transition-delay: 0;
 
 
 .navbar { 
-  background-color: #37BBED;
+  background-color: #252C4F;
   padding-left: 15px;
 }
 
@@ -102,7 +102,7 @@ transition-delay: 0;
   font-size: 1.5rem;
   font-style: italic;
   color: white;
-  background-color: #37BBED;
+  background-color: #252C4F;
   height: auto;
   padding: 20px;
 }

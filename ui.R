@@ -4,7 +4,7 @@ navbarPage(title = div(  #### NavBar #####
                          div(
                            id = "img-id",
                            tags$a(img(src = "https://tableros.yvera.tur.ar/recursos/logo_sinta.png",
-                                      width = 150),href="https://www.yvera.tur.ar/sinta/",target = '_blank'
+                                      width = 100),href="https://www.yvera.tur.ar/sinta/",target = '_blank'
                            )),
                          icon("globe"),"TURISMO INTERNACIONAL", id = "title", class = "navbar1"),
            id="navbar",
