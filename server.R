@@ -647,18 +647,18 @@ function(input, output, session) {
   
   # Reactivo de tabla_pais segun input.
   
-  tabla_pais_mes <- reactive({
-    req(input$mes_encuesta)
-    if (input$mes_encuesta == "Todos") {
-      tabla_pais_mes <- tabla_pais()
-    } else {
-      tabla_pais_mes <- tabla_pais()[tabla_pais()$mes == input$mes_encuesta,  ]
-    }
-  })
+  # tabla_pais_mes <- reactive({
+  #   req(input$mes_encuesta)
+  #   if (input$mes_encuesta == "Todos") {
+  #     tabla_pais_mes <- tabla_pais()
+  #   } else {
+  #     tabla_pais_mes <- tabla_pais()[tabla_pais()$mes == input$mes_encuesta,  ]
+  #   }
+  # })
   
   tabla_final_perfil <- reactive({
     
-    tabla <- tabla_pais_mes()
+    tabla <- tabla_pais()
     #filtros:
     req(input$paso)
     tabla <- tabla[tabla$paso_final == input$paso,]		
@@ -671,10 +671,10 @@ function(input, output, session) {
     if (all(input$trim != "Todos")) {
       tabla <- tabla[tabla$trim %in% input$trim,]		
     }
-    req(input$mes_encuesta)
-    if (all(input$mes_encuesta != "Todos")) {
-      tabla <- tabla[tabla$mes %in% input$mes_encuesta,]		
-    }
+    # req(input$mes_encuesta)
+    # if (all(input$mes_encuesta != "Todos")) {
+    #   tabla <- tabla[tabla$mes %in% input$mes_encuesta,]		
+    # }
     req(input$provincia)
     if (all(input$provincia != "Todas")) {
       tabla <- tabla[tabla$provincia %in% input$provincia,]		
@@ -707,14 +707,14 @@ function(input, output, session) {
       ungroup()
     
     #saco gasto al mostrar por mes
-    if (any(input$agrup_p == "mes")) {
-      tabla <- tabla %>% select (-Gasto)
-    }
+    # if (any(input$agrup_p == "mes")) {
+    #   tabla <- tabla %>% select (-Gasto)
+    # }
     
     tabla <- tabla %>% 
       rename(any_of(c(
         "Año"="anio",
-        "Mes"="mes",
+        #"Mes"="mes",
         "Trimestre"="trim",
         "Provincia visitada"="provincia",
         "Ciudad visitada"="ciudad",

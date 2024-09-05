@@ -552,12 +552,12 @@ navbarPage(title = div(  #### NavBar #####
                                                c("Todos",
                                                  unique(as.character(localidad$trim))), selected = "Todos" , multiple =TRUE)
                             ),
-                            column(3,
-                                   selectInput("mes_encuesta",
-                                               "Mes:",
-                                               c("Todos",
-                                                 unique(as.character(localidad$mes))), selected = "Todos" , multiple =TRUE)
-                            ),
+                            # column(3,
+                            #        selectInput("mes_encuesta",
+                            #                    "Mes:",
+                            #                    c("Todos",
+                            #                      unique(as.character(localidad$mes))), selected = "Todos" , multiple =TRUE)
+                            # ),
                             column(3,
                                    selectInput("provincia",
                                                "Provincia visitada:",
@@ -594,7 +594,7 @@ navbarPage(title = div(  #### NavBar #####
                                    selectInput("agrup_p", "Mostrar por:", 
                                                choices = c( 'Año' = 'anio', 
                                                             'Trimestre' = 'trim',
-                                                            'Mes' = 'mes', 
+                                                            #'Mes' = 'mes', 
                                                             'Pais de residencia' = 'pais_origen', 
                                                             'Tipo de alojamiento principal en el país' = 'alojamiento', 
                                                             'Motivo de viaje' = 'motivo_viaje',
@@ -620,7 +620,7 @@ navbarPage(title = div(  #### NavBar #####
                           por los casos que visitan más de una ciudad en la misma provincia."),
                           h6("*Solamente se consideran las visitas a destinos con al menos un pernocte, excepto en 
                           los casos de cruceros, donde puede no haber pernocte."),
-                          h6("**Los datos del gasto se calculan trimestralmente, por eso", tags$b("no se muestran a nivel mensual y están en 0 hasta el cierre del trimestre.")),
+                          h6("**Los datos del gasto se calculan trimestralmente", tags$b(" y están en 0 hasta el cierre del trimestre.")),
                           h6("**El gasto por destino visitado (localidad/provincia) está estimado como el gasto promedio 
                              diario en el país por la cantidad de noches en el destino."),
                           h6("***Si la columna casos muestrales arroja menos de 50 casos, se sugiere reducir la 
