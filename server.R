@@ -626,12 +626,12 @@ function(input, output, session) {
   
   #al cambiar input de paso actualizo choices de mes:
   
-  observeEvent(paso_select(), {
-    updateSelectInput(session, inputId = "mes_encuesta", choices = c("Todos",
-                                                                    unique(as.character(paso_select()$mes))),
-                      selected = "Todos")
-    
-  })
+  # observeEvent(paso_select(), {
+  #   updateSelectInput(session, inputId = "mes_encuesta", choices = c("Todos",
+  #                                                                   unique(as.character(paso_select()$mes))),
+  #                     selected = "Todos")
+  #   
+  # })
   
   # Reactivo de tabla_pais segun input.
   
