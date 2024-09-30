@@ -310,7 +310,7 @@ navbarPage(title = div(  #### NavBar #####
                                    ),
                             column(3,
                                    selectInput("ruta",
-                                               "Ruta natural*:",
+                                               "Región natural*:",
                                                c("Todos",
                                                  unique(data_receptivo$ruta_natural)))
                                    ),
@@ -332,7 +332,7 @@ navbarPage(title = div(  #### NavBar #####
                                    ),
                           ),
                           h5('*Esta información no refleja la estimación de turismo 
-                             receptivo por provincia/ruta natural. Ver "Notas técnicas", en la pestaña Metodología.'),
+                             receptivo por provincia/región natural. Ver "Notas técnicas", en la pestaña Metodología.'),
                           
                           h3("VISUALIZACIÓN"),
                           h5("Selecciona el nivel de apertura con que se visualizan los datos. Escriba varios términos en el buscador para mostrar por más de una variable."),
@@ -345,7 +345,7 @@ navbarPage(title = div(  #### NavBar #####
                                                             'Tipo de visitante' = 'tipo_visitante', 
                                                             'País de residencia (agrup.)'= 'pais_agrupado', 
                                                             'País de residencia'= 'pais', 
-                                                            'Ruta natural' = 'ruta_natural',
+                                                            'Región natural' = 'ruta_natural',
                                                             'Paso' = 'paso_publ',
                                                             'Provincia del paso' = 'prov', 
                                                             'País con el que limita' = 'limita',
@@ -677,7 +677,7 @@ navbarPage(title = div(  #### NavBar #####
                         la cantidad de viajes coincide con la cantidad de turistas. Este supuesto no se aplica en el resto de las vías de acceso al país.
                         ")), 
                         
-                        tags$ul(h5("-La apertura por provincia/ruta natural no refleja la estimación del turismo receptivo de cada provincia,
+                        tags$ul(h5("-La apertura por provincia/región natural no refleja la estimación del turismo receptivo de cada provincia,
                         sino sólo los viajes de turistas contabilizados en los pasos fronterizos de la misma.")),  
                         
                         tags$ul(h5("-Al descargar los datos, se recomienda hacerlo con decimales, para que la suma de los parciales 

@@ -297,7 +297,7 @@ function(input, output, session) {
                       "Mes"="mes",
                       "Trimestre"="trim",
                       "Vía"="via",
-                      "Ruta Natural"="ruta_natural",
+                      "Región Natural"="ruta_natural",
                       "País de residencia (agrup.)"="pais_agrupado",
                       "País de residencia"="pais",
                       "Paso"="paso_publ",
