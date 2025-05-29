@@ -10,41 +10,41 @@ function(input, output, session) {
   
   output$boxreceptivo <- renderValueBox({
     
-    value <- lbl_int(dato_mensual$casos[dato_mensual$turismo_internac == "Receptivo"])
+    value <- comunicacion::lbl_int(dato_mensual$casos[dato_mensual$turismo_internac == "Receptivo"])
     valueBox(value = value, 
              subtitle = "Viajes de turistas",
              icon = "plane-arrival",
-             color = dnmye_colores("azul verde")
+             color = comunicacion::dnmye_colores("azul verde")
              )
   })
   
   output$boxreceptivo_var <- renderValueBox({
     
-    value <- lbl_percent(dato_mensual$var[dato_mensual$turismo_internac == "Receptivo"])
+    value <- comunicacion::lbl_percent(dato_mensual$var[dato_mensual$turismo_internac == "Receptivo"])
     valueBox(value = value, 
              subtitle = "Var.ia %",
              icon = "chart-line",
-             color = dnmye_colores("azul verde")
+             color = comunicacion::dnmye_colores("azul verde")
              )
   })
   
   output$boxemisivo <- renderValueBox({
     
-    value <- lbl_int(dato_mensual$casos[dato_mensual$turismo_internac == "Emisivo"])
+    value <- comunicacion::lbl_int(dato_mensual$casos[dato_mensual$turismo_internac == "Emisivo"])
     valueBox(value = value, 
              subtitle = "Viajes de turistas",
              icon = "plane-departure",
-             color = dnmye_colores("rosa")
+             color = comunicacion::dnmye_colores("rosa")
              )
   })
   
   output$boxemisivo_var <- renderValueBox({
     
-    value <- lbl_percent(dato_mensual$var[dato_mensual$turismo_internac == "Emisivo"])
+    value <- comunicacion::lbl_percent(dato_mensual$var[dato_mensual$turismo_internac == "Emisivo"])
     valueBox(value = value, 
              subtitle = "Var.ia %",
              icon = "chart-line",
-             color = dnmye_colores("rosa")
+             color = comunicacion::dnmye_colores("rosa")
     )
   })
   
@@ -52,42 +52,42 @@ function(input, output, session) {
   
   output$boxreceptivo_ac <- renderValueBox({
     
-    value <- lbl_int(dato_acumulado$casos[dato_acumulado$turismo_internac == "Receptivo"])
+    value <- comunicacion::lbl_int(dato_acumulado$casos[dato_acumulado$turismo_internac == "Receptivo"])
     valueBox(value = value, 
              subtitle = "Viajes de turistas",
              icon = "plane-arrival",
-             color = dnmye_colores("azul verde")
+             color = comunicacion::dnmye_colores("azul verde")
     )
   })
   
   output$boxreceptivo_var_ac <- renderValueBox({
     
-    value <- lbl_percent(dato_acumulado$var[dato_acumulado$turismo_internac == "Receptivo"])
+    value <- comunicacion::lbl_percent(dato_acumulado$var[dato_acumulado$turismo_internac == "Receptivo"])
     valueBox(value = value, 
              subtitle = "Var.ia %",
              icon = "chart-line",
-             color = dnmye_colores("azul verde")
+             color = comunicacion::dnmye_colores("azul verde")
     )
   })
   
   output$boxemisivo_ac <- renderValueBox({
     
-    value <- lbl_int(dato_acumulado$casos[dato_acumulado$turismo_internac == "Emisivo"])
+    value <- comunicacion::lbl_int(dato_acumulado$casos[dato_acumulado$turismo_internac == "Emisivo"])
     valueBox(value = value, 
              subtitle = "Viajes de turistas",
              icon = "plane-departure",
-             color = dnmye_colores("rosa")
+             color = comunicacion::dnmye_colores("rosa")
              #color = "#EE3D8F"
     )
   })
   
   output$boxemisivo_var_ac <- renderValueBox({
     
-    value <- lbl_percent(dato_acumulado$var[dato_acumulado$turismo_internac == "Emisivo"])
+    value <- comunicacion::lbl_percent(dato_acumulado$var[dato_acumulado$turismo_internac == "Emisivo"])
     valueBox(value = value, 
              subtitle = "Var.ia %",
              icon = "chart-line",
-             color = dnmye_colores("rosa")
+             color = comunicacion::dnmye_colores("rosa")
     )
     
   })
@@ -101,7 +101,7 @@ function(input, output, session) {
     if (input$pais_agrupado == "Todos") {
       pais_ag <- data_receptivo
     } else {
-      pais_ag <- data_receptivo[data_receptivo$pais_agrupado == input$pais_agrupado,  ]
+      pais_ag <- data_receptivo %>% filter(pais_agrupado == input$pais_agrupado)
     } 
   })
   
@@ -110,9 +110,9 @@ function(input, output, session) {
   observeEvent(pais_ag(), {
     if (input$pais_agrupado == "Todos") {
       updateSelectInput(session, inputId = "pais", choices = c("Todos",
-                                                               sort(unique(data_receptivo$pais))))
+                                                               sort(data_receptivo %>% distinct(pais) %>% pull())))
     } else {
-      updateSelectInput(session, inputId = "pais", choices = c("Todos", (unique(pais_ag()$pais)))) 
+      updateSelectInput(session, inputId = "pais", choices = c("Todos", pais_ag() %>% disntinct(pais) %>% pull())) 
     }
   })
   
@@ -124,7 +124,7 @@ function(input, output, session) {
     if (input$pais == "Todos") {
       pais <- pais_ag()
     } else {
-      pais <- pais_ag()[pais_ag()$pais == input$pais,  ]
+      pais <- pais_ag() %>% filter(pais == input$pais)
     }
   })
   
@@ -135,7 +135,7 @@ function(input, output, session) {
     if (input$via == "Todos") {
       via <- pais()
     } else {
-      via <- pais()[pais()$via == input$via,  ]
+      via <- pais() %>% filter(via == input$via)
     } 
   })
   
@@ -146,9 +146,9 @@ function(input, output, session) {
   observeEvent(via(), {
     if (input$limita == "Todos" & input$via == "Todos") {
       updateSelectInput(session, inputId = "ruta", choices = c("Todos",
-                                                               sort(unique(data_receptivo$ruta_natural))))
+                                                               sort(data_receptivo %>% distinct(ruta_natural) %>% pull())))
     } else {
-      updateSelectInput(session, inputId = "ruta", choices = c("Todos",sort(unique(via()$ruta_natural)))) 
+      updateSelectInput(session, inputId = "ruta", choices = c("Todos",sort(via() %>% distinct(ruta_natural) %>% pull())))
     }
   })
   
@@ -160,7 +160,7 @@ function(input, output, session) {
     if (input$ruta == "Todos") {
       ruta <- via()
     } else {
-      ruta <- via()[via()$ruta == input$ruta,  ]
+      ruta <- via() %>% filter(ruta == input$ruta)
     }
   })
   
@@ -172,9 +172,9 @@ function(input, output, session) {
   observeEvent(ruta(), {
     if (input$ruta == "Todos" & input$via == "Todos") {
       updateSelectInput(session, inputId = "prov", choices = c("Todos",
-                                                               sort(unique(data_receptivo$prov))))
+                                                               sort(data_receptivo %>% distinct(prov) %>% pull())))
     } else {
-      updateSelectInput(session, inputId = "prov", choices = c("Todos",sort(unique(ruta()$prov)))) 
+      updateSelectInput(session, inputId = "prov", choices = c("Todos",sort(ruta() %>% distinct(prov) %>% pull()))) 
     }
   })
   
@@ -186,7 +186,7 @@ function(input, output, session) {
     if (input$prov == "Todos") {
       prov <- ruta()
     } else {
-      prov <- ruta()[ruta()$prov == input$prov,  ]
+      prov <- ruta() %>% filter(prov == input$prov)
     }
   })
   
@@ -195,9 +195,9 @@ function(input, output, session) {
   observeEvent(prov(), {
     if (input$via == "Todos" & input$ruta == "Todos" & input$prov == "Todos") {
       updateSelectInput(session, inputId = "limita", choices = c("Todos",
-                                                                 sort(unique(data_receptivo$limita)))) 
+                                                                 sort(data_receptivo %>% distinct(limita) %>% pull())))
     } else {
-      updateSelectInput(session, inputId = "limita", choices = c("Todos",sort(unique(prov()$limita))))
+      updateSelectInput(session, inputId = "limita", choices = c("Todos",sort(prov() %>% distinct(limita) %>% pull())))
     }
   })
   
@@ -209,7 +209,7 @@ function(input, output, session) {
     if (input$limita == "Todos") {
       limita <- prov()
     } else {
-      limita <- prov()[prov()$limita == input$limita,  ]
+      limita <- prov() %>% filter(limita == input$limita)
     }
   })
   
@@ -219,9 +219,9 @@ function(input, output, session) {
   observeEvent(limita(), {
     if (input$limita == "Todos" & input$via == "Todos" & input$ruta == "Todos" & input$prov == "Todos") {
       updateSelectInput(session, inputId = "paso_publ", choices = c("Todos",
-                                                                    sort(unique(data_receptivo$paso_publ))))
+                                                                    sort(data_receptivo %>% distinct(paso_publ) %>% pull())))
     } else {
-      updateSelectInput(session, inputId = "paso_publ", choices = c("Todos",sort(unique(limita()$paso_publ))))
+      updateSelectInput(session, inputId = "paso_publ", choices = c("Todos",sort(limita() %>% distinct(paso_publ) %>% pull())))
     }
   })
   
@@ -233,7 +233,7 @@ function(input, output, session) {
     if (input$paso_publ == "Todos") {
       paso <- limita()
     } else {
-      paso <- limita()[limita()$paso_publ == input$paso_publ,  ]
+      paso <- limita() %>% filter(paso_publ == input$paso_publ)
     }
   })
 
@@ -252,22 +252,22 @@ function(input, output, session) {
   
   tabla_final_rec <- reactive({
     
-    tabla <- paso()
+
     req(input$tipo_visitante)
-    tabla <- tabla[tabla$tipo_visitante %in% input$tipo_visitante,]		
+    tabla <- paso() %>% filter(tipo_visitante %in% input$tipo_visitante)
     
     req(input$anio)
     if (all(input$anio != "Todos")) {
-      tabla <- tabla[tabla$anio %in% input$anio,]		
+      tabla <- tabla %>% filter(anio %in% input$anio)		
     }
     req(input$mes)
     if (all(input$mes != "Todos")) {
-      tabla <- tabla[tabla$mes %in% input$mes,]		
+      tabla <- tabla %>% filter(mes %in% input$mes)		
     }
     
     tabla <- tabla %>%
       group_by_at(.vars = c( "anio", input$agrup)) %>%
-      summarise (viajes = sum(turistas)) %>% 
+      summarise(viajes = sum(turistas)) %>% 
       ungroup()
     
     
@@ -283,16 +283,17 @@ function(input, output, session) {
     req(input$tipo_visitante)
     if (all(input$tipo_visitante == "Turistas")){
       tabla <- tabla %>%
-        rename ("Viajes de turistas" = viajes) 
+        rename("Viajes de turistas" = viajes) 
     } else if (all(input$tipo_visitante == "Excursionistas")){
       tabla <- tabla %>%
-        rename ("Viajes de excursionistas" = viajes)  
+        rename("Viajes de excursionistas" = viajes)  
     } else {
       tabla <- tabla %>%
-        rename ("Viajes de visitantes" = viajes)   
+        rename("Viajes de visitantes" = viajes)   
     }
     
     tabla <- tabla %>% 
+      collect() %>% 
       rename(any_of(c("Año"="anio",
                       "Mes"="mes",
                       "Trimestre"="trim",
@@ -377,7 +378,7 @@ function(input, output, session) {
     if (input$via_e == "Todos") {
       via_e <- data_emisivo
     } else {
-      via_e <- data_emisivo[data_emisivo$via == input$via_e,  ]
+      via_e <- data_emisivo %>% filter(via == input$via_e)
     } 
   }) 
   
@@ -387,10 +388,11 @@ function(input, output, session) {
   
   observeEvent(via_e(), {
     if (input$limita_e == "Todos" & input$via_e == "Todos") {
-      updateSelectInput(session, inputId = "prov_e", choices = c("Todos",
-                                                                 sort(unique(data_emisivo$prov)))) 
+      updateSelectInput(session, inputId = "prov_e", 
+                        choices = c("Todos", sort(data_emisivo %>% distinct(prov) %>% pull())))
     } else {
-      updateSelectInput(session, inputId = "prov_e", choices = c("Todos", sort(unique(via_e()$prov)))) 
+      updateSelectInput(session, inputId = "prov_e", 
+                        choices = c("Todos", sort(via_e() %>% distinct(prov) %>% pull())))
     }
   })
   
@@ -402,7 +404,7 @@ function(input, output, session) {
     if (input$prov_e == "Todos") {
       prov_e <- via_e()
     } else {
-      prov_e <- via_e()[via_e()$prov == input$prov_e,  ]
+      prov_e <- via_e() %>% filter(prov == input$prov_e)
     }
   })
   
@@ -410,10 +412,12 @@ function(input, output, session) {
   
   observeEvent(prov_e(), {
     if (input$via_e == "Todos" & input$prov_e == "Todos") {
-      updateSelectInput(session, inputId = "limita_e", choices = c("Todos",
-                                                                   sort(unique(data_emisivo$limita)))) 
+      updateSelectInput(session, inputId = "limita_e", 
+                        choices = c("Todos",
+                                    sort(data_emisivo %>% distinct(limita) %>% pull()))) 
     } else {
-      updateSelectInput(session, inputId = "limita_e", choices = c("Todos",sort(unique(prov_e()$limita)))) 
+      updateSelectInput(session, inputId = "limita_e", 
+                        choices = c("Todos",sort(prov_e() %>% distinct(limita) %>% pull()))) 
     }
   })
   
@@ -425,7 +429,7 @@ function(input, output, session) {
     if (input$limita_e == "Todos") {
       limita_e <- prov_e()
     } else {
-      limita_e <- prov_e()[prov_e()$limita == input$limita_e,  ]
+      limita_e <- prov_e() %>% filter(limita == input$limita_e)
     }
   })
   
@@ -434,10 +438,12 @@ function(input, output, session) {
   
   observeEvent(limita_e(), {
     if (input$limita_e == "Todos" & input$via_e == "Todos" & input$prov_e == "Todos") {
-      updateSelectInput(session, inputId = "paso_publ_e", choices = c("Todos",
-                                                                      sort(unique(data_emisivo$paso_publ)))) 
+      updateSelectInput(session, inputId = "paso_publ_e", 
+                        choices = c("Todos",
+                                    sort(data_emisivo %>% distinct(paso_publ) %>% pull()))) 
     } else {
-      updateSelectInput(session, inputId = "paso_publ_e", choices = c("Todos", sort(unique(limita_e()$paso_publ)))) 
+      updateSelectInput(session, inputId = "paso_publ_e", 
+                        choices = c("Todos", sort(limita_e() %>% distinct(paso_publ) %>% pull()))) 
     }
   })
   
@@ -449,7 +455,7 @@ function(input, output, session) {
     if (input$paso_publ_e == "Todos") {
       paso_e <- limita_e()
     } else {
-      paso_e <- limita_e()[limita_e()$paso_publ == input$paso_publ_e,  ]
+      paso_e <- limita_e() %>% filter(paso_publ == input$paso_publ_e)
     }
   })
   
@@ -472,21 +478,20 @@ function(input, output, session) {
   tabla_final_emi <- reactive({
     
     
-    tabla_e <- paso_e()
     req(input$tipo_visitante_e)
-    tabla_e <- tabla_e[tabla_e$tipo_visitante %in% input$tipo_visitante_e,]		
+    tabla_e <- paso_e() %>% filter(tipo_visitante %in% input$tipo_visitante_e)
     
     req(input$anio_e)
     if (all(input$anio_e != "Todos")) {
-      tabla_e <- tabla_e[tabla_e$anio %in% input$anio_e,]		
+      tabla_e <- tabla_e %>% filter(anio %in% input$anio_e) 	
     }
     req(input$mes_e)
     if (all(input$mes_e != "Todos")) {
-      tabla_e <- tabla_e[tabla_e$mes %in% input$mes_e,]		
+      tabla_e <- tabla_e %>% filter(mes %in% input$mes_e)
     }
     req(input$destino)
     if (all(input$destino != "Todos")) {
-      tabla_e <- tabla_e[tabla_e$destino == input$destino,]		
+      tabla_e <- tabla_e %>% filter(destino == input$destino)
     }
     
     tabla_e <- tabla_e %>%
@@ -518,6 +523,7 @@ function(input, output, session) {
     
     
     tabla_e <- tabla_e %>% 
+      collect() %>% 
       rename(any_of(c("Año"="anio",
                       "Mes"="mes",
                       "Trimestre"="trim",
@@ -947,11 +953,11 @@ output$grafico_serie <- renderPlotly({
           legend.text = element_text (size =12),
           plot.caption =  element_text (size =12, hjust = 0.0)) +
     labs(title = "Evolución mensual de los viajes de turistas internacionales.",
-         subtitle = glue ("Emisivo y receptivo \n Enero 2016-{Mes_ult}-{anio_ult}"),
+         subtitle = glue ("Emisivo y receptivo \n Enero 2016-{mes_ult_nro}-{anio_ult}"),
          y = "", 
          x = "", 
          color= "",
-         caption =  "Fuente: Dirección Nacional de Mercados y Estadistica, Ministerio de Turismo y Deportes,
+         caption =  "Fuente: Dirección de Mercados y Estadisticas, Subsecretaría de Turismo,
          en base a información de la Dirección Nacional de Migraciones y la Encuesta de Turismo Internacional." )
   
   

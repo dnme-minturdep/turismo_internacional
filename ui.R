@@ -16,7 +16,7 @@ navbarPage(title = div(  #### NavBar #####
            #RESUMEN####
            tabPanel("RESUMEN",
                     
-                    tags$head(includeHTML("/srv/DataDNMYE/login_shiny/turismo-internacional.html")),
+                    #tags$head(includeHTML("/srv/DataDNMYE/login_shiny/turismo-internacional.html")),
                     
                     div(id= "container-info",
                         useWaiter(),
@@ -32,7 +32,7 @@ navbarPage(title = div(  #### NavBar #####
                            ),
                         br(),
                         
-                        h3(glue("Datos de último mes: {Mes_ult} {anio_ult}")),
+                        h3(glue("Datos de último mes: {mes_ult_nro} {anio_ult}")),
                         fluidRow(column(6,
                                  wellPanel( 
                                    h6("Turismo receptivo",  style = "color: #37BBED; font-size: 2rem"),
@@ -53,7 +53,7 @@ navbarPage(title = div(  #### NavBar #####
                           )
                         ),
                           
-                        h3(glue("Datos de último año: acumulado Enero - {Mes_ult} {anio_ult}")),
+                        h3(glue("Datos de último año: acumulado Enero - {mes_ult_nro} {anio_ult}")),
                         fluidRow(column(6,
                                         wellPanel( 
                                           h6("Turismo receptivo",  style = "color: #37BBED; font-size: 2rem"),
@@ -159,14 +159,14 @@ navbarPage(title = div(  #### NavBar #####
                                    selectInput("pais_agrup_graf_serie",
                                                "País de residencia/destino:",
                                                c("Todos",
-                                                 sort(unique(data_receptivo$pais_agrupado))))
+                                                 sort(data_receptivo %>% distinct(pais_agrupado) %>% pull())))
                             ),
                           ),
                           
                           plotlyOutput("grafico_gasto"),
                           helpText("Nota: Hasta 1994 no se dispone de datos a nivel trimestral. Hasta 2003 no hay datos de excursionistas por país de residencia/destino.",  
                                    style = "text-align: left;"),
-                          helpText("Fuente: Dirección Nacional de Mercados y Estadistica (Ministerio de Turismo y Deportes) y Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (INDEC).",  
+                          helpText("Fuente: Dirección de Mercados y Estadisticas (Subsecretaría de Turismo) y Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (INDEC).",  
                                    style = "text-align: left;"),
                           br(),
                           
@@ -243,7 +243,7 @@ navbarPage(title = div(  #### NavBar #####
                           
                           br(),
                           h6("* Hasta 1994 no se dispone de datos a nivel trimestral. Hasta 2003 no hay datos de excursionistas por país de residencia/destino. Datos provisorios desde 2020."),
-                          h5("Fuente: Dirección Nacional de Mercados y Estadistica (Ministerio de Turismo y Deportes) y Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (INDEC)"),
+                          h5("Fuente: Dirección de Mercados y Estadisticas (Subsecretaría de Turismo) y Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (INDEC)"),
                           br(),
                           
                           
@@ -256,7 +256,7 @@ navbarPage(title = div(  #### NavBar #####
                     
                     div(id="container-info",
                         br(),
-                        h4(stringr::str_to_upper(paste("VIAJES DE VISITANTES NO RESIDENTES- Datos hasta", Mes_ult, data_receptivo[nrow(data_receptivo),1]))),
+                        h4(stringr::str_to_upper(paste("VIAJES DE VISITANTES NO RESIDENTES- Datos hasta", mes_ult_nro, anio_ult))),
                         fluidPage(
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos"),
@@ -273,8 +273,8 @@ navbarPage(title = div(  #### NavBar #####
                                    selectInput("anio",
                                                "Año:",
                                                c("Todos",
-                                                 unique(as.character(data_receptivo$anio))),
-                                               selected = data_receptivo[nrow(data_receptivo),1], 
+                                                 1990:anio_ult),
+                                               selected = anio_ult, 
                                                multiple =TRUE)
                                    ),
                                    #sliderTextInput("anio",
@@ -286,14 +286,17 @@ navbarPage(title = div(  #### NavBar #####
                                    selectInput("mes",
                                                "Mes:",
                                                c("Todos",
-                                                 unique(as.character(data_receptivo$mes))), 
+                                                 levels(mes_ult_nro)), 
                                                selected = "Todos" , multiple =TRUE)
                             ),
                             column(3,
                                    selectInput("via",
                                                "Medio de transporte*:",
                                                c("Todos",
-                                                 unique(data_receptivo$via)))
+                                                 "Aéreo",
+                                                 "Fluvial/marítimo",
+                                                 "Terrestre",
+                                                 "Sin dato"))
                                    )
                             ),
                           fluidRow(
@@ -301,7 +304,16 @@ navbarPage(title = div(  #### NavBar #####
                                    selectInput("pais_agrupado",
                                                "País de residencia (agrup.):",
                                                c("Todos",
-                                                 sort(unique(data_receptivo$pais_agrupado))))
+                                                 "Bolivia",
+                                                 "Brasil",
+                                                 "Chile",
+                                                 "EE.UU. y Canadá",
+                                                 "Europa",
+                                                 "Paraguay",
+                                                 "Resto de América",
+                                                 "Resto del mundo",
+                                                 "Uruguay",
+                                                 "Sin dato"))
                             ),
                             column(3,
                                    selectInput("pais",
@@ -312,7 +324,7 @@ navbarPage(title = div(  #### NavBar #####
                                    selectInput("ruta",
                                                "Región natural*:",
                                                c("Todos",
-                                                 unique(data_receptivo$ruta_natural)))
+                                                 sort(data_receptivo %>% distinct(ruta_natural) %>% pull())))
                                    ),
                             column(3,
                                    selectInput("prov",
@@ -377,7 +389,7 @@ navbarPage(title = div(  #### NavBar #####
                           fluidRow(downloadButton("downloadExcelRec","Descargar en excel"),
                                                     downloadButton("downloadCSVRec","Descargar en csv")),
                           br(),
-                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Subsecretaría de Turismo."),
+                          h5("Fuente: Dirección de Mercados y Estadísticas, Subsecretaría de Turismo."),
                           
                           br(), 
                           h5("   Aquí puede acceder al último ", 
@@ -400,7 +412,7 @@ navbarPage(title = div(  #### NavBar #####
                     
                     div(id="container-info",
                         br(),
-                        h4(stringr::str_to_upper(paste("VIAJES AL EXTERIOR DE TURISTAS RESIDENTES- Datos hasta", Mes_ult, data_emisivo[nrow(data_emisivo),1]))),
+                        h4(stringr::str_to_upper(paste("VIAJES AL EXTERIOR DE TURISTAS RESIDENTES- Datos hasta", mes_ult_nro, anio_ult))),
                         fluidPage(
                           h3("FILTROS"),
                           h5("Los siguientes comandos permiten filtrar los datos"),
@@ -418,26 +430,41 @@ navbarPage(title = div(  #### NavBar #####
                                    selectInput("anio_e",
                                                "Año:",
                                                c("Todos",
-                                                 unique(as.character(data_emisivo$anio))),selected = data_emisivo[nrow(data_emisivo),1], multiple =TRUE)
+                                                 1990:anio_ult),
+                                               selected = anio_ult,
+                                               multiple =TRUE)
                             ),
                             column(3,
                                    selectInput("mes_e",
                                                "Mes:",
                                                c("Todos",
-                                                 unique(as.character(data_emisivo$mes))),selected = "Todos" , multiple =TRUE)
+                                                 levels(mes_ult_nro)), 
+                                               selected = mes_ult_nro,
+                                               multiple =TRUE)
                             ),
                             column(3,
                                    selectInput("via_e",
                                                "Medio de transporte:",
                                                c("Todos",
-                                                 unique(data_emisivo$via)))
+                                                 "Aéreo",
+                                                 "Fluvial/marítimo",
+                                                 "Terrestre",
+                                                 "Sin dato"))
                             )),
                           fluidRow(
                             column(3,
                                    selectInput("destino",
                                                "Destino principal:",
                                                c("Todos",
-                                                 sort(unique(data_emisivo$destino_agrup))))
+                                                 "Bolivia",
+                                                 "Brasil",
+                                                 "Chile",
+                                                 "EE.UU. y Canadá",
+                                                 "Europa",
+                                                 "Paraguay",
+                                                 "Resto de América",
+                                                 "Resto del mundo",
+                                                 "Sin dato"))
                             ),
                             column(3,
                                    selectInput("prov_e",
@@ -499,7 +526,7 @@ navbarPage(title = div(  #### NavBar #####
                                    downloadButton("downloadCSVEmi","Descargar en csv")),
                           
                           br(),
-                          h5("Fuente: Dirección Nacional de Mercados y Estadistica, Subsecretaría de Turismo"),
+                          h5("Fuente: Dirección de Mercados y Estadísticas, Subsecretaría de Turismo"),
                           br(), 
                           h5("   Aquí puede acceder al último ", 
                              tags$a(href="https://tableros.yvera.tur.ar/internacional.html", 
@@ -522,7 +549,7 @@ navbarPage(title = div(  #### NavBar #####
                     div(id="container-info",
                         br(),
                         h4("PERFIL TURISMO RECEPTIVO"),
-                        h5(glue("Datos desde Enero de 2019 a {Mes_ult} {anio_ult}.")),
+                        h5(glue("Datos desde Enero de 2019 a {mes_ult_nro} {anio_ult}.")),
                         h5("Esta pestaña permite caracterizar el perfil del turismo receptivo por los pasos relevados en 
                            la Encuesta de Turismo Internacional (ETI). Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
@@ -650,8 +677,7 @@ navbarPage(title = div(  #### NavBar #####
                         br(),
                         h5("   • La estimación de ", tags$b("viajes"), "del turismo internacional (receptivo y emisivo) 
                         para el total del país surge de los registros migratorios provistos por la Dirección 
-                        Nacional de 
-             Migraciones (DNM)"),
+                        Nacional de Migraciones (DNM)"),
                         
                         h5("   • El", tags$b("gasto y las pernoctaciones,"),"tienen como fuente las estimaciones elaboradas por la 
                         Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (DNESEyCI) del INDEC.  "), 
@@ -663,7 +689,7 @@ navbarPage(title = div(  #### NavBar #####
                         
                         h3("ACLARACIONES TÉCNICAS"),
                         h5("•", tags$b("Serie histórica:"), "Los datos de gasto desde el 2016 en adelante surgen directamente de la DNESEyCI de INDEC, 
-                        mientras que los datos de años anteriores surgen de un empalme realizado por la DNMyE para poder mantener
+                        mientras que los datos de años anteriores surgen de un empalme realizado por la DMyE para poder mantener
                         la comparabilidad de la serie histórica."), 
                         
                         h5("•", tags$b("Receptivo y Emisivo:")),
