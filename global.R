@@ -66,8 +66,7 @@ data_grafico_ac_pais <- data_graficos %>%
 
 
 dato_box <-  datos %>% 
-  filter(anio == anio_ult | anio == anio_ult-1) %>%  #Año actual y anterior 
-  filter(tipo_visitante == "Turistas") %>% 
+  filter(anio >= anio_ult-1, tipo_visitante == "Turistas") %>% 
   collect() %>% 
   filter(mes <= mes_ult_nro) 
 
@@ -75,7 +74,7 @@ dato_acumulado <- dato_box %>%
   group_by(anio, turismo_internac) %>% 
   summarise(casos = sum(casos)) %>% 
   ungroup() %>%
-  collect() %>% 
+  #collect() %>% 
   mutate(var = casos/lag(casos, n = 2)-1) %>% 
   filter(anio ==anio_ult) 
 
@@ -84,7 +83,7 @@ dato_mensual <- dato_box %>%
   summarise(casos = sum(casos)) %>% 
   ungroup() %>%
   filter(mes == mes_ult_nro) %>% 
-  collect() %>% 
+  #collect() %>% 
   arrange(anio) %>%
   group_by(turismo_internac) %>% 
   mutate(var = casos/lag(casos)-1) %>% 

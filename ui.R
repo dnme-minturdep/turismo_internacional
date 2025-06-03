@@ -16,7 +16,7 @@ navbarPage(title = div(  #### NavBar #####
            #RESUMEN####
            tabPanel("RESUMEN",
                     
-                    #tags$head(includeHTML("/srv/DataDNMYE/login_shiny/turismo-internacional.html")),
+                    tags$head(includeHTML("/srv/DataDNMYE/login_shiny/turismo-internacional.html")),
                     
                     div(id= "container-info",
                         useWaiter(),
@@ -93,7 +93,7 @@ navbarPage(title = div(  #### NavBar #####
                            tags$a(href="https://datos.yvera.gob.ar/dataset/turismo-internacional-total-pais", 
                                   target = '_blank',
                                   "y datos abiertos"),
-                           "de turismo internacional."),
+                           "de turismo internacional.")#,
                         
                         
                         #fluidRow(
@@ -225,7 +225,7 @@ navbarPage(title = div(  #### NavBar #####
                                                                                        'País de residencia/destino'= 'pais_agrupado'), 
                                                
                                                selected = "trim", multiple = TRUE)
-                            ), 
+                            )#, 
                             #column(2,
                             #       radioButtons("round_s",
                             #                    label = "Redondeo:",
@@ -244,7 +244,7 @@ navbarPage(title = div(  #### NavBar #####
                           br(),
                           h6("* Hasta 1994 no se dispone de datos a nivel trimestral. Hasta 2003 no hay datos de excursionistas por país de residencia/destino. Datos provisorios desde 2020."),
                           h5("Fuente: Dirección de Mercados y Estadisticas (Subsecretaría de Turismo) y Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (INDEC)"),
-                          br(),
+                          br()#,
                           
                           
                         ))),
@@ -402,7 +402,7 @@ navbarPage(title = div(  #### NavBar #####
                              tags$a(href="https://datos.yvera.gob.ar/dataset/turismo-internacional-total-pais", 
                                     target = '_blank',
                                     "y datos abiertos"),
-                             "de turismo internacional."),
+                             "de turismo internacional.")#,
                           
                           
                         ))),
@@ -538,7 +538,7 @@ navbarPage(title = div(  #### NavBar #####
                              tags$a(href="https://datos.yvera.gob.ar/dataset/turismo-internacional-total-pais", 
                                     target = '_blank',
                                     "y datos abiertos"),
-                             "de turismo internacional."),
+                             "de turismo internacional.")#,
                           
                           
                         ))),
