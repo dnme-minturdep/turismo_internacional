@@ -163,7 +163,7 @@ navbarPage(title = div(  #### NavBar #####
                             ),
                           ),
                           
-                          plotlyOutput("grafico_gasto"),
+                          plotlyOutput("grafico_gasto") %>% withSpinner(),
                           helpText("Nota: Hasta 1994 no se dispone de datos a nivel trimestral. Hasta 2003 no hay datos de excursionistas por país de residencia/destino.",  
                                    style = "text-align: left;"),
                           helpText("Fuente: Dirección de Mercados y Estadisticas (Subsecretaría de Turismo) y Dirección Nacional de Estadísticas del Sector Externo y Cuentas Internacionales (INDEC).",  
