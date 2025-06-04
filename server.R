@@ -4,11 +4,11 @@ function(input, output, session) {
   
   # GRAFICO ####
   
-  output$fig1 <- renderPlotly(fig1)
+  #output$fig1 <- renderPlotly(fig1)
   
   # RESUMEN ####
   
-  output$boxreceptivo <- renderValueBox({
+  output$boxreceptivo <- shinydashboard::renderValueBox({
     
     value <- comunicacion::lbl_int(dato_mensual$casos[dato_mensual$turismo_internac == "Receptivo"])
     valueBox(value = value, 
@@ -18,7 +18,7 @@ function(input, output, session) {
              )
   })
   
-  output$boxreceptivo_var <- renderValueBox({
+  output$boxreceptivo_var <- shinydashboard::renderValueBox({
     
     value <- comunicacion::lbl_percent(dato_mensual$var[dato_mensual$turismo_internac == "Receptivo"])
     valueBox(value = value, 
@@ -28,7 +28,7 @@ function(input, output, session) {
              )
   })
   
-  output$boxemisivo <- renderValueBox({
+  output$boxemisivo <- shinydashboard::renderValueBox({
     
     value <- comunicacion::lbl_int(dato_mensual$casos[dato_mensual$turismo_internac == "Emisivo"])
     valueBox(value = value, 
@@ -38,7 +38,7 @@ function(input, output, session) {
              )
   })
   
-  output$boxemisivo_var <- renderValueBox({
+  output$boxemisivo_var <- shinydashboard::renderValueBox({
     
     value <- comunicacion::lbl_percent(dato_mensual$var[dato_mensual$turismo_internac == "Emisivo"])
     valueBox(value = value, 
@@ -50,7 +50,7 @@ function(input, output, session) {
   
   
   
-  output$boxreceptivo_ac <- renderValueBox({
+  output$boxreceptivo_ac <- shinydashboard::renderValueBox({
     
     value <- comunicacion::lbl_int(dato_acumulado$casos[dato_acumulado$turismo_internac == "Receptivo"])
     valueBox(value = value, 
@@ -60,7 +60,7 @@ function(input, output, session) {
     )
   })
   
-  output$boxreceptivo_var_ac <- renderValueBox({
+  output$boxreceptivo_var_ac <- shinydashboard::renderValueBox({
     
     value <- comunicacion::lbl_percent(dato_acumulado$var[dato_acumulado$turismo_internac == "Receptivo"])
     valueBox(value = value, 
@@ -70,7 +70,7 @@ function(input, output, session) {
     )
   })
   
-  output$boxemisivo_ac <- renderValueBox({
+  output$boxemisivo_ac <- shinydashboard::renderValueBox({
     
     value <- comunicacion::lbl_int(dato_acumulado$casos[dato_acumulado$turismo_internac == "Emisivo"])
     valueBox(value = value, 
@@ -81,7 +81,7 @@ function(input, output, session) {
     )
   })
   
-  output$boxemisivo_var_ac <- renderValueBox({
+  output$boxemisivo_var_ac <- shinydashboard::renderValueBox({
     
     value <- comunicacion::lbl_percent(dato_acumulado$var[dato_acumulado$turismo_internac == "Emisivo"])
     valueBox(value = value, 
@@ -92,6 +92,12 @@ function(input, output, session) {
     
   })
   
+  # Graficos
+  output$graf_pais_ti <- renderPlotly(ggplotly(graf_pais_ti, tooltip = "text"))
+  
+  output$graf_via_ti <- renderPlotly(ggplotly(graf_via_ti, tooltip = "text"))
+  
+  waiter_hide()
   
   # RECEPTIVO ####
   
@@ -112,7 +118,7 @@ function(input, output, session) {
       updateSelectInput(session, inputId = "pais", choices = c("Todos",
                                                                sort(data_receptivo %>% distinct(pais) %>% pull())))
     } else {
-      updateSelectInput(session, inputId = "pais", choices = c("Todos", pais_ag() %>% disntinct(pais) %>% pull())) 
+      updateSelectInput(session, inputId = "pais", choices = c("Todos", pais_ag() %>% distinct(pais) %>% pull())) 
     }
   })
   
@@ -325,7 +331,6 @@ function(input, output, session) {
     # etiquetas <- gsub ("tipo_visitante" ,"Tipo de visitante", etiquetas)
   })
   
-  waiter_hide()
   
   col_format <- reactive({
     
@@ -333,9 +338,9 @@ function(input, output, session) {
     })
   
   output$titulo <- renderText({seleccion_vis()})
-  output$table_receptivo <- renderDT(server = FALSE,
+  output$table_receptivo <- DT::renderDT(server = FALSE,
                                          
-                                         datatable(#extensions = 'Buttons',
+                                         DT::datatable(#extensions = 'Buttons',
                                                        options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
                                                                       dom = 'lfrtipB'
                                                                       # buttons = list('copy',
@@ -349,7 +354,7 @@ function(input, output, session) {
                                                        , rownames= FALSE#, colnames = etiquetas
                                                        ) %>% 
                                        formatRound(columns = col_format(), mark = ".", digits = 0)
-  )
+  ) %>% bindEvent(input$btnSearchReceptivo)
   
   output$downloadExcelRec <- downloadHandler(
     filename = function() {
@@ -575,9 +580,9 @@ function(input, output, session) {
   
   output$titulo_e <- renderText({seleccion_vis_e()})
   
-  output$table_emisivo <- renderDataTable(server = FALSE,
+  output$table_emisivo <- DT::renderDT(server = FALSE,
                                               
-                                              datatable(#extensions = 'Buttons', 
+                                       DT::datatable(#extensions = 'Buttons', 
                                                             options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
                                                                            dom = 'lfrtipB'
                                                                            # buttons = list('copy',
@@ -592,7 +597,7 @@ function(input, output, session) {
                                                             
                                                             , rownames= FALSE) %>% 
                                             formatRound(columns = col_format_e(), mark = ".", digits =  0)
-  )
+  ) %>% bindEvent(input$btnSearchReceptivo)
   
   output$downloadExcelEmi <- downloadHandler(
     filename = function() {
@@ -748,9 +753,9 @@ function(input, output, session) {
     # etiquetas <- gsub ("Casos_Muestrales", "Casos Muestrales***", etiquetas)
     
   })
-  output$tabla_eti<- renderDT(server = FALSE,
+  output$tabla_eti<- DT::renderDT(server = FALSE,
                                   
-                                  datatable(#extensions = 'Buttons',
+                                  DT::datatable(#extensions = 'Buttons',
                                                 options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
                                                                dom = 'lfrtipB'#,
                                                                # buttons = list('copy',
@@ -767,7 +772,7 @@ function(input, output, session) {
                                 formatRound(columns = c("Turistas no residentes*",
                                                         "Casos Muestrales***"), mark = ".", digits = 0) %>% 
                                 formatCurrency(columns = c("Gasto en US$**"), mark = ".", dec.mark = ",", digits = 1, currency = "$ ")
-  )
+  ) %>% bindEvent(input$btnSearchPerfil)
   
   output$downloadExcelPerfil<- downloadHandler(
     filename = function() {
@@ -868,9 +873,9 @@ function(input, output, session) {
   
   # SERIE ####  
   
-  output$tabla_serie<- renderDT(server = FALSE,
+  output$tabla_serie<- DT::renderDT(server = FALSE,
                                 
-                                datatable(#extensions = 'Buttons',
+                                    DT::datatable(#extensions = 'Buttons',
                                   options = list(lengthMenu = c(12, 25, 50), pageLength = 12, 
                                                  dom = 'lfrtipB'#,
                                                  # buttons = list('copy',
@@ -894,7 +899,7 @@ function(input, output, session) {
                                               mark = ".", dec.mark = ",", digits = 1) %>% 
                                   formatRound(columns = c("Viajes", "Pernoctaciones"),
                                               mark = ".", digits = 0)
-  )
+  ) %>% bindEvent(input$btnSearchSerie)
   
   output$downloadExcelSerie <- downloadHandler(
     filename = function() {
@@ -917,57 +922,54 @@ function(input, output, session) {
 # GRAFICOS ####
 ## 1. Por pais #####
     
-datos_grafico1_sel <- eventReactive(input$pais_agrup_graf,{
-    req(input$pais_agrup_graf)
-  if (input$pais_agrup_graf == "Todos") {
-   datos_grafico1_sel <- data_graficos %>% 
-     group_by(periodo, turismo) %>%
-     summarise(turistas = round(sum(turistas))) 
-   } else {
-     datos_grafico1_sel <- data_graficos %>% 
-     filter(pais_agrupado == input$pais_agrup_graf |
-            destino_agrup == input$pais_agrup_graf) %>% 
-     group_by(periodo, turismo, pais_agrupado, destino_agrup) %>% 
-       summarise(turistas = round(sum(turistas)))
-     }
-})
-  
-output$grafico_serie <- renderPlotly({ 
-  grafico_1  <- ggplot(datos_grafico1_sel(), aes(periodo, turistas, colour = turismo, group =1, 
-                                                 text = paste('Fecha:', format(periodo,"%b%y"),
-                                                              '<br>Viajes:',format(turistas,big.mark=".",
-                                                                                   decimal.mark = ","),
-                                                              '<br>Turismo:',turismo)))+   
-    geom_hline(yintercept = 0, color = "grey", alpha =0.7, linewidth = 0.5) + 
-    geom_line(linewidth = 0.5 , alpha = 0.8) + 
-    geom_point(size = 1.0, alpha = 0.8)+ 
-    scale_color_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
-    scale_x_date(date_breaks = "1 months", date_labels = "%b%y", expand = c(0,10))+ 
-    scale_y_continuous(#breaks = seq(min(datos_grafico1_sel()$turistas), max(datos_grafico1_sel()$turistas), by = 200000),
-                       n.breaks = 6,
-                       labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
-    theme_minimal()+
-    theme(legend.position = "bottom", 
-          axis.text.x =element_text (size =12, angle=90),
-          axis.text.y = element_text(size = 12),
-          legend.text = element_text (size =12),
-          plot.caption =  element_text (size =12, hjust = 0.0)) +
-    labs(title = "Evolución mensual de los viajes de turistas internacionales.",
-         subtitle = glue ("Emisivo y receptivo \n Enero 2016-{mes_ult_nro}-{anio_ult}"),
-         y = "", 
-         x = "", 
-         color= "",
-         caption =  "Fuente: Dirección de Mercados y Estadisticas, Subsecretaría de Turismo,
-         en base a información de la Dirección Nacional de Migraciones y la Encuesta de Turismo Internacional." )
-  
-  
-ggplotly(grafico_1, tooltip = "text")  %>% 
-    layout(legend = list(orientation = "h", x = 0.4, y = -0.6))
- })
+# datos_grafico1_sel <- eventReactive(input$pais_agrup_graf,{
+#     req(input$pais_agrup_graf)
+#   if (input$pais_agrup_graf == "Todos") {
+#    datos_grafico1_sel <- data_graficos %>% 
+#      group_by(periodo, turismo) %>%
+#      summarise(turistas = round(sum(turistas))) 
+#    } else {
+#      datos_grafico1_sel <- data_graficos %>% 
+#      filter(pais_agrupado == input$pais_agrup_graf |
+#             destino_agrup == input$pais_agrup_graf) %>% 
+#      group_by(periodo, turismo, pais_agrupado, destino_agrup) %>% 
+#        summarise(turistas = round(sum(turistas)))
+#      }
+# })
+#   
+# output$grafico_serie <- renderPlotly({ 
+#   grafico_1  <- ggplot(datos_grafico1_sel(), aes(periodo, turistas, colour = turismo, group =1, 
+#                                                  text = paste('Fecha:', format(periodo,"%b%y"),
+#                                                               '<br>Viajes:',format(turistas,big.mark=".",
+#                                                                                    decimal.mark = ","),
+#                                                               '<br>Turismo:',turismo)))+   
+#     geom_hline(yintercept = 0, color = "grey", alpha =0.7, linewidth = 0.5) + 
+#     geom_line(linewidth = 0.5 , alpha = 0.8) + 
+#     geom_point(size = 1.0, alpha = 0.8)+ 
+#     scale_color_manual(values = c(cols_arg2[1], cols_arg2[2])) + 
+#     scale_x_date(date_breaks = "1 months", date_labels = "%b%y", expand = c(0,10))+ 
+#     scale_y_continuous(#breaks = seq(min(datos_grafico1_sel()$turistas), max(datos_grafico1_sel()$turistas), by = 200000),
+#                        n.breaks = 6,
+#                        labels = scales::number_format(big.mark = ".", decimal.mark = ",")) + 
+#     theme_minimal()+
+#     theme(legend.position = "bottom", 
+#           axis.text.x =element_text (size =12, angle=90),
+#           axis.text.y = element_text(size = 12),
+#           legend.text = element_text (size =12),
+#           plot.caption =  element_text (size =12, hjust = 0.0)) +
+#     labs(title = "Evolución mensual de los viajes de turistas internacionales.",
+#          subtitle = glue ("Emisivo y receptivo \n Enero 2016-{mes_ult_nro}-{anio_ult}"),
+#          y = "", 
+#          x = "", 
+#          color= "",
+#          caption =  "Fuente: Dirección de Mercados y Estadisticas, Subsecretaría de Turismo,
+#          en base a información de la Dirección Nacional de Migraciones y la Encuesta de Turismo Internacional." )
+#   
+#   
+# ggplotly(grafico_1, tooltip = "text")  %>% 
+#     layout(legend = list(orientation = "h", x = 0.4, y = -0.6))
+#  })
 
-output$graf_pais_ti <- renderPlotly(ggplotly(graf_pais_ti, tooltip = "text"))
-
-output$graf_via_ti <- renderPlotly(ggplotly(graf_via_ti, tooltip = "text"))
 
 
 ## 2. Gasto #####
