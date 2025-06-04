@@ -32,13 +32,13 @@ navbarPage(title = div(  #### NavBar #####
                            ),
                         br(),
                         
-                        h3(glue("Datos de último mes: {mes_ult_nro} {anio_ult}")),
+                        h3(glue::glue("Datos de último mes: {mes_ult_nro} {anio_ult}")),
                         fluidRow(column(6,
                                  wellPanel( 
                                    h6("Turismo receptivo",  style = "color: #37BBED; font-size: 2rem"),
                                    fluidRow(
-                                     column(6, valueBoxOutput("boxreceptivo", width = "100%") %>% withSpinner()),
-                                     column(6, valueBoxOutput("boxreceptivo_var", width = "100%") %>% withSpinner())
+                                     column(6, shinydashboard::valueBoxOutput("boxreceptivo", width = "100%") %>% withSpinner()),
+                                     column(6, shinydashboard::valueBoxOutput("boxreceptivo_var", width = "100%") %>% withSpinner())
                                    )
                                  )
                           ),
@@ -46,20 +46,20 @@ navbarPage(title = div(  #### NavBar #####
                                  wellPanel( 
                                    h6("Turismo emisivo",  style = "color: #37BBED; font-size: 2rem"),
                                    fluidRow(
-                                     column(6, valueBoxOutput("boxemisivo", width = "100%") %>% withSpinner()),
-                                     column(6, valueBoxOutput("boxemisivo_var", width = "100%") %>% withSpinner())
+                                     column(6, shinydashboard::valueBoxOutput("boxemisivo", width = "100%") %>% withSpinner()),
+                                     column(6, shinydashboard::valueBoxOutput("boxemisivo_var", width = "100%") %>% withSpinner())
                                    )
                                  )
                           )
                         ),
                           
-                        h3(glue("Datos de último año: acumulado Enero - {mes_ult_nro} {anio_ult}")),
+                        h3(glue::glue("Datos de último año: acumulado Enero - {mes_ult_nro} {anio_ult}")),
                         fluidRow(column(6,
                                         wellPanel( 
                                           h6("Turismo receptivo",  style = "color: #37BBED; font-size: 2rem"),
                                           fluidRow(
-                                            column(6, valueBoxOutput("boxreceptivo_ac", width = "100%") %>% withSpinner()),
-                                            column(6, valueBoxOutput("boxreceptivo_var_ac", width = "100%") %>% withSpinner())
+                                            column(6, shinydashboard::valueBoxOutput("boxreceptivo_ac", width = "100%") %>% withSpinner()),
+                                            column(6, shinydashboard::valueBoxOutput("boxreceptivo_var_ac", width = "100%") %>% withSpinner())
                                           )
                                         )
                         ),
@@ -67,8 +67,8 @@ navbarPage(title = div(  #### NavBar #####
                                wellPanel( 
                                  h6("Turismo emisivo",  style = "color: #37BBED; font-size: 2rem"),
                                  fluidRow(
-                                   column(6, valueBoxOutput("boxemisivo_ac", width = "100%") %>% withSpinner()),
-                                   column(6, valueBoxOutput("boxemisivo_var_ac", width = "100%") %>% withSpinner())
+                                   column(6, shinydashboard::valueBoxOutput("boxemisivo_ac", width = "100%") %>% withSpinner()),
+                                   column(6, shinydashboard::valueBoxOutput("boxemisivo_var_ac", width = "100%") %>% withSpinner())
                                  )
                                )
                         )
@@ -118,7 +118,7 @@ navbarPage(title = div(  #### NavBar #####
                     div(id= "container-info",
                         br(),
                         h4("SERIE HISTÓRICA TRIMESTRAL DE VIAJES, GASTO Y PERNOCTACIONES"),
-                        h5(tags$p(glue("Datos hasta trimestre {trim_ult_gasto} del año {anio_ult_gasto}."))), 
+                        h5(tags$p(glue::glue("Datos hasta trimestre {trim_ult_gasto} del año {anio_ult_gasto}."))), 
                         h5(tags$p(" En esta sección se presenta la serie histórica trimestral de ",  
                         tags$b("turismo receptivo y emisivo de viajes,
                                gasto en dólares y pernoctaciones de turistas y excursionistas,"),
@@ -225,7 +225,13 @@ navbarPage(title = div(  #### NavBar #####
                                                                                        'País de residencia/destino'= 'pais_agrupado'), 
                                                
                                                selected = "trim", multiple = TRUE)
-                            )#, 
+                            ),
+                            column(2, br(),
+                                   actionButton("btnSearchSerie", "Buscar", 
+                                                icon = icon("magnifying-glass"),
+                                                style ="color: #fff; background-color: #b5b5b5;", width = "100%")
+                                   )
+                            #, 
                             #column(2,
                             #       radioButtons("round_s",
                             #                    label = "Redondeo:",
@@ -233,7 +239,8 @@ navbarPage(title = div(  #### NavBar #####
                             #                    selected = "Básico")
                             #)
                           ),
-                          
+                         
+                    
                           # Create a new row for the table.
                           DT::dataTableOutput("tabla_serie") %>% 
                             withSpinner(), 
@@ -363,8 +370,15 @@ navbarPage(title = div(  #### NavBar #####
                                                             'País con el que limita' = 'limita',
                                                             'Género' = 'sexo',
                                                             'Tramos de edad' = 'grupoetario'),
-                                               selected = "mes", multiple = TRUE)
-                            )#,
+                                               selected = "mes", multiple = TRUE, width = "100%")
+                            ),
+                            column(2, br(),
+                                   actionButton("btnSearchReceptivo", "Buscar", 
+                                                icon = icon("magnifying-glass"),
+                                                style ="color: #fff; background-color: #b5b5b5;", width = "100%")
+                            )
+                            
+                            #,
                             # column(6,
                             #        radioButtons("round",
                             #                     label = "Redondeo:",
@@ -383,7 +397,7 @@ navbarPage(title = div(  #### NavBar #####
                           textOutput(outputId = "titulo", container = h3),
                           
                           # Create a new row for the table.
-                          dataTableOutput("table_receptivo") %>% 
+                          DT::dataTableOutput("table_receptivo") %>% 
                             withSpinner(), 
                           
                           fluidRow(downloadButton("downloadExcelRec","Descargar en excel"),
@@ -500,7 +514,12 @@ navbarPage(title = div(  #### NavBar #####
                                                                                        'País con el que limita' = 'limita',
                                                                                        'Género' = 'sexo',
                                                                                        'Tramos de edad' = 'grupoetario'),
-                                               selected = "mes", multiple = TRUE)
+                                               selected = "mes", multiple = TRUE, width = "100%")
+                            ),
+                            column(2, br(),
+                                   actionButton("btnSearchEmisivo", "Buscar", 
+                                                icon = icon("magnifying-glass"),
+                                                style ="color: #fff; background-color: #b5b5b5;", width = "100%")
                             )
                             # column(6,
                             #        radioButtons("round_e",
@@ -519,7 +538,7 @@ navbarPage(title = div(  #### NavBar #####
                           
                           
                           # Create a new row for the table.
-                          dataTableOutput("table_emisivo") %>% 
+                          DT::dataTableOutput("table_emisivo") %>% 
                             withSpinner(), 
                           
                           fluidRow(downloadButton("downloadExcelEmi","Descargar en excel"),
@@ -549,7 +568,7 @@ navbarPage(title = div(  #### NavBar #####
                     div(id="container-info",
                         br(),
                         h4("PERFIL TURISMO RECEPTIVO"),
-                        h5(glue("Datos desde Enero de 2019 a {mes_ult_nro} {anio_ult}.")),
+                        h5(glue::glue("Datos desde Enero de 2019 a {mes_ult_nro} {anio_ult}.")),
                         h5("Esta pestaña permite caracterizar el perfil del turismo receptivo por los pasos relevados en 
                            la Encuesta de Turismo Internacional (ETI). Se pueden analizar algunas características de los turistas (país de residencia,
                            tipo de alojamiento principal en el país, motivo de viaje), así como conocer los destinos (localidades, provincias) que han 
@@ -628,13 +647,19 @@ navbarPage(title = div(  #### NavBar #####
                                                             'Provincia visitada' = 'provincia',
                                                             'Ciudad visitada' = 'ciudad'),
                                                selected = c("anio", "trim"), multiple = TRUE)
-                                   )
+                                   ),
+                            
+                            column(2, br(),
+                                   actionButton("btnSearchPerfil", "Buscar", 
+                                                icon = icon("magnifying-glass"),
+                                                style ="color: #fff; background-color: #b5b5b5;", width = "100%")
+                            )
                             ),
                           
                           h3("PERFIL DE TURISTAS NO RESIDENTES (ETI)"),
                           
                           # Create a new row for the table.
-                          dataTableOutput("tabla_eti") %>% 
+                          DT::dataTableOutput("tabla_eti") %>% 
                             withSpinner(), 
                           
                           

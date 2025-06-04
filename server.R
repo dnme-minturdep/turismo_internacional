@@ -597,7 +597,7 @@ function(input, output, session) {
                                                             
                                                             , rownames= FALSE) %>% 
                                             formatRound(columns = col_format_e(), mark = ".", digits =  0)
-  ) %>% bindEvent(input$btnSearchReceptivo)
+  ) %>% bindEvent(input$btnSearchEmisivo)
   
   output$downloadExcelEmi <- downloadHandler(
     filename = function() {
