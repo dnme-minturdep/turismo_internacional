@@ -496,7 +496,7 @@ function(input, output, session) {
     }
     req(input$destino)
     if (all(input$destino != "Todos")) {
-      tabla_e <- tabla_e %>% filter(destino == input$destino)
+      tabla_e <- tabla_e %>% filter(destino_agrup == input$destino)
     }
     
     tabla_e <- tabla_e %>%
