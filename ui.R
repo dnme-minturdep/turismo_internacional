@@ -478,6 +478,7 @@ navbarPage(title = div(  #### NavBar #####
                                                  "Paraguay",
                                                  "Resto de América",
                                                  "Resto del mundo",
+                                                 "Uruguay",
                                                  "Sin dato"))
                             ),
                             column(3,
