@@ -651,7 +651,7 @@ function(input, output, session) {
     if (input$pais_origen == "Todos") {
       tabla_pais <- paso_select()
     } else {
-      tabla_pais <- paso_select()[paso_select()$pais_origen == input$pais_origen,  ]
+      tabla_pais <- paso_select()[paso_select()$pais_origen %in% input$pais_origen,  ]
     }
   })
   
